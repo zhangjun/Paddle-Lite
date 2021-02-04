@@ -21,6 +21,20 @@ namespace lite {
 namespace x86 {
 namespace math {
 
+void conv_depthwise_5x5s1_m256(lite::Tensor* input,
+                               lite::Tensor* output,
+                               lite::Tensor* filter,
+                               lite::Tensor* bias,
+                               const bool has_act,
+                               const lite_api::ActivationType act_type);
+
+void conv_depthwise_5x5s2_m256(lite::Tensor* input,
+                               lite::Tensor* output,
+                               lite::Tensor* filter,
+                               lite::Tensor* bias,
+                               const bool has_act,
+                               const lite_api::ActivationType act_type);
+
 void conv_depthwise_3x3s1_m256(lite::Tensor* input,
                                lite::Tensor* output,
                                lite::Tensor* filter,

@@ -25,6 +25,348 @@ namespace math {
 // filter [1,  oc/8, kh, kw, 8]
 // bias   [    oc             ]
 // output [bs, oc/8, oh, ow, 8]
+void conv_depthwise_5x5s1_m256(lite::Tensor* input,
+                               lite::Tensor* output,
+                               lite::Tensor* filter,
+                               lite::Tensor* bias,
+                               const bool has_act,
+                               const lite_api::ActivationType act_type) {
+  // input [bs, ic/8, ih, iw, 8]
+  CHECK_EQ(input->dims().size(), 5UL);
+  const int batch_size = input->dims()[0];
+  const int channel_num = input->dims()[1];
+  const int input_height = input->dims()[2];
+  const int input_width = input->dims()[3];
+  const float* input_data = input->data<float>();
+
+  // filter [1, oc/8, kh, kw, 8]
+  CHECK_EQ(filter->dims().size(), 5UL);
+  const int kernel_h = filter->dims()[2];
+  const int kernel_w = filter->dims()[3];
+  const float* filter_data = filter->data<float>();
+
+  // output [bs, oc/8, oh, ow, 8]
+  CHECK_EQ(output->dims().size(), 5UL);
+  const int output_height = output->dims()[2];
+  const int output_width = output->dims()[3];
+  float* output_data = output->mutable_data<float>();
+
+  const int input_group_step = input_width * 8;
+  const int input_channel_step = input_height * input_width * 8;
+  const int input_batch_step = channel_num * input_height * input_width * 8;
+
+  const int filter_channel_step = kernel_h * kernel_w * 8;
+
+  for (int bs = 0; bs < batch_size; ++bs) {
+    for (int ic = 0; ic < channel_num; ++ic) {
+      __m256 _bias0 = bias ? _mm256_loadu_ps(bias->data<float>() + ic * 8)
+                           : _mm256_set1_ps(0.f);
+
+      const float* k0 = filter_data + ic * filter_channel_step;
+
+      const float* r0 =
+          input_data + bs * input_batch_step + ic * input_channel_step;
+      const float* r1 = r0 + input_group_step;
+      const float* r2 = r1 + input_group_step;
+      const float* r3 = r2 + input_group_step;
+      const float* r4 = r3 + input_group_step;
+
+      for (int i = 0; i < output_height; ++i) {
+        int j = 0;
+        for (; j < output_width; ++j) {
+          __m256 _sum0 = _bias0;
+
+          __m256 _r00 = _mm256_loadu_ps(r0);
+          __m256 _r01 = _mm256_loadu_ps(r0 + 8);
+          __m256 _r02 = _mm256_loadu_ps(r0 + 16);
+          __m256 _r03 = _mm256_loadu_ps(r0 + 24);
+          __m256 _r04 = _mm256_loadu_ps(r0 + 32);
+          __m256 _k00 = _mm256_loadu_ps(k0);
+          __m256 _k01 = _mm256_loadu_ps(k0 + 8);
+          __m256 _k02 = _mm256_loadu_ps(k0 + 16);
+          __m256 _k03 = _mm256_loadu_ps(k0 + 24);
+          __m256 _k04 = _mm256_loadu_ps(k0 + 32);
+
+          k0 += 40;
+
+          _sum0 = _mm256_fmadd_ps(_k00, _r00, _sum0);
+          _sum0 = _mm256_fmadd_ps(_k01, _r01, _sum0);
+          _sum0 = _mm256_fmadd_ps(_k02, _r02, _sum0);
+          _sum0 = _mm256_fmadd_ps(_k03, _r03, _sum0);
+          _sum0 = _mm256_fmadd_ps(_k04, _r04, _sum0);
+
+          __m256 _r10 = _mm256_loadu_ps(r1);
+          __m256 _r11 = _mm256_loadu_ps(r1 + 8);
+          __m256 _r12 = _mm256_loadu_ps(r1 + 16);
+          __m256 _r13 = _mm256_loadu_ps(r1 + 24);
+          __m256 _r14 = _mm256_loadu_ps(r1 + 32);
+          __m256 _k10 = _mm256_loadu_ps(k0);
+          __m256 _k11 = _mm256_loadu_ps(k0 + 8);
+          __m256 _k12 = _mm256_loadu_ps(k0 + 16);
+          __m256 _k13 = _mm256_loadu_ps(k0 + 24);
+          __m256 _k14 = _mm256_loadu_ps(k0 + 32);
+
+          k0 += 40;
+
+          _sum0 = _mm256_fmadd_ps(_k10, _r10, _sum0);
+          _sum0 = _mm256_fmadd_ps(_k11, _r11, _sum0);
+          _sum0 = _mm256_fmadd_ps(_k12, _r12, _sum0);
+          _sum0 = _mm256_fmadd_ps(_k13, _r13, _sum0);
+          _sum0 = _mm256_fmadd_ps(_k14, _r14, _sum0);
+
+          __m256 _r20 = _mm256_loadu_ps(r2);
+          __m256 _r21 = _mm256_loadu_ps(r2 + 8);
+          __m256 _r22 = _mm256_loadu_ps(r2 + 16);
+          __m256 _r23 = _mm256_loadu_ps(r2 + 24);
+          __m256 _r24 = _mm256_loadu_ps(r2 + 32);
+          __m256 _k20 = _mm256_loadu_ps(k0);
+          __m256 _k21 = _mm256_loadu_ps(k0 + 8);
+          __m256 _k22 = _mm256_loadu_ps(k0 + 16);
+          __m256 _k23 = _mm256_loadu_ps(k0 + 24);
+          __m256 _k24 = _mm256_loadu_ps(k0 + 32);
+
+          k0 += 40;
+
+          _sum0 = _mm256_fmadd_ps(_k20, _r20, _sum0);
+          _sum0 = _mm256_fmadd_ps(_k21, _r21, _sum0);
+          _sum0 = _mm256_fmadd_ps(_k22, _r22, _sum0);
+          _sum0 = _mm256_fmadd_ps(_k23, _r23, _sum0);
+          _sum0 = _mm256_fmadd_ps(_k24, _r24, _sum0);
+
+          __m256 _r30 = _mm256_loadu_ps(r3);
+          __m256 _r31 = _mm256_loadu_ps(r3 + 8);
+          __m256 _r32 = _mm256_loadu_ps(r3 + 16);
+          __m256 _r33 = _mm256_loadu_ps(r3 + 24);
+          __m256 _r34 = _mm256_loadu_ps(r3 + 32);
+          __m256 _k30 = _mm256_loadu_ps(k0);
+          __m256 _k31 = _mm256_loadu_ps(k0 + 8);
+          __m256 _k32 = _mm256_loadu_ps(k0 + 16);
+          __m256 _k33 = _mm256_loadu_ps(k0 + 24);
+          __m256 _k34 = _mm256_loadu_ps(k0 + 32);
+
+          k0 += 40;
+
+          _sum0 = _mm256_fmadd_ps(_k30, _r30, _sum0);
+          _sum0 = _mm256_fmadd_ps(_k31, _r31, _sum0);
+          _sum0 = _mm256_fmadd_ps(_k32, _r32, _sum0);
+          _sum0 = _mm256_fmadd_ps(_k33, _r33, _sum0);
+          _sum0 = _mm256_fmadd_ps(_k34, _r34, _sum0);
+
+          __m256 _r40 = _mm256_loadu_ps(r4);
+          __m256 _r41 = _mm256_loadu_ps(r4 + 8);
+          __m256 _r42 = _mm256_loadu_ps(r4 + 16);
+          __m256 _r43 = _mm256_loadu_ps(r4 + 24);
+          __m256 _r44 = _mm256_loadu_ps(r4 + 32);
+          __m256 _k40 = _mm256_loadu_ps(k0);
+          __m256 _k41 = _mm256_loadu_ps(k0 + 8);
+          __m256 _k42 = _mm256_loadu_ps(k0 + 16);
+          __m256 _k43 = _mm256_loadu_ps(k0 + 24);
+          __m256 _k44 = _mm256_loadu_ps(k0 + 32);
+
+          k0 -= 160;
+
+          _sum0 = _mm256_fmadd_ps(_k40, _r40, _sum0);
+          _sum0 = _mm256_fmadd_ps(_k41, _r41, _sum0);
+          _sum0 = _mm256_fmadd_ps(_k42, _r42, _sum0);
+          _sum0 = _mm256_fmadd_ps(_k43, _r43, _sum0);
+          _sum0 = _mm256_fmadd_ps(_k44, _r44, _sum0);
+
+          if (has_act) {
+            _sum0 = activation8_m256(_sum0, act_type);
+          }
+
+          _mm256_storeu_ps(output_data, _sum0);
+
+          r0 += 8;
+          r1 += 8;
+          r2 += 8;
+          r3 += 8;
+          r4 += 8;
+          output_data += 8;
+        }
+        r0 += 4 * 8;
+        r1 += 4 * 8;
+        r2 += 4 * 8;
+        r3 += 4 * 8;
+        r4 += 4 * 8;
+      }  // end of for output_height
+    }    // end of for channel_num
+  }      // end of for batch_size
+}
+
+// input  [bs, ic/8, ih, iw, 8]
+// filter [1,  oc/8, kh, kw, 8]
+// bias   [    oc             ]
+// output [bs, oc/8, oh, ow, 8]
+void conv_depthwise_5x5s2_m256(lite::Tensor* input,
+                               lite::Tensor* output,
+                               lite::Tensor* filter,
+                               lite::Tensor* bias,
+                               const bool has_act,
+                               const lite_api::ActivationType act_type) {
+  // input [bs, ic/8, ih, iw, 8]
+  CHECK_EQ(input->dims().size(), 5UL);
+  const int batch_size = input->dims()[0];
+  const int channel_num = input->dims()[1];
+  const int input_height = input->dims()[2];
+  const int input_width = input->dims()[3];
+  const float* input_data = input->data<float>();
+
+  // filter [1, oc/8, kh, kw, 8]
+  CHECK_EQ(filter->dims().size(), 5UL);
+  const int kernel_h = filter->dims()[2];
+  const int kernel_w = filter->dims()[3];
+  const float* filter_data = filter->data<float>();
+
+  // output [bs, oc/8, oh, ow, 8]
+  CHECK_EQ(output->dims().size(), 5UL);
+  const int output_height = output->dims()[2];  // 2
+  const int output_width = output->dims()[3];   // 2
+  float* output_data = output->mutable_data<float>();
+
+  const int input_group_step = input_width * 8;
+  const int input_channel_step = input_height * input_width * 8;
+  const int input_batch_step = channel_num * input_height * input_width * 8;
+
+  const int filter_channel_step = kernel_h * kernel_w * 8;
+
+  const int tailstep = (input_width - 2 * output_width + input_width) * 8;
+
+  for (int bs = 0; bs < batch_size; ++bs) {
+    for (int ic = 0; ic < channel_num; ++ic) {
+      __m256 _bias0 = bias ? _mm256_loadu_ps(bias->data<float>() + ic * 8)
+                           : _mm256_set1_ps(0.f);
+
+      const float* k0 = filter_data + ic * filter_channel_step;
+
+      const float* r0 =
+          input_data + bs * input_batch_step + ic * input_channel_step;
+      const float* r1 = r0 + input_group_step;
+      const float* r2 = r1 + input_group_step;
+      const float* r3 = r2 + input_group_step;
+      const float* r4 = r3 + input_group_step;
+
+      for (int i = 0; i < output_height; ++i) {
+        int j = 0;
+        for (; j < output_width; ++j) {
+          __m256 _sum0 = _bias0;
+
+          __m256 _r00 = _mm256_loadu_ps(r0);
+          __m256 _r01 = _mm256_loadu_ps(r0 + 8);
+          __m256 _r02 = _mm256_loadu_ps(r0 + 16);
+          __m256 _r03 = _mm256_loadu_ps(r0 + 24);
+          __m256 _r04 = _mm256_loadu_ps(r0 + 32);
+          __m256 _k00 = _mm256_loadu_ps(k0);
+          __m256 _k01 = _mm256_loadu_ps(k0 + 8);
+          __m256 _k02 = _mm256_loadu_ps(k0 + 16);
+          __m256 _k03 = _mm256_loadu_ps(k0 + 24);
+          __m256 _k04 = _mm256_loadu_ps(k0 + 32);
+          k0 += 40;
+
+          _sum0 = _mm256_fmadd_ps(_k00, _r00, _sum0);
+          _sum0 = _mm256_fmadd_ps(_k01, _r01, _sum0);
+          _sum0 = _mm256_fmadd_ps(_k02, _r02, _sum0);
+          _sum0 = _mm256_fmadd_ps(_k03, _r03, _sum0);
+          _sum0 = _mm256_fmadd_ps(_k04, _r04, _sum0);
+
+          __m256 _r10 = _mm256_loadu_ps(r1);
+          __m256 _r11 = _mm256_loadu_ps(r1 + 8);
+          __m256 _r12 = _mm256_loadu_ps(r1 + 16);
+          __m256 _r13 = _mm256_loadu_ps(r1 + 24);
+          __m256 _r14 = _mm256_loadu_ps(r1 + 32);
+          __m256 _k10 = _mm256_loadu_ps(k0);
+          __m256 _k11 = _mm256_loadu_ps(k0 + 8);
+          __m256 _k12 = _mm256_loadu_ps(k0 + 16);
+          __m256 _k13 = _mm256_loadu_ps(k0 + 24);
+          __m256 _k14 = _mm256_loadu_ps(k0 + 32);
+          k0 += 40;
+
+          _sum0 = _mm256_fmadd_ps(_k10, _r10, _sum0);
+          _sum0 = _mm256_fmadd_ps(_k11, _r11, _sum0);
+          _sum0 = _mm256_fmadd_ps(_k12, _r12, _sum0);
+          _sum0 = _mm256_fmadd_ps(_k13, _r13, _sum0);
+          _sum0 = _mm256_fmadd_ps(_k14, _r14, _sum0);
+
+          __m256 _r20 = _mm256_loadu_ps(r2);
+          __m256 _r21 = _mm256_loadu_ps(r2 + 8);
+          __m256 _r22 = _mm256_loadu_ps(r2 + 16);
+          __m256 _r23 = _mm256_loadu_ps(r2 + 24);
+          __m256 _r24 = _mm256_loadu_ps(r2 + 32);
+          __m256 _k20 = _mm256_loadu_ps(k0);
+          __m256 _k21 = _mm256_loadu_ps(k0 + 8);
+          __m256 _k22 = _mm256_loadu_ps(k0 + 16);
+          __m256 _k23 = _mm256_loadu_ps(k0 + 24);
+          __m256 _k24 = _mm256_loadu_ps(k0 + 32);
+          k0 += 40;
+
+          _sum0 = _mm256_fmadd_ps(_k20, _r20, _sum0);
+          _sum0 = _mm256_fmadd_ps(_k21, _r21, _sum0);
+          _sum0 = _mm256_fmadd_ps(_k22, _r22, _sum0);
+          _sum0 = _mm256_fmadd_ps(_k23, _r23, _sum0);
+          _sum0 = _mm256_fmadd_ps(_k24, _r24, _sum0);
+
+          __m256 _r30 = _mm256_loadu_ps(r3);
+          __m256 _r31 = _mm256_loadu_ps(r3 + 8);
+          __m256 _r32 = _mm256_loadu_ps(r3 + 16);
+          __m256 _r33 = _mm256_loadu_ps(r3 + 24);
+          __m256 _r34 = _mm256_loadu_ps(r3 + 32);
+          __m256 _k30 = _mm256_loadu_ps(k0);
+          __m256 _k31 = _mm256_loadu_ps(k0 + 8);
+          __m256 _k32 = _mm256_loadu_ps(k0 + 16);
+          __m256 _k33 = _mm256_loadu_ps(k0 + 24);
+          __m256 _k34 = _mm256_loadu_ps(k0 + 32);
+          k0 += 40;
+
+          _sum0 = _mm256_fmadd_ps(_k30, _r30, _sum0);
+          _sum0 = _mm256_fmadd_ps(_k31, _r31, _sum0);
+          _sum0 = _mm256_fmadd_ps(_k32, _r32, _sum0);
+          _sum0 = _mm256_fmadd_ps(_k33, _r33, _sum0);
+          _sum0 = _mm256_fmadd_ps(_k34, _r34, _sum0);
+
+          __m256 _r40 = _mm256_loadu_ps(r4);
+          __m256 _r41 = _mm256_loadu_ps(r4 + 8);
+          __m256 _r42 = _mm256_loadu_ps(r4 + 16);
+          __m256 _r43 = _mm256_loadu_ps(r4 + 24);
+          __m256 _r44 = _mm256_loadu_ps(r4 + 32);
+          __m256 _k40 = _mm256_loadu_ps(k0);
+          __m256 _k41 = _mm256_loadu_ps(k0 + 8);
+          __m256 _k42 = _mm256_loadu_ps(k0 + 16);
+          __m256 _k43 = _mm256_loadu_ps(k0 + 24);
+          __m256 _k44 = _mm256_loadu_ps(k0 + 32);
+          k0 -= 160;
+
+          _sum0 = _mm256_fmadd_ps(_k40, _r40, _sum0);
+          _sum0 = _mm256_fmadd_ps(_k41, _r41, _sum0);
+          _sum0 = _mm256_fmadd_ps(_k42, _r42, _sum0);
+          _sum0 = _mm256_fmadd_ps(_k43, _r43, _sum0);
+          _sum0 = _mm256_fmadd_ps(_k44, _r44, _sum0);
+
+          if (has_act) {
+            _sum0 = activation8_m256(_sum0, act_type);
+          }
+          _mm256_storeu_ps(output_data, _sum0);
+
+          r0 += 2 * 8;
+          r1 += 2 * 8;
+          r2 += 2 * 8;
+          r3 += 2 * 8;
+          r4 += 2 * 8;
+          output_data += 8;
+        }
+        r0 += tailstep;
+        r1 += tailstep;
+        r2 += tailstep;
+        r3 += tailstep;
+        r4 += tailstep;
+      }  // end of for output_height
+    }    // end of for channel_num
+  }      // end of for batch_size
+}
+
+// input  [bs, ic/8, ih, iw, 8]
+// filter [1,  oc/8, kh, kw, 8]
+// bias   [    oc             ]
+// output [bs, oc/8, oh, ow, 8]
 void conv_depthwise_3x3s1_m256(lite::Tensor* input,
                                lite::Tensor* output,
                                lite::Tensor* filter,

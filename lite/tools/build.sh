@@ -438,7 +438,7 @@ function make_x86 {
   prepare_thirdparty
 
   root_dir=$(pwd)
-  build_directory=$BUILD_DIR/build.lite.x86
+  build_directory=$BUILD_DIR/build.lite.conv
 
   if [ ${WITH_HUAWEI_ASCEND_NPU} == "ON" ]; then
     export CXX=g++ # Huawei Ascend NPU need g++

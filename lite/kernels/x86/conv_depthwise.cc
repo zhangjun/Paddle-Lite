@@ -86,7 +86,29 @@ void DepthwiseConv<float>::Run() {
   auto act_type = act_param.active_type;
 
   if (pack_size == 8) {
-    if (kernel_h == 3 && kernel_w == 3 && stride_h == 1 && stride_w == 1) {
+    if (kernel_h == 5 && kernel_w == 5 && stride_h == 1 && stride_w == 1) {
+      lite::x86::math::conv_depthwise_5x5s2_m256(&input_padding_,
+                                                 &output_pack_,
+                                                 &filter_pack_,
+                                                 param.bias,
+                                                 has_act,
+                                                 act_type);
+#ifdef LITE_WITH_PROFILE
+      kernel_func_name_ = "conv_depthwise_5x5s2_m256";
+#endif
+    } else if (kernel_h == 5 && kernel_w == 5 && stride_h == 2 &&
+               stride_w == 2) {
+      lite::x86::math::conv_depthwise_5x5s2_m256(&input_padding_,
+                                                 &output_pack_,
+                                                 &filter_pack_,
+                                                 param.bias,
+                                                 has_act,
+                                                 act_type);
+#ifdef LITE_WITH_PROFILE
+      kernel_func_name_ = "conv_depthwise_5x5s2_m256";
+#endif
+    } else if (kernel_h == 3 && kernel_w == 3 && stride_h == 1 &&
+               stride_w == 1) {
       lite::x86::math::conv_depthwise_3x3s1_m256(&input_padding_,
                                                  &output_pack_,
                                                  &filter_pack_,
