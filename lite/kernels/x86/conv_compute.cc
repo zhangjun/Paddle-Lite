@@ -45,6 +45,14 @@ void Conv2dCompute<float>::PrepareForRun() {
                stride_w == 2) {
       impl_ = new DepthwiseConv<float>;
       VLOG(3) << "invoking conv_depthwise_3x3s2";
+    } else if (kernel_h == 5 && kernel_w == 5 && stride_h == 1 &&
+               stride_w == 1) {
+      impl_ = new DepthwiseConv<float>;
+      VLOG(3) << "invoking conv_depthwise_5x5s1";
+    } else if (kernel_h == 5 && kernel_w == 5 && stride_h == 2 &&
+               stride_w == 2) {
+      impl_ = new DepthwiseConv<float>;
+      VLOG(3) << "invoking conv_depthwise_5x5s2";
     }
   }
 
