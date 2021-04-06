@@ -14,6 +14,7 @@
 
 #pragma once
 
+#include <vector>
 #include "lite/core/tensor.h"
 
 namespace paddle {
@@ -21,12 +22,13 @@ namespace lite {
 namespace x86 {
 namespace math {
 
-static void conv_3x3s1_winograd_m256(lite::Tensor* input,
-                                     lite::Tensor* outout,
-                                     lite::Tensor* filter,
-                                     lite::Tensor* bias,
-                                     const bool has_act,
-                                     const lite_api::ActivationType act_type);
+void conv_3x3s1_winograd_m256(lite::Tensor* input,
+                              lite::Tensor* outout,
+                              lite::Tensor* filter,
+                              lite::Tensor* bias,
+                              const bool has_act,
+                              const lite_api::ActivationType act_type,
+                              const std::vector<int>& paddings);
 
 }  // namespace math
 }  // namespace x86

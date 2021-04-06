@@ -15,6 +15,7 @@
 #include "lite/kernels/x86/conv2d_compute.h"
 #include "lite/backends/x86/math/conv_3x3_pack8.h"
 #include "lite/backends/x86/math/conv_3x3_winograd.h"
+#include "lite/backends/x86/math/conv_utils.h"
 
 namespace paddle {
 namespace lite {
@@ -23,7 +24,8 @@ namespace x86 {
 
 template <>
 void Conv2d<float>::Run() {
-  auto& param = this->Param<param_t>() CHECK(this->ctx_);
+  auto& param = this->Param<param_t>();
+  CHECK(this->ctx_);
 
   auto input_dims = param.x->dims();
   CHECK_EQ(input_dims.size(), 4UL);
@@ -96,12 +98,15 @@ void Conv2d<float>::Run() {
                                                 &filter_pack_,
                                                 param.bias,
                                                 has_act,
-                                                act_type);
+                                                act_type,
+                                                *(param.paddings));
     } else {
       lite::x86::math::conv_3x3_m256(&input_padding_,
                                      &output_pack_,
                                      &filter_pack_,
                                      param.bias,
+                                     dilation_h,
+                                     dilation_w,
                                      has_act,
                                      act_type);
     }
@@ -111,6 +116,8 @@ void Conv2d<float>::Run() {
                                    &output_pack_,
                                    &filter_pack_,
                                    param.bias,
+                                   dilation_h,
+                                   dilation_w,
                                    has_act,
                                    act_type);
   }
@@ -119,6 +126,8 @@ void Conv2d<float>::Run() {
                                    &output_pack_,
                                    &filter_pack_,
                                    param.bias,
+                                   dilation_h,
+                                   dilation_w,
                                    has_act,
                                    act_type);
   }

@@ -29,13 +29,8 @@ class Conv2d : public KernelLite<TARGET(kX86), PRECISION(kFloat)> {
  public:
   Conv2d() = default;
   ~Conv2d() {}
-  virtual void PrepareForRun();
   virtual void Run();
-  virtual void ReinitWhenNeeded() {
-    if (impl_) {
-      impl_->ReInitWhenNeeded();
-    }
-  }
+
 #ifdef LITE_WITH_PROFILE
   virtual void SetProfileRuntimeKernelInfo(
       paddle::lite::profile::OpCharacter* ch) {
@@ -44,12 +39,6 @@ class Conv2d : public KernelLite<TARGET(kX86), PRECISION(kFloat)> {
 
   std::string kernel_func_name_{"NotImplForConv2d"};
 #endif
-  ~Conv2d() {
-    if (impl_ != nullptr) {
-      delete impl_;
-      impl == nullptr;
-    }
-  }
 
  private:
   using param_t = operators::ConvParam;

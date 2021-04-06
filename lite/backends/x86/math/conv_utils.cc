@@ -21,15 +21,15 @@ namespace x86 {
 namespace math {
 
 // From: https://stackoverflow.com/a/25627536
-static inline void transpose8_ps(__m256& row0,  // NOLINT
-                                 __m256& row1,  // NOLINT
-                                 __m256& row2,  // NOLINT
-                                 __m256& row3,  // NOLINT
-                                 __m256& row4,  // NOLINT
-                                 __m256& row5,  // NOLINT
-                                 __m256& row6,  // NOLINT
-                                 __m256& row7   // NOLINT
-                                 ) {
+void transpose8_ps(__m256& row0,  // NOLINT
+                   __m256& row1,  // NOLINT
+                   __m256& row2,  // NOLINT
+                   __m256& row3,  // NOLINT
+                   __m256& row4,  // NOLINT
+                   __m256& row5,  // NOLINT
+                   __m256& row6,  // NOLINT
+                   __m256& row7   // NOLINT
+                   ) {
   __m256 __t0, __t1, __t2, __t3, __t4, __t5, __t6, __t7;
   __m256 __tt0, __tt1, __tt2, __tt3, __tt4, __tt5, __tt6, __tt7;
   __t0 = _mm256_unpacklo_ps(row0, row1);

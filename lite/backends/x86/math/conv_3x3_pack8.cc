@@ -22,7 +22,7 @@ namespace x86 {
 namespace math {
 
 void conv_3x3_m256(lite::Tensor* input,
-                   lite::Tensor* outout,
+                   lite::Tensor* output,
                    lite::Tensor* filter,
                    lite::Tensor* bias,
                    const int dilation_h,
@@ -59,7 +59,7 @@ void conv_3x3_m256(lite::Tensor* input,
   const int output_batch_step =
       output_channel * output_height * output_width * 8;
 
-  const int filter_channel_step = kernel_h * kernel_w * 8;
+  // const int filter_channel_step = kernel_h * kernel_w * 8;
 
   const int filter_kernel_size = kernel_w * kernel_h;
   // kernel offsets
@@ -154,7 +154,7 @@ void conv_3x3_m256(lite::Tensor* input,
 }
 
 void conv_3x3_8to4(lite::Tensor* input,
-                   lite::Tensor* outout,
+                   lite::Tensor* output,
                    lite::Tensor* filter,
                    lite::Tensor* bias,
                    const int dilation_h,
@@ -190,7 +190,7 @@ void conv_3x3_8to4(lite::Tensor* input,
   const int output_batch_step =
       output_channel * output_height * output_width * 4;
 
-  const int filter_channel_step = kernel_h * kernel_w * 8;
+  // const int filter_channel_step = kernel_h * kernel_w * 8;
 
   const int filter_kernel_size = kernel_w * kernel_h;
   // kernel offsets
@@ -211,9 +211,7 @@ void conv_3x3_8to4(lite::Tensor* input,
   }
 
   for (int bs = 0; bs < batch_size; ++bs) {
-    for (int oc = 0; oc < output_channel;
-         ++oc) {  // output_channel == filter.dim[0]
-      //  float* outptr = top_blob.channel(p);
+    for (int oc = 0; oc < output_channel; ++oc) {
       float* output_ptr =
           output_data + bs * output_batch_step + oc * output_channel_step;
       for (int h = 0; h < output_height; ++h) {
@@ -277,7 +275,7 @@ void conv_3x3_8to4(lite::Tensor* input,
 }
 
 void conv_3x3_4to8(lite::Tensor* input,
-                   lite::Tensor* outout,
+                   lite::Tensor* output,
                    lite::Tensor* filter,
                    lite::Tensor* bias,
                    const int dilation_h,
@@ -313,7 +311,7 @@ void conv_3x3_4to8(lite::Tensor* input,
   const int output_batch_step =
       output_channel * output_height * output_width * 8;
 
-  const int filter_channel_step = kernel_h * kernel_w * 8;
+  // const int filter_channel_step = kernel_h * kernel_w * 8;
 
   const int filter_kernel_size = kernel_w * kernel_h;
   // kernel offsets
@@ -348,7 +346,7 @@ void conv_3x3_4to8(lite::Tensor* input,
           }
 
           const float* kptr = (const float*)filter_data +
-                              filter_kernel_size * input_channel * oc * 64;
+                              filter_kernel_size * input_channel * oc * 32;
           for (int ic = 0; ic < input_channel; ++ic) {
             const float* input_ptr =
                 input_data + bs * input_batch_step + ic * input_channel_step;

@@ -309,7 +309,6 @@ static inline void winograd_f6k3_output_inplace_avx2(__m256& m0,  // NOLINT
   m5_sub_m6 = m5 - m6;
 
   const __m256 bias_value = _mm256_set1_ps(bias);
-  const __m256 m_0p0 = _mm256_setzero_ps();
 
   m0 = bias_value + m0 + m1_add_m2 + m3_add_m4 + m5_add_m6;
   m2 = bias_value + m1_add_m2 + m_4p0 * m3_add_m4 + m_0p25 * m5_add_m6;
@@ -319,24 +318,25 @@ static inline void winograd_f6k3_output_inplace_avx2(__m256& m0,  // NOLINT
   m5 = bias_value + m7 + m1_sub_m2 + m3_sub_m4 * m_32p0 + m5_sub_m6 * m_0p03125;
 }
 
-static void conv_3x3s1_winograd_m256(lite::Tensor* input,
-                                     lite::Tensor* output,
-                                     lite::Tensor* filter,
-                                     lite::Tensor* bias,
-                                     const bool has_act,
-                                     const lite_api::ActivationType act_type,
-                                     const std::vector<int>& paddings) {
-  CHECK_EQ(input->dims.size(), 5UL);
+void conv_3x3s1_winograd_m256(lite::Tensor* input,
+                              lite::Tensor* output,
+                              lite::Tensor* filter,
+                              lite::Tensor* bias,
+                              const bool has_act,
+                              const lite_api::ActivationType act_type,
+                              const std::vector<int>& paddings) {
+  CHECK_EQ(input->dims().size(), 5UL);
   const int batch_size = input->dims()[0];
   const int input_channel = input->dims()[1];
   const int input_height = input->dims()[2];
   const int input_width = input->dims()[3];
   const float* input_data = input->data<float>();
 
-  CHECK_EQ(fileter->dim().size(), 5UL);
+  CHECK_EQ(filter->dims().size(), 5UL);
   const int kernel_h = filter->dims()[2];
   const int kernel_w = filter->dims()[3];
   const float* filter_data = filter->data<float>();
+  const int filter_kernel_size = kernel_h * kernel_w;
 
   const int output_channel = output->dims()[1];
   const int output_height = output->dims()[2];
@@ -345,23 +345,17 @@ static void conv_3x3s1_winograd_m256(lite::Tensor* input,
 
   const int tile_w = (output_width + 5) / 6;
   const int tile_h = (output_height + 5) / 6;
-  const int size_tile = tile_w * tile_h;
+  // const int size_tile = tile_w * tile_h;
 
   const int pad_h = paddings[0];
   const int pad_w = paddings[2];
 
   const int input_channel_step = input_height * input_width;
   const int output_channel_step = output_height * output_width;
-  const int tran_channel_step = 8 * 8 * size_tile;
+  // const int trans_channel_step = 8 * 8 * size_tile;
 
-  const int max_ch =
-      input_channel > output_channel ? input_channel : output_channel;
-
-  int tile_w = (output_width + 5) / 6;
-  int tile_h = (output_height + 5) / 6;
-  int size_tile = tile_h * tile_w;
-  int size_trans_channel = 8 * 8 * size_tile;
-  int max_ch = input_channel > output_channel ? input_channel : output_channel;
+  // int max_ch = input_channel > output_channel ? input_channel :
+  // output_channel;
 
   for (int bs = 0; bs < batch_size; ++bs) {
     const float* din_batch =
@@ -405,12 +399,10 @@ static void conv_3x3s1_winograd_m256(lite::Tensor* input,
                                              data_in_tmp[7]);
 
             // exit(0)
-            const float* filter_ptr = (const float*)filter_data +
-                                      filter_kernel_size * input_channel * oc *
-                                          64 for (int i = 0; i < 8; i++) {
-              int weights_index = oc * input_channel * 64 + ic * 64;
-              result[i] += data_in_tmp[i] *
-                           _mm256_loadu_ps(&weights[weights_index + i * 8]);
+            const float* filter_ptr =
+                (const float*)filter_data +
+                filter_kernel_size * input_channel * oc * 64;
+            for (int i = 0; i < 8; i++) {
               result[i] += data_in_tmp[i] * _mm256_loadu_ps(filter_ptr + i * 8);
             }
           }
