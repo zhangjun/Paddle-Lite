@@ -45,7 +45,7 @@ void Conv2dCompute<float>::PrepareForRun() {
       input_channel % 8 == 0 ? 8 : input_channel % 4 == 0 ? 4 : 1;
   const int pack_out =
       output_channel % 8 == 0 ? 8 : output_channel % 4 == 0 ? 4 : 1;
-  bool pack8 = (pack_in == 8) || (pack_in == 8);
+  bool pack8 = (pack_in == 8) || (pack_out == 8);
 
   if (input_channel == groups && output_channel == groups &&
       (groups & 3) == 0) {
@@ -59,12 +59,12 @@ void Conv2dCompute<float>::PrepareForRun() {
     }
   } else if (1 == groups && no_dilation && pack8) {
     // s1d1g1, winograd
-    if (kernel_h == 3 && kernel_w == 3 && stride_h == 1 && stride_w == 1 &&
-        pack_in == 8 && pack_out == 8) {
-      impl_ = new Conv2d<float>;
-      VLOG(3) << "invoking conv_2d_3x3s1";
-    } else if (kernel_h == 3 && kernel_w == 3 && stride_h == 2 &&
-               stride_w == 2) {
+    // if (kernel_h == 3 && kernel_w == 3 && stride_h == 1 && stride_w == 1 &&
+    //    pack_in == 8 && pack_out == 8) {
+    //  impl_ = new Conv2d<float>;
+    //  VLOG(3) << "invoking conv_2d_3x3s1";
+    //} else if (kernel_h == 3 && kernel_w == 3 && stride_h == 2 &&
+    if (kernel_h == 3 && kernel_w == 3 && stride_h == 2 && stride_w == 2) {
       impl_ = new Conv2d<float>;
       VLOG(3) << "invoking conv_2d_3x3s2";
     }

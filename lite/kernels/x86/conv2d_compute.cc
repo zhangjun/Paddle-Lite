@@ -58,13 +58,13 @@ void Conv2d<float>::Run() {
   int kernel_h = param.filter->dims()[2];
   int kernel_w = param.filter->dims()[3];
 
-  // filter [oc, 1, ih, iw] & pack_size=8 => [oc/8, ih, iw, 8]
-  // filter [oc, 1, ih, iw] & pack_size=4 => [ic/4, ih, iw, 4]
-  if (pack_in == 8) {
-    lite::x86::math::pack8_m256(param.filter, &filter_pack_, pack_num, true);
-  } else if (pack_in == 4) {
-    lite::x86::math::pack4_m128(param.filter, &filter_pack_, pack_num, true);
-  }
+  // filter [oc, ic, ih, iw] & pack_in=8, pack_out=8 => [oc/8, ic/8, ih, iw, 8,
+  // 8]
+  // filter [oc, ic, ih, iw] & pack_in=4, pack_out=4 => [ic/4, ic/4, ih, iw, 4,
+  // 4]
+  filter_pack_.Resize(
+      {pack_num_out, pack_num, kernel_h, kernel_w, pack_in, pack_out});
+  lite::x86::math::convert_filter(param.filter, &filter_pack_);
 
   // attributes
   const int stride_h = param.strides[0];

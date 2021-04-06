@@ -226,6 +226,51 @@ void pack4_m128(lite::Tensor* input,
   }    // end of for bs
 }
 
+// filter [oc, ic, ih, iw] => [oc/pack_out, ic/pack_in, ih, iw, pack_in,
+// pack_out] for conv2d
+void transform_filter(lite::Tensor* input, lite::Tensor* output) {
+  int batch_size = input->dims()[0];
+  int channel = input->dims()[1];
+  int input_height = input->dims()[2];
+  int input_width = input->dims()[3];
+
+  int output_channel = output->dims()[0];
+  int input_channel = output->dims()[1];
+  int pack_in = output->dims()[4];
+  int pack_out = output->dims()[5];
+
+  // output->Resize({output_channel, input_channel, input_height, input_width,
+  // 4});
+
+  const int kernel_size = input_height * input_width;
+  const int input_batch_step = input_channel * kernel_size;
+  const int input_channel_step = kernel_size;
+
+  const int batch_step = input_channel * kernel_size * pack_in * pack_out;
+  const int channel_step = kernel_size * pack_in * pack_out;
+
+  const float* input_data = input->data<float>();
+  float* output_data = output->mutable_data<float>();
+
+  for (int oc = 0; oc < output_channel; ++oc) {
+    for (int ic = 0; ic < input_channel; ++ic) {
+      float* output_ptr = output_data + oc * batch_step + ic * channel_step;
+
+      for (int k = 0; k < kernel_size; ++k) {
+        for (int m = 0; m < pack_in; ++m) {
+          for (int n = 0; n < pack_out; ++n) {
+            float* input_ptr = input_data +
+                               (oc * pack_out + n) * input_batch_step +
+                               (ic * pack_in + m) * input_channel_step + k;
+            *output_ptr = *input_ptr;
+            ++output_ptr;
+          }
+        }
+      }
+    }
+  }
+}
+
 // output_trans [bs, oc/8, oh, ow, 8] => output [bs, oc, oh, ow]
 void unpack8_m256(lite::Tensor* input, lite::Tensor* output) {
   CHECK_EQ(input->dims().size(), 5UL);
