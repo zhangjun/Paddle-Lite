@@ -14,6 +14,7 @@
 
 #include "lite/kernels/x86/conv_compute.h"
 #include <utility>
+#include "lite/kernels/x86/conv2d_compute.h"
 #include "lite/kernels/x86/conv_depthwise.h"
 
 namespace paddle {
@@ -36,6 +37,16 @@ void Conv2dCompute<float>::PrepareForRun() {
   const int stride_h = param.strides[0];
   const int stride_w = param.strides[1];
 
+  auto dilations = *param.dilations;
+  bool no_dilation = (static_cast<int>(dilations[0]) == 1) &&
+                     (static_cast<int>(dilations[1]) == 1);
+
+  const int pack_in =
+      input_channel % 8 == 0 ? 8 : input_channel % 4 == 0 ? 4 : 1;
+  const int pack_out =
+      output_channel % 8 == 0 ? 8 : output_channel % 4 == 0 ? 4 : 1;
+  bool pack8 = (pack_in == 8) || (pack_in == 8);
+
   if (input_channel == groups && output_channel == groups &&
       (groups & 3) == 0) {
     if (kernel_h == 3 && kernel_w == 3 && stride_h == 1 && stride_w == 1) {
@@ -45,6 +56,17 @@ void Conv2dCompute<float>::PrepareForRun() {
                stride_w == 2) {
       impl_ = new DepthwiseConv<float>;
       VLOG(3) << "invoking conv_depthwise_3x3s2";
+    }
+  } else if (1 == groups && no_dilation && pack8) {
+    // s1d1g1, winograd
+    if (kernel_h == 3 && kernel_w == 3 && stride_h == 1 && stride_w == 1 &&
+        pack_in == 8 && pack_out == 8) {
+      impl_ = new Conv2D<float>;
+      VLOG(3) << "invoking conv_2d_3x3s1";
+    } else if (kernel_h == 3 && kernel_w == 3 && stride_h == 2 &&
+               stride_w == 2) {
+      impl_ = new Conv2D<float>;
+      VLOG(3) << "invoking conv_2d_3x3s2";
     }
   }
 

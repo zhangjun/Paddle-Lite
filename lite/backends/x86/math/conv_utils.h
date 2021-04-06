@@ -23,6 +23,14 @@ namespace lite {
 namespace x86 {
 namespace math {
 
+static inline void transpose8_ps(__m256& row0,   // NOLINT
+                                 __m256& row1,   // NOLINT
+                                 __m256& row2,   // NOLINT
+                                 __m256& row3,   // NOLINT
+                                 __m256& row4,   // NOLINT
+                                 __m256& row5,   // NOLINT
+                                 __m256& row6,   // NOLINT
+                                 __m256& row7);  // NOLINT
 // for input and filter pack
 void pack8_m256(lite::Tensor* input,
                 lite::Tensor* output,

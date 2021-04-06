@@ -1,5 +1,5 @@
 if(NOT LITE_WITH_X86)
-    return()
+  return()
 endif()
 
 add_kernel(activation_compute_x86 X86 basic SRCS activation_compute.cc DEPS ${lite_kernel_deps} math_function)
@@ -13,10 +13,11 @@ add_kernel(cast_compute_x86 X86 basic SRCS cast_compute.cc DEPS ${lite_kernel_de
 add_kernel(slice_compute_x86 X86 basic SRCS slice_compute.cc DEPS ${lite_kernel_deps})
 add_kernel(reshape_compute_x86 X86 basic SRCS reshape_compute.cc DEPS ${lite_kernel_deps} reshape_op)
 if(WITH_AVX AND AVX_FOUND)
-add_kernel(conv_depthwise_x86 X86 basic SRCS conv_depthwise.cc DEPS ${lite_kernel_deps} conv_utils conv_depthwise_pack8 conv_depthwise_pack4)
-add_kernel(conv_compute_x86 X86 basic SRCS conv_compute.cc DEPS ${lite_kernel_deps} blas im2col vol2col conv_depthwise_x86 conv_bias)
+  add_kernel(conv_depthwise_x86 X86 basic SRCS conv_depthwise.cc DEPS ${lite_kernel_deps} conv_utils conv_depthwise_pack8 conv_depthwise_pack4)
+  add_kernel(conv_2d_x86 X86 basic SRCS conv2d_compute.cc DEPS ${lite_kernel_deps} conv_utils conv_3x3_pack8 conv_3x3_winograd)
+  add_kernel(conv_compute_x86 X86 basic SRCS conv_compute.cc DEPS ${lite_kernel_deps} blas im2col vol2col conv_depthwise_x86 conv_2d_x86 conv_bias)
 else()
-add_kernel(conv_compute_x86 X86 basic SRCS conv_compute.cc DEPS ${lite_kernel_deps} blas im2col vol2col conv_bias)
+  add_kernel(conv_compute_x86 X86 basic SRCS conv_compute.cc DEPS ${lite_kernel_deps} blas im2col vol2col conv_bias)
 endif()
 # lite_cc_library(elementwise_compute_x86 SRCS elementwise_compute.cc DEPS ${lite_kernel_deps} elementwise_sub_op elementwise_add_op)
 # lite_cc_library(softmax_compute_x86 SRCS softmax_compute.cc DEPS ${lite_kernel_deps} softmax)
@@ -30,7 +31,7 @@ add_kernel(layer_norm_compute_x86 X86 basic SRCS layer_norm_compute.cc DEPS ${li
 # todo: fc x86 kernel can not compile successfully on mac because openmp is not supported on mac clang,
 # this problem should be fixed later to support fc x86 kernel on mac. @DannyIsFunny
 if(NOT APPLE)
-    add_kernel(fc_compute_x86 X86 basic SRCS fc_compute.cc DEPS ${lite_kernel_deps} jit_kernel_helper)
+  add_kernel(fc_compute_x86 X86 basic SRCS fc_compute.cc DEPS ${lite_kernel_deps} jit_kernel_helper)
 endif()
 # lite_cc_library(batch_norm_compute_x86 SRCS batch_norm_compute.cc DEPS ${lite_kernel_deps})
 # lite_cc_library(uniform_random_compute_x86 SRCS uniform_random_compute.cc DEPS ${lite_kernel_deps} )
