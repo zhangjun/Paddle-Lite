@@ -25,6 +25,8 @@ void conv_3x3_m256(lite::Tensor* input,
                    lite::Tensor* output,
                    lite::Tensor* filter,
                    lite::Tensor* bias,
+                   const int stride_h,
+                   const int stride_w,
                    const int dilation_h,
                    const int dilation_w,
                    const bool has_act,
@@ -39,7 +41,7 @@ void conv_3x3_m256(lite::Tensor* input,
   const float* input_data = input->data<float>();
 
   // filter [1, oc/8, kh, kw, 8]
-  CHECK_EQ(filter->dims().size(), 5UL);
+  CHECK_EQ(filter->dims().size(), 6UL);
   const int kernel_h = filter->dims()[2];
   const int kernel_w = filter->dims()[3];
   const float* filter_data = filter->data<float>();
@@ -102,7 +104,8 @@ void conv_3x3_m256(lite::Tensor* input,
             // const float* sptr = m.row(h * stride_h) + w * stride_w * 8;
             const float* input_ptr =
                 input_data + bs * input_batch_step + ic * input_channel_step;
-            const float* sptr = input_ptr + h * input_group_step + w * 8;
+            const float* sptr =
+                input_ptr + h * stride_h * input_group_step + w * stride_w * 8;
 
             for (int k = 0; k < filter_kernel_size; k++) {
               __m256 _val0 = _mm256_broadcast_ss((sptr + space_ofs[k] * 8));
@@ -157,6 +160,8 @@ void conv_3x3_8to4(lite::Tensor* input,
                    lite::Tensor* output,
                    lite::Tensor* filter,
                    lite::Tensor* bias,
+                   const int stride_h,
+                   const int stride_w,
                    const int dilation_h,
                    const int dilation_w,
                    const bool has_act,
@@ -170,7 +175,7 @@ void conv_3x3_8to4(lite::Tensor* input,
   const float* input_data = input->data<float>();
 
   // filter [1, oc/8, kh, kw, 8]
-  CHECK_EQ(filter->dims().size(), 5UL);
+  CHECK_EQ(filter->dims().size(), 6UL);
   const int kernel_h = filter->dims()[2];
   const int kernel_w = filter->dims()[3];
   const float* filter_data = filter->data<float>();
@@ -219,17 +224,18 @@ void conv_3x3_8to4(lite::Tensor* input,
           __m128 _sum = _mm_set1_ps(0.f);
 
           if (bias) {
-            _sum = _mm_loadu_ps(bias->data<float>() + oc * 8);
+            _sum = _mm_loadu_ps(bias->data<float>() + oc * 4);
           }
 
           const float* kptr = (const float*)filter_data +
-                              filter_kernel_size * input_channel * oc * 64;
+                              filter_kernel_size * input_channel * oc * 32;
           //  const float* kptr = weight_data_packed.channel(p);
 
           for (int ic = 0; ic < input_channel; ++ic) {
             const float* input_ptr =
                 input_data + bs * input_batch_step + ic * input_channel_step;
-            const float* sptr = input_ptr + h * input_group_step + w * 8;
+            const float* sptr =
+                input_ptr + h * stride_h * input_group_step + w * stride_w * 8;
 
             for (int k = 0; k < filter_kernel_size; k++) {
               __m128 _val0 = _mm_broadcast_ss((sptr + space_ofs[k] * 8));
@@ -278,6 +284,8 @@ void conv_3x3_4to8(lite::Tensor* input,
                    lite::Tensor* output,
                    lite::Tensor* filter,
                    lite::Tensor* bias,
+                   const int stride_h,
+                   const int stride_w,
                    const int dilation_h,
                    const int dilation_w,
                    const bool has_act,
@@ -291,7 +299,7 @@ void conv_3x3_4to8(lite::Tensor* input,
   const float* input_data = input->data<float>();
 
   // filter [1, oc/8, kh, kw, 8]
-  CHECK_EQ(filter->dims().size(), 5UL);
+  CHECK_EQ(filter->dims().size(), 6UL);
   const int kernel_h = filter->dims()[2];
   const int kernel_w = filter->dims()[3];
   const float* filter_data = filter->data<float>();
@@ -332,9 +340,7 @@ void conv_3x3_4to8(lite::Tensor* input,
   }
 
   for (int bs = 0; bs < batch_size; ++bs) {
-    for (int oc = 0; oc < output_channel;
-         ++oc) {  // output_channel == filter.dim[0]
-      // float* outptr = top_blob.channel(p);
+    for (int oc = 0; oc < output_channel; ++oc) {
       float* output_ptr =
           output_data + bs * output_batch_step + oc * output_channel_step;
       for (int h = 0; h < output_height; ++h) {
@@ -350,7 +356,8 @@ void conv_3x3_4to8(lite::Tensor* input,
           for (int ic = 0; ic < input_channel; ++ic) {
             const float* input_ptr =
                 input_data + bs * input_batch_step + ic * input_channel_step;
-            const float* sptr = input_ptr + h * input_group_step + w * 4;
+            const float* sptr =
+                input_ptr + h * stride_h * input_group_step + w * stride_w * 4;
 
             for (int k = 0; k < filter_kernel_size; k++) {
               __m256 _val0 = _mm256_broadcast_ss((sptr + space_ofs[k] * 4));
@@ -381,6 +388,10 @@ void conv_3x3_4to8(lite::Tensor* input,
       }
     }
   }
+  std::cout << "batch_size: " << batch_size << ", " << output_channel
+            << std::endl;
+  std::cout << "out_h: " << output_height << ", out_w:" << output_width
+            << std::endl;
 }
 
 }  // namespace math

@@ -64,7 +64,7 @@ void Conv2d<float>::Run() {
   // 4]
   filter_pack_.Resize(
       {pack_num_out, pack_num, kernel_h, kernel_w, pack_in, pack_out});
-  lite::x86::math::convert_filter(param.filter, &filter_pack_);
+  lite::x86::math::transform_filter(param.filter, &filter_pack_);
 
   // attributes
   const int stride_h = param.strides[0];
@@ -92,7 +92,6 @@ void Conv2d<float>::Run() {
   if (pack_in == 8 && pack_out == 8) {
     if (kernel_h == 3 && kernel_w == 3 && stride_h == 1 && stride_w == 1 &&
         dilation_h == 1 && dilation_w == 1) {
-      // conv3x3s1_winograd64_pack8_avx();
       lite::x86::math::conv_3x3s1_winograd_m256(&input_padding_,
                                                 &output_pack_,
                                                 &filter_pack_,
@@ -105,6 +104,8 @@ void Conv2d<float>::Run() {
                                      &output_pack_,
                                      &filter_pack_,
                                      param.bias,
+                                     stride_h,
+                                     stride_w,
                                      dilation_h,
                                      dilation_w,
                                      has_act,
@@ -116,6 +117,8 @@ void Conv2d<float>::Run() {
                                    &output_pack_,
                                    &filter_pack_,
                                    param.bias,
+                                   stride_h,
+                                   stride_w,
                                    dilation_h,
                                    dilation_w,
                                    has_act,
@@ -126,6 +129,8 @@ void Conv2d<float>::Run() {
                                    &output_pack_,
                                    &filter_pack_,
                                    param.bias,
+                                   stride_h,
+                                   stride_w,
                                    dilation_h,
                                    dilation_w,
                                    has_act,

@@ -229,8 +229,8 @@ void pack4_m128(lite::Tensor* input,
 // filter [oc, ic, ih, iw] => [oc/pack_out, ic/pack_in, ih, iw, pack_in,
 // pack_out] for conv2d
 void transform_filter(lite::Tensor* input, lite::Tensor* output) {
-  int batch_size = input->dims()[0];
-  int channel = input->dims()[1];
+  // int batch_size = input->dims()[0];
+  // int channel = input->dims()[1];
   int input_height = input->dims()[2];
   int input_width = input->dims()[3];
 
@@ -259,9 +259,9 @@ void transform_filter(lite::Tensor* input, lite::Tensor* output) {
       for (int k = 0; k < kernel_size; ++k) {
         for (int m = 0; m < pack_in; ++m) {
           for (int n = 0; n < pack_out; ++n) {
-            float* input_ptr = input_data +
-                               (oc * pack_out + n) * input_batch_step +
-                               (ic * pack_in + m) * input_channel_step + k;
+            const float* input_ptr =
+                input_data + (oc * pack_out + n) * input_batch_step +
+                (ic * pack_in + m) * input_channel_step + k;
             *output_ptr = *input_ptr;
             ++output_ptr;
           }

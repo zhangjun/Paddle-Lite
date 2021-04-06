@@ -332,7 +332,7 @@ void conv_3x3s1_winograd_m256(lite::Tensor* input,
   const int input_width = input->dims()[3];
   const float* input_data = input->data<float>();
 
-  CHECK_EQ(filter->dims().size(), 5UL);
+  CHECK_EQ(filter->dims().size(), 6UL);
   const int kernel_h = filter->dims()[2];
   const int kernel_w = filter->dims()[3];
   const float* filter_data = filter->data<float>();

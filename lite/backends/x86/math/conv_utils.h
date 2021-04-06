@@ -41,6 +41,8 @@ void pack4_m128(lite::Tensor* input,
                 const int channel_num,
                 const bool is_filter);
 
+void transform_filter(lite::Tensor* input, lite::Tensor* output);
+
 // for output unpack
 void unpack8_m256(lite::Tensor* input, lite::Tensor* output);
 void unpack4_m128(lite::Tensor* input, lite::Tensor* output);
