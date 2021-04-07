@@ -82,9 +82,7 @@ void conv_3x3_m256(lite::Tensor* input,
   }
 
   for (int bs = 0; bs < batch_size; ++bs) {
-    for (int oc = 0; oc < output_channel;
-         ++oc) {  // output_channel == filter.dim[0]
-      // float* outptr = top_blob.channel(p);
+    for (int oc = 0; oc < output_channel; ++oc) {
       float* output_ptr =
           output_data + bs * output_batch_step + oc * output_channel_step;
       for (int h = 0; h < output_height; ++h) {
