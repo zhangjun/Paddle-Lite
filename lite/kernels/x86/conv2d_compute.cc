@@ -58,6 +58,12 @@ void Conv2d<float>::Run() {
   int kernel_h = param.filter->dims()[2];
   int kernel_w = param.filter->dims()[3];
 
+  // attributes
+  const int stride_h = param.strides[0];
+  const int stride_w = param.strides[1];
+  const int dilation_h = (*param.dilations)[0];
+  const int dilation_w = (*param.dilations)[1];
+
   // filter [oc, ic, ih, iw] & pack_in=8, pack_out=8 => [oc/8, ic/8, ih, iw, 8,
   // 8]
   // filter [oc, ic, ih, iw] & pack_in=4, pack_out=4 => [ic/4, ic/4, ih, iw, 4,
@@ -66,11 +72,11 @@ void Conv2d<float>::Run() {
       {pack_num_out, pack_num, kernel_h, kernel_w, pack_in, pack_out});
   lite::x86::math::transform_filter(param.filter, &filter_pack_);
 
-  // attributes
-  const int stride_h = param.strides[0];
-  const int stride_w = param.strides[1];
-  const int dilation_h = (*param.dilations)[0];
-  const int dilation_w = (*param.dilations)[1];
+  // channel_in >= 16 && channel_out >= 16
+  // if(pack_in == 8 && pack_out == 8 && kernel_h == 3 && kernel_w == 3 &&
+  // stride_h == 1 && stride_w == 1) {
+  //  conv3x3s1_winograd64_transform_kernel_pack8_avx();
+  //}
 
   // act type
   auto act_param = param.activation_param;

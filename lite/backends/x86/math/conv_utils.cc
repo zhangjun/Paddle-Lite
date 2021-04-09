@@ -230,7 +230,7 @@ void pack4_m128(lite::Tensor* input,
 // pack_out] for conv2d
 void transform_filter(lite::Tensor* input, lite::Tensor* output) {
   // int batch_size = input->dims()[0];
-  // int channel = input->dims()[1];
+  int channel = input->dims()[1];
   int input_height = input->dims()[2];
   int input_width = input->dims()[3];
 
@@ -243,7 +243,7 @@ void transform_filter(lite::Tensor* input, lite::Tensor* output) {
   // 4});
 
   const int kernel_size = input_height * input_width;
-  const int input_batch_step = input_channel * kernel_size;
+  const int input_batch_step = channel * kernel_size;
   const int input_channel_step = kernel_size;
 
   const int batch_step = input_channel * kernel_size * pack_in * pack_out;
