@@ -256,6 +256,15 @@ RuntimeProgram::RuntimeProgram(
   Init();
 }
 
+#ifdef LITE_WITH_METAL
+void RuntimeProgram::SaveOutput() {
+  auto& insts = instructions_[kRootBlockIdx];
+  for (auto& inst : insts) {
+    inst.SaveOutput();
+  }
+}
+#endif
+
 void RuntimeProgram::Run() {
 #ifdef LITE_WITH_PRECISION_PROFILE
   auto inst_precision_profiler = paddle::lite::profile::PrecisionProfiler();
@@ -271,11 +280,16 @@ void RuntimeProgram::Run() {
                                  lite::Color::Engine);
   }
 #endif
+
+#ifdef LITE_WITH_METAL
+  TargetWrapperMetal::CreateCommandBuffer(this);
+#endif
+
   int idx = -1;
   auto& insts = instructions_[kRootBlockIdx];
   for (auto& inst : insts) {
     ++idx;
-#ifndef LITE_WITH_FPGA
+#if !defined(LITE_WITH_FPGA) && !defined(LITE_WITH_METAL)
     if (inst.is_feed_fetch_op()) continue;
 #endif
 #ifdef LITE_WITH_NVTX
@@ -305,6 +319,11 @@ void RuntimeProgram::Run() {
 #endif
 #endif  // LITE_WITH_PRECISION_PROFILE
   }
+
+#ifdef LITE_WITH_METAL
+  TargetWrapperMetal::WaitForCompleted();
+#endif
+
 #ifdef LITE_WITH_PROFILE
   LOG(INFO) << "\n" << profiler_.Summary(profile::Type::kDispatch, false, 1);
 #endif
@@ -431,6 +450,12 @@ void Program::PrepareWorkspace(
     sub_tensor->CopyDataFrom(*tensor);
   }
 }
+
+#ifdef LITE_WITH_METAL
+void Instruction::SaveOutput() {
+  if (kernel_) kernel_->SaveOutput();
+}
+#endif
 
 void Instruction::Run() {
 #ifdef LITE_WITH_PROFILE
