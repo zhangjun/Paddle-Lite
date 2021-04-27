@@ -40,6 +40,8 @@ void Conv2d<float>::Run() {
   const int pack_num = input_channel / pack_in;
   const int pack_num_out = output_channel / pack_out;
 
+  // [bs, ic, ih, iw] & pack_size=8 => [bs, ic/8, ih, iw, 8]
+  // [bs, ic, ih, iw] & pack_size=4 => [bs, ic/4, ih, iw, 4]
   if (pack_in == 8) {
     lite::x86::math::pack_padding8_m256(
         param.x, &input_padding_, pack_num, *(param.paddings));
@@ -64,9 +66,9 @@ void Conv2d<float>::Run() {
   const int dilation_h = (*param.dilations)[0];
   const int dilation_w = (*param.dilations)[1];
 
-  // filter [oc, ic, ih, iw] & pack_in=8, pack_out=8 => [oc/8, ic/8, ih, iw, 8,
+  // filter [oc, ic, kh, kw] & pack_in=8, pack_out=8 => [oc/8, ic/8, kh, kw, 8,
   // 8]
-  // filter [oc, ic, ih, iw] & pack_in=4, pack_out=4 => [ic/4, ic/4, ih, iw, 4,
+  // filter [oc, ic, kh, kw] & pack_in=4, pack_out=4 => [ic/4, ic/4, kh, kw, 4,
   // 4]
   filter_pack_.Resize(
       {pack_num_out, pack_num, kernel_h, kernel_w, pack_in, pack_out});
