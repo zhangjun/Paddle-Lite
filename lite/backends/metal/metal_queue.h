@@ -35,7 +35,7 @@ struct MetalCommandBuffer {
 #if defined(__OBJC__)
   id<MTLCommandBuffer> metal_command_buffer_{nil};
 #else
-  void* metal_command_buffer_{nullptr};
+  void *metal_command_buffer_{nullptr};
 #endif
   bool have_command_{false};
 
@@ -43,31 +43,31 @@ struct MetalCommandBuffer {
 };
 
 struct MetalEncoder {
-  MetalEncoder(MetalCommandBuffer* buffer, MetalKernelProgram* program);
+  MetalEncoder(MetalCommandBuffer *buffer, MetalKernelProgram *program);
   virtual ~MetalEncoder();
 
 #if defined(__OBJC__)
   id<MTLCommandBuffer> metal_command_buffer_{nil};
   id<MTLComputeCommandEncoder> metal_command_encoder_{nil};
 #else
-  void* metal_command_buffer_{nullptr};
-  void* metal_command_encoder_{nullptr};
+  void *metal_command_buffer_{nullptr};
+  void *metal_command_encoder_{nullptr};
 #endif
 };
 
 class MetalQueue {
  public:
 #if defined(__OBJC__)
-  MetalQueue(const MetalDevice* device, id<MTLCommandQueue> queue);
+  MetalQueue(const MetalDevice *device, id<MTLCommandQueue> queue);
 #endif
 
   std::unique_ptr<MetalCommandBuffer> CreateCommandBuffer(
-      RuntimeProgram* program);
+      RuntimeProgram *program);
 
 #if defined(__OBJC__)
   id<MTLCommandQueue> queue() { return queue_; }
 #else
-  void* queue() { return queue_; }
+  void *queue() { return queue_; }
 #endif
 
  private:
@@ -75,10 +75,10 @@ class MetalQueue {
   mutable std::vector<id<MTLCommandBuffer>> command_buffers_;
   id<MTLCommandQueue> queue_;
 #else
-  mutable std::vector<void*> command_buffers_;
-  void* queue_;
+  mutable std::vector<void *> command_buffers_;
+  void *queue_;
 #endif
-  MetalDevice* mtl_device_;
+  MetalDevice *mtl_device_;
 };
 
 }  // namespace lite

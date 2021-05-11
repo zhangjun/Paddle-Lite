@@ -24,11 +24,11 @@ namespace metal {
 
 template <typename P, PrecisionType PTYPE>
 void SoftmaxImageCompute<P, PTYPE>::PrepareForRun() {
-  auto& context = this->ctx_->template As<ContextMetal>();
-  metal_context_ = (MetalContext*)context.context();
+  auto &context = this->ctx_->template As<ContextMetal>();
+  metal_context_ = (MetalContext *)context.context();
   auto device = metal_context_->GetDefaultDevice();
 
-  const auto& param = this->template Param<param_t>();
+  const auto &param = this->template Param<param_t>();
   auto output_dims = param.output->dims();
   auto input_dims = param.x->dims();
 
@@ -64,7 +64,7 @@ void SoftmaxImageCompute<P, PTYPE>::PrepareForRun() {
 
 template <typename P, PrecisionType PTYPE>
 std::string SoftmaxImageCompute<P, PTYPE>::GetFunctionName(
-    const DDimLite& input_dims, int axis) const {
+    const DDimLite &input_dims, int axis) const {
   std::string function_name = "";
   if (std::is_same<P, float>::value) {
     if (input_dims.size() == 4) {

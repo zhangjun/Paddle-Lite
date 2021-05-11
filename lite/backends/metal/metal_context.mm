@@ -33,10 +33,10 @@ void MetalContext::PrepareDevices() {
   id<MTLDevice> mtl_device = MTLCreateSystemDefaultDevice();
   if (!mtl_device)
     return;
-  NSArray<id<MTLDevice>>* mtl_devices =
-      (NSArray<id<MTLDevice>>*)[NSArray arrayWithObjects:mtl_device, nil];
+  NSArray<id<MTLDevice>> *mtl_devices =
+      (NSArray<id<MTLDevice>> *)[NSArray arrayWithObjects:mtl_device, nil];
 #else
-  NSArray<id<MTLDevice>>* mtl_devices = MTLCopyAllDevices();
+  NSArray<id<MTLDevice>> *mtl_devices = MTLCopyAllDevices();
 #endif
   if (!mtl_devices)
     return;
@@ -44,7 +44,7 @@ void MetalContext::PrepareDevices() {
   uint32_t device_num = 0;
   for (id<MTLDevice> dev in mtl_devices) {
     devices_.emplace_back(std::shared_ptr<MetalDevice>(new MetalDevice));
-    auto& device = (MetalDevice&)*devices_.back();
+    auto &device = (MetalDevice &)*devices_.back();
     device.set_device(dev);
     device.set_name([[dev name] UTF8String]);
     ++device_num;
@@ -68,7 +68,7 @@ int MetalContext::GetDevicesNum() {
   return devices_.size();
 }
 
-MetalDevice* MetalContext::GetDeviceByID(int id) {
+MetalDevice *MetalContext::GetDeviceByID(int id) {
   if (!got_devices_) {
     PrepareDevices();
     got_devices_ = true;
@@ -83,7 +83,7 @@ MetalDevice* MetalContext::GetDeviceByID(int id) {
   }
 }
 
-void MetalContext::CreateCommandBuffer(RuntimeProgram* program) {
+void MetalContext::CreateCommandBuffer(RuntimeProgram *program) {
   auto device = GetDefaultDevice();
   auto queue = device->GetDefaultQueue();
 
@@ -99,7 +99,7 @@ void MetalContext::WaitUntilCompleted() {
   }
 }
 
-const MetalDevice* MetalContext::GetDefaultDevice() {
+const MetalDevice *MetalContext::GetDefaultDevice() {
   if (!got_devices_) {
     PrepareDevices();
     got_devices_ = true;
@@ -123,16 +123,16 @@ void MetalContext::set_use_aggressive_optimization(bool flag) {
 void MetalContext::set_use_mps(bool flag) { use_mps_ = flag; }
 
 __unused std::shared_ptr<MetalQueue> MetalContext::CreateQueue(
-    const MetalDevice& device) {
+    const MetalDevice &device) {
   return device.CreateQueue();
 }
 
 std::shared_ptr<MetalQueue> MetalContext::GetDefaultQueue(
-    const MetalDevice& device) {
+    const MetalDevice &device) {
   return device.GetDefaultQueue();
 }
 
-void MetalContext::CreateLibraryWithFile(const MetalDevice& device,
+void MetalContext::CreateLibraryWithFile(const MetalDevice &device,
                                          std::string library_path) {
   std::string library_name = library_path;
   if (library_name.empty()) {
@@ -143,7 +143,7 @@ void MetalContext::CreateLibraryWithFile(const MetalDevice& device,
   auto key = std::hash<std::string>()(library_name);
 
   if (!library_map_.count(key)) {
-    NSError* error = nil;
+    NSError *error = nil;
     auto library = [device.device()
         newLibraryWithFile:[NSString stringWithUTF8String:library_name.c_str()]
                      error:&error];
@@ -161,9 +161,9 @@ void MetalContext::CreateLibraryWithFile(const MetalDevice& device,
 }
 
 std::shared_ptr<MetalKernel> MetalContext::GetKernel(
-    const MetalDevice& device, const std::string function_name) {
+    const MetalDevice &device, const std::string function_name) {
   assert(library_ != nil);
-  NSError* error = nil;
+  NSError *error = nil;
   MetalKernelProgram program;
 
   program.function_ = [library_
@@ -200,13 +200,13 @@ std::shared_ptr<MetalKernel> MetalContext::GetKernel(
 }
 
 std::shared_ptr<MetalBuffer> MetalContext::CreateBuffer(
-    const MetalDevice& device, size_t length, const METAL_ACCESS_FLAG flags) {
+    const MetalDevice &device, size_t length, const METAL_ACCESS_FLAG flags) {
   return std::make_shared<MetalBuffer>(device, length, flags);
 }
 
 std::shared_ptr<MetalBuffer> MetalContext::CreateBuffer(
-    const MetalDevice& device,
-    void* data,
+    const MetalDevice &device,
+    void *data,
     size_t length,
     const METAL_ACCESS_FLAG flags) {
   return std::make_shared<MetalBuffer>(device, data, length, flags);

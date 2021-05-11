@@ -17,7 +17,7 @@ using namespace metal;
 
 kernel void nms_fetch_result(
     texture2d_array<float, access::read> inTexture[[texture(0)]],
-    device float* output[[buffer(0)]],
+    device float *output[[buffer(0)]],
     uint3 gid[[thread_position_in_grid]]) {
   if (gid.x >= inTexture.get_width() || gid.y >= inTexture.get_height() ||
       gid.z >= inTexture.get_array_size()) {
@@ -31,7 +31,7 @@ kernel void nms_fetch_result(
 
 kernel void nms_fetch_result_half(
     texture2d_array<half, access::read> inTexture[[texture(0)]],
-    device float* output[[buffer(0)]],
+    device float *output[[buffer(0)]],
     uint3 gid[[thread_position_in_grid]]) {
   if (gid.x >= inTexture.get_width() || gid.y >= inTexture.get_height() ||
       gid.z >= inTexture.get_array_size()) {
@@ -45,7 +45,7 @@ kernel void nms_fetch_result_half(
 
 kernel void nms_fetch_bbox(
     texture2d_array<float, access::read> inTexture[[texture(0)]],
-    device float4* output[[buffer(0)]],
+    device float4 *output[[buffer(0)]],
     uint3 gid[[thread_position_in_grid]]) {
   if (gid.x >= inTexture.get_width() || gid.y >= inTexture.get_height() ||
       gid.z >= inTexture.get_array_size()) {
@@ -60,7 +60,7 @@ kernel void nms_fetch_bbox(
 
 kernel void nms_fetch_bbox_half(
     texture2d_array<half, access::read> inTexture[[texture(0)]],
-    device float4* output[[buffer(0)]],
+    device float4 *output[[buffer(0)]],
     uint3 gid[[thread_position_in_grid]]) {
   if (gid.x >= inTexture.get_width() || gid.y >= inTexture.get_height() ||
       gid.z >= inTexture.get_array_size()) {

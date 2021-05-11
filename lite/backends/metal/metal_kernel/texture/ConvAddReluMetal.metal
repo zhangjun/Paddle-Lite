@@ -22,8 +22,8 @@ kernel void conv_add_relu_1x1(
     texture2d_array<float, access::sample> inTexture[[texture(0)]],
     texture2d_array<float, access::sample> biasTexture[[texture(1)]],
     texture2d_array<float, access::write> outTexture[[texture(2)]],
-    constant MetalConvParam& param[[buffer(0)]],
-    const device float4* weights[[buffer(1)]],
+    constant MetalConvParam &param[[buffer(0)]],
+    const device float4 *weights[[buffer(1)]],
     uint3 gid[[thread_position_in_grid]]) {
   if (gid.x >= outTexture.get_width() || gid.y >= outTexture.get_height() ||
       gid.z >= outTexture.get_array_size()) {
@@ -43,7 +43,7 @@ kernel void conv_add_relu_1x1(
 
   float4 output = float4(0.0, 0.0, 0.0, 0.0);
   if (param.hasAddOp) {
-    constant ElementwiseAddParam& addParam = param.addParam;
+    constant ElementwiseAddParam &addParam = param.addParam;
     output = getBias(gid, addParam, biasTexture);
   }
 
@@ -70,8 +70,8 @@ kernel void conv_add_relu_3x3(
     texture2d_array<float, access::sample> inTexture[[texture(0)]],
     texture2d_array<float, access::sample> biasTexture[[texture(1)]],
     texture2d_array<float, access::write> outTexture[[texture(2)]],
-    constant MetalConvParam& param[[buffer(0)]],
-    const device float4* weights[[buffer(1)]],
+    constant MetalConvParam &param[[buffer(0)]],
+    const device float4 *weights[[buffer(1)]],
     uint3 gid[[thread_position_in_grid]]) {
   if (gid.x >= outTexture.get_width() || gid.y >= outTexture.get_height() ||
       gid.z >= outTexture.get_array_size()) {
@@ -93,7 +93,7 @@ kernel void conv_add_relu_3x3(
 
   float4 output = float4(0.0, 0.0, 0.0, 0.0);
   if (param.hasAddOp) {
-    constant ElementwiseAddParam& addParam = param.addParam;
+    constant ElementwiseAddParam &addParam = param.addParam;
     output = getBias(gid, addParam, biasTexture);
   }
 
@@ -163,8 +163,8 @@ kernel void conv_add_relu_2x2(
     texture2d_array<float, access::sample> inTexture[[texture(0)]],
     texture2d_array<float, access::sample> biasTexture[[texture(1)]],
     texture2d_array<float, access::write> outTexture[[texture(2)]],
-    constant MetalConvParam& param[[buffer(0)]],
-    const device float4* weights[[buffer(1)]],
+    constant MetalConvParam &param[[buffer(0)]],
+    const device float4 *weights[[buffer(1)]],
     uint3 gid[[thread_position_in_grid]]) {
   if (gid.x >= outTexture.get_width() || gid.y >= outTexture.get_height() ||
       gid.z >= outTexture.get_array_size()) {
@@ -185,7 +185,7 @@ kernel void conv_add_relu_2x2(
 
   float4 output = float4(0.0, 0.0, 0.0, 0.0);
   if (param.hasAddOp) {
-    constant ElementwiseAddParam& addParam = param.addParam;
+    constant ElementwiseAddParam &addParam = param.addParam;
     output = getBias(gid, addParam, biasTexture);
   }
 
@@ -231,8 +231,8 @@ kernel void group_conv_add_relu_3x3(
     texture2d_array<float, access::sample> inTexture[[texture(0)]],
     texture2d_array<float, access::sample> biasTexture[[texture(1)]],
     texture2d_array<float, access::write> outTexture[[texture(2)]],
-    constant MetalConvParam& param[[buffer(0)]],
-    const device float* weights[[buffer(1)]],
+    constant MetalConvParam &param[[buffer(0)]],
+    const device float *weights[[buffer(1)]],
     uint3 gid[[thread_position_in_grid]]) {
   if (gid.x >= outTexture.get_width() || gid.y >= outTexture.get_height() ||
       gid.z >= outTexture.get_array_size()) {
@@ -250,7 +250,7 @@ kernel void group_conv_add_relu_3x3(
 
   float4 output = float4(0.0, 0.0, 0.0, 0.0);
   if (param.hasAddOp) {
-    constant ElementwiseAddParam& addParam = param.addParam;
+    constant ElementwiseAddParam &addParam = param.addParam;
     output = getBias(gid, addParam, biasTexture);
   }
 
@@ -320,8 +320,8 @@ kernel void conv_add_relu_5x1(
     texture2d_array<float, access::sample> inTexture[[texture(0)]],
     texture2d_array<float, access::sample> biasTexture[[texture(1)]],
     texture2d_array<float, access::write> outTexture[[texture(2)]],
-    constant MetalConvParam& param[[buffer(0)]],
-    const device float4* weights[[buffer(1)]],
+    constant MetalConvParam &param[[buffer(0)]],
+    const device float4 *weights[[buffer(1)]],
     uint3 gid[[thread_position_in_grid]]) {
   if (gid.x >= outTexture.get_width() || gid.y >= outTexture.get_height() ||
       gid.z >= outTexture.get_array_size()) {
@@ -343,7 +343,7 @@ kernel void conv_add_relu_5x1(
 
   float4 output = float4(0.0, 0.0, 0.0, 0.0);
   if (param.hasAddOp) {
-    constant ElementwiseAddParam& addParam = param.addParam;
+    constant ElementwiseAddParam &addParam = param.addParam;
     output = getBias(gid, addParam, biasTexture);
   }
 
@@ -391,8 +391,8 @@ kernel void conv_add_relu_1x5(
     texture2d_array<float, access::sample> inTexture[[texture(0)]],
     texture2d_array<float, access::sample> biasTexture[[texture(1)]],
     texture2d_array<float, access::write> outTexture[[texture(2)]],
-    constant MetalConvParam& param[[buffer(0)]],
-    const device float4* weights[[buffer(1)]],
+    constant MetalConvParam &param[[buffer(0)]],
+    const device float4 *weights[[buffer(1)]],
     uint3 gid[[thread_position_in_grid]]) {
   if (gid.x >= outTexture.get_width() || gid.y >= outTexture.get_height() ||
       gid.z >= outTexture.get_array_size()) {
@@ -414,7 +414,7 @@ kernel void conv_add_relu_1x5(
 
   float4 output = float4(0.0, 0.0, 0.0, 0.0);
   if (param.hasAddOp) {
-    constant ElementwiseAddParam& addParam = param.addParam;
+    constant ElementwiseAddParam &addParam = param.addParam;
     output = getBias(gid, addParam, biasTexture);
   }
 
@@ -462,8 +462,8 @@ kernel void conv_add_relu_7x7(
     texture2d_array<float, access::sample> inTexture[[texture(0)]],
     texture2d_array<float, access::sample> biasTexture[[texture(1)]],
     texture2d_array<float, access::write> outTexture[[texture(2)]],
-    constant MetalConvParam& param[[buffer(0)]],
-    const device float4* weights[[buffer(1)]],
+    constant MetalConvParam &param[[buffer(0)]],
+    const device float4 *weights[[buffer(1)]],
     uint3 gid[[thread_position_in_grid]]) {
   if (gid.x >= outTexture.get_width() || gid.y >= outTexture.get_height() ||
       gid.z >= outTexture.get_array_size()) {
@@ -485,7 +485,7 @@ kernel void conv_add_relu_7x7(
 
   float4 output = float4(0.0, 0.0, 0.0, 0.0);
   if (param.hasAddOp) {
-    constant ElementwiseAddParam& addParam = param.addParam;
+    constant ElementwiseAddParam &addParam = param.addParam;
     output = getBias(gid, addParam, biasTexture);
   }
 
@@ -593,8 +593,8 @@ kernel void depthwise_conv_add_relu_3x3(
     texture2d_array<float, access::sample> inTexture[[texture(0)]],
     texture2d_array<float, access::sample> biasTexture[[texture(1)]],
     texture2d_array<float, access::write> outTexture[[texture(2)]],
-    constant MetalConvParam& param[[buffer(0)]],
-    const device float* weights[[buffer(1)]],
+    constant MetalConvParam &param[[buffer(0)]],
+    const device float *weights[[buffer(1)]],
     uint3 gid[[thread_position_in_grid]]) {
   if (gid.x >= outTexture.get_width() || gid.y >= outTexture.get_height() ||
       gid.z >= outTexture.get_array_size()) {
@@ -611,7 +611,7 @@ kernel void depthwise_conv_add_relu_3x3(
 
   float4 output = float4(0.0, 0.0, 0.0, 0.0);
   if (param.hasAddOp) {
-    constant ElementwiseAddParam& addParam = param.addParam;
+    constant ElementwiseAddParam &addParam = param.addParam;
     output = getBias(gid, addParam, biasTexture);
   }
 
@@ -660,8 +660,8 @@ kernel void depthwise_conv_add_relu_5x5(
     texture2d_array<float, access::sample> inTexture[[texture(0)]],
     texture2d_array<float, access::sample> biasTexture[[texture(1)]],
     texture2d_array<float, access::write> outTexture[[texture(2)]],
-    constant MetalConvParam& param[[buffer(0)]],
-    const device float* weights[[buffer(1)]],
+    constant MetalConvParam &param[[buffer(0)]],
+    const device float *weights[[buffer(1)]],
     uint3 gid[[thread_position_in_grid]]) {
   if (gid.x >= outTexture.get_width() || gid.y >= outTexture.get_height() ||
       gid.z >= outTexture.get_array_size()) {
@@ -678,7 +678,7 @@ kernel void depthwise_conv_add_relu_5x5(
 
   float4 output = float4(0.0, 0.0, 0.0, 0.0);
   if (param.hasAddOp) {
-    constant ElementwiseAddParam& addParam = param.addParam;
+    constant ElementwiseAddParam &addParam = param.addParam;
     output = getBias(gid, addParam, biasTexture);
   }
 
@@ -704,8 +704,8 @@ kernel void conv_add_relu_7x7_half(
     texture2d_array<half, access::sample> inTexture[[texture(0)]],
     texture2d_array<half, access::sample> biasTexture[[texture(1)]],
     texture2d_array<half, access::write> outTexture[[texture(2)]],
-    constant MetalConvParam& param[[buffer(0)]],
-    const device half4* weights[[buffer(1)]],
+    constant MetalConvParam &param[[buffer(0)]],
+    const device half4 *weights[[buffer(1)]],
     uint3 gid[[thread_position_in_grid]]) {
   if (gid.x >= outTexture.get_width() || gid.y >= outTexture.get_height() ||
       gid.z >= outTexture.get_array_size()) {
@@ -727,7 +727,7 @@ kernel void conv_add_relu_7x7_half(
 
   float4 output = float4(0.0, 0.0, 0.0, 0.0);
   if (param.hasAddOp) {
-    constant ElementwiseAddParam& addParam = param.addParam;
+    constant ElementwiseAddParam &addParam = param.addParam;
     output = float4(getBiasHalf(gid, addParam, biasTexture));
   }
 
@@ -835,8 +835,8 @@ kernel void conv_add_relu_1x1_half(
     texture2d_array<half, access::sample> inTexture[[texture(0)]],
     texture2d_array<half, access::sample> biasTexture[[texture(1)]],
     texture2d_array<half, access::write> outTexture[[texture(2)]],
-    constant MetalConvParam& param[[buffer(0)]],
-    const device half4* weights[[buffer(1)]],
+    constant MetalConvParam &param[[buffer(0)]],
+    const device half4 *weights[[buffer(1)]],
     uint3 gid[[thread_position_in_grid]]) {
   if (gid.x >= outTexture.get_width() || gid.y >= outTexture.get_height() ||
       gid.z >= outTexture.get_array_size()) {
@@ -856,7 +856,7 @@ kernel void conv_add_relu_1x1_half(
 
   float4 output = float4(0.0, 0.0, 0.0, 0.0);
   if (param.hasAddOp) {
-    constant ElementwiseAddParam& addParam = param.addParam;
+    constant ElementwiseAddParam &addParam = param.addParam;
     output = float4(getBiasHalf(gid, addParam, biasTexture));
   }
 
@@ -888,8 +888,8 @@ kernel void conv_add_relu_1x1_quadruple_half(
     texture2d_array<half, access::sample> inTexture[[texture(0)]],
     texture2d_array<half, access::sample> biasTexture[[texture(1)]],
     texture2d_array<half, access::write> outTexture[[texture(2)]],
-    constant MetalConvParam& param[[buffer(0)]],
-    const device half4* weights[[buffer(1)]],
+    constant MetalConvParam &param[[buffer(0)]],
+    const device half4 *weights[[buffer(1)]],
     uint3 gid[[thread_position_in_grid]]) {
   uint tx = gid.x << 1, ty = gid.y << 1, tz = gid.z;
   if (tx >= outTexture.get_width() || ty >= outTexture.get_height() ||
@@ -906,7 +906,7 @@ kernel void conv_add_relu_1x1_quadruple_half(
   float4 output0, output1, output2, output3;
 
   if (param.hasAddOp) {
-    constant ElementwiseAddParam& addParam = param.addParam;
+    constant ElementwiseAddParam &addParam = param.addParam;
     output0 = float4(getBiasHalf(uint3(tx, ty, tz), addParam, biasTexture));
     output1 = float4(getBiasHalf(uint3(tx + 1, ty, tz), addParam, biasTexture));
     output2 = float4(getBiasHalf(uint3(tx, ty + 1, tz), addParam, biasTexture));
@@ -966,8 +966,8 @@ kernel void conv_add_relu_3x3_half(
     texture2d_array<half, access::sample> inTexture[[texture(0)]],
     texture2d_array<half, access::sample> biasTexture[[texture(1)]],
     texture2d_array<half, access::write> outTexture[[texture(2)]],
-    constant MetalConvParam& param[[buffer(0)]],
-    const device half4* weights[[buffer(1)]],
+    constant MetalConvParam &param[[buffer(0)]],
+    const device half4 *weights[[buffer(1)]],
     uint3 gid[[thread_position_in_grid]]) {
   if (gid.x >= outTexture.get_width() || gid.y >= outTexture.get_height() ||
       gid.z >= outTexture.get_array_size()) {
@@ -986,7 +986,7 @@ kernel void conv_add_relu_3x3_half(
 
   float4 output = float4(0.0, 0.0, 0.0, 0.0);
   if (param.hasAddOp) {
-    constant ElementwiseAddParam& addParam = param.addParam;
+    constant ElementwiseAddParam &addParam = param.addParam;
     output = float4(getBiasHalf(gid, addParam, biasTexture));
   }
 
@@ -1046,8 +1046,8 @@ kernel void conv_add_relu_2x2_half(
     texture2d_array<half, access::sample> inTexture[[texture(0)]],
     texture2d_array<half, access::sample> biasTexture[[texture(1)]],
     texture2d_array<half, access::write> outTexture[[texture(2)]],
-    constant MetalConvParam& param[[buffer(0)]],
-    const device half4* weights[[buffer(1)]],
+    constant MetalConvParam &param[[buffer(0)]],
+    const device half4 *weights[[buffer(1)]],
     uint3 gid[[thread_position_in_grid]]) {
   if (gid.x >= outTexture.get_width() || gid.y >= outTexture.get_height() ||
       gid.z >= outTexture.get_array_size()) {
@@ -1066,7 +1066,7 @@ kernel void conv_add_relu_2x2_half(
 
   float4 output = float4(0.0, 0.0, 0.0, 0.0);
   if (param.hasAddOp) {
-    constant ElementwiseAddParam& addParam = param.addParam;
+    constant ElementwiseAddParam &addParam = param.addParam;
     output = float4(getBiasHalf(gid, addParam, biasTexture));
   }
 
@@ -1111,8 +1111,8 @@ kernel void conv_add_relu_3x3_half_winograd(
     texture2d_array<half, access::sample> inTexture[[texture(0)]],
     texture2d_array<half, access::sample> biasTexture[[texture(1)]],
     texture2d_array<half, access::write> outTexture[[texture(2)]],
-    constant MetalConvParam& param[[buffer(0)]],
-    const device half4x4* weights[[buffer(1)]],
+    constant MetalConvParam &param[[buffer(0)]],
+    const device half4x4 *weights[[buffer(1)]],
     uint3 gid[[thread_position_in_grid]]) {
   uint tx = gid.x << 1, ty = gid.y << 1, tc = gid.z;
   if (tx >= outTexture.get_width() || ty >= outTexture.get_height() ||
@@ -1125,7 +1125,7 @@ kernel void conv_add_relu_3x3_half_winograd(
 
   half4 output[4];
   if (param.hasAddOp == 1) {
-    constant ElementwiseAddParam& addParam = param.addParam;
+    constant ElementwiseAddParam &addParam = param.addParam;
     output[0] = getBiasHalf(uint3(tx, ty, tc), addParam, biasTexture);
     output[1] = getBiasHalf(uint3(tx + 1, ty, tc), addParam, biasTexture);
     output[2] = getBiasHalf(uint3(tx, ty + 1, tc), addParam, biasTexture);
@@ -1248,8 +1248,8 @@ kernel void group_conv_add_relu_3x3_half(
     texture2d_array<half, access::sample> inTexture[[texture(0)]],
     texture2d_array<half, access::sample> biasTexture[[texture(1)]],
     texture2d_array<half, access::write> outTexture[[texture(2)]],
-    constant MetalConvParam& param[[buffer(0)]],
-    const device half* weights[[buffer(1)]],
+    constant MetalConvParam &param[[buffer(0)]],
+    const device half *weights[[buffer(1)]],
     uint3 gid[[thread_position_in_grid]]) {
   if (gid.x >= outTexture.get_width() || gid.y >= outTexture.get_height() ||
       gid.z >= outTexture.get_array_size()) {
@@ -1267,7 +1267,7 @@ kernel void group_conv_add_relu_3x3_half(
 
   float4 output = float4(0.0, 0.0, 0.0, 0.0);
   if (param.hasAddOp) {
-    constant ElementwiseAddParam& addParam = param.addParam;
+    constant ElementwiseAddParam &addParam = param.addParam;
     output = float4(getBiasHalf(gid, addParam, biasTexture));
   }
 
@@ -1337,8 +1337,8 @@ kernel void depthwise_conv_add_relu_3x3_half(
     texture2d_array<half, access::sample> inTexture[[texture(0)]],
     texture2d_array<half, access::sample> biasTexture[[texture(1)]],
     texture2d_array<half, access::write> outTexture[[texture(2)]],
-    constant MetalConvParam& param[[buffer(0)]],
-    const device half* weights[[buffer(1)]],
+    constant MetalConvParam &param[[buffer(0)]],
+    const device half *weights[[buffer(1)]],
     uint3 gid[[thread_position_in_grid]]) {
   if (gid.x >= outTexture.get_width() || gid.y >= outTexture.get_height() ||
       gid.z >= outTexture.get_array_size()) {
@@ -1355,7 +1355,7 @@ kernel void depthwise_conv_add_relu_3x3_half(
 
   float4 output = float4(0.0, 0.0, 0.0, 0.0);
   if (param.hasAddOp) {
-    constant ElementwiseAddParam& addParam = param.addParam;
+    constant ElementwiseAddParam &addParam = param.addParam;
     output = float4(getBiasHalf(gid, addParam, biasTexture));
   }
 
@@ -1405,8 +1405,8 @@ kernel void depthwise_conv_add_relu_3x3_half_winograd(
     texture2d_array<half, access::sample> inTexture[[texture(0)]],
     texture2d_array<half, access::sample> biasTexture[[texture(1)]],
     texture2d_array<half, access::write> outTexture[[texture(2)]],
-    constant MetalConvParam& param[[buffer(0)]],
-    const device half4x4* weights[[buffer(1)]],
+    constant MetalConvParam &param[[buffer(0)]],
+    const device half4x4 *weights[[buffer(1)]],
     uint3 gid[[thread_position_in_grid]]) {
   uint x = gid.x, y = gid.y, z = gid.z;
 
@@ -1509,7 +1509,7 @@ kernel void depthwise_conv_add_relu_3x3_half_winograd(
   }
 
   if (param.hasAddOp == 1) {
-    constant ElementwiseAddParam& addParam = param.addParam;
+    constant ElementwiseAddParam &addParam = param.addParam;
     half4 base = getBiasHalf(uint3(tx, ty, tc), addParam, biasTexture);
     res[0] += base;
     base = getBiasHalf(uint3(tx + 1, ty, tc), addParam, biasTexture);
@@ -1537,8 +1537,8 @@ kernel void depthwise_conv_add_relu_5x5_half(
     texture2d_array<half, access::sample> inTexture[[texture(0)]],
     texture2d_array<half, access::sample> biasTexture[[texture(1)]],
     texture2d_array<half, access::write> outTexture[[texture(2)]],
-    constant MetalConvParam& param[[buffer(0)]],
-    const device half* weights[[buffer(1)]],
+    constant MetalConvParam &param[[buffer(0)]],
+    const device half *weights[[buffer(1)]],
     uint3 gid[[thread_position_in_grid]]) {
   if (gid.x >= outTexture.get_width() || gid.y >= outTexture.get_height() ||
       gid.z >= outTexture.get_array_size()) {
@@ -1555,7 +1555,7 @@ kernel void depthwise_conv_add_relu_5x5_half(
 
   float4 output = float4(0.0, 0.0, 0.0, 0.0);
   if (param.hasAddOp) {
-    constant ElementwiseAddParam& addParam = param.addParam;
+    constant ElementwiseAddParam &addParam = param.addParam;
     output = float4(getBiasHalf(gid, addParam, biasTexture));
   }
 
@@ -1583,8 +1583,8 @@ kernel void conv_add_relu_5x1_half(
     texture2d_array<half, access::sample> inTexture[[texture(0)]],
     texture2d_array<half, access::sample> biasTexture[[texture(1)]],
     texture2d_array<half, access::write> outTexture[[texture(2)]],
-    constant MetalConvParam& param[[buffer(0)]],
-    const device half4* weights[[buffer(1)]],
+    constant MetalConvParam &param[[buffer(0)]],
+    const device half4 *weights[[buffer(1)]],
     uint3 gid[[thread_position_in_grid]]) {
   if (gid.x >= outTexture.get_width() || gid.y >= outTexture.get_height() ||
       gid.z >= outTexture.get_array_size()) {
@@ -1606,7 +1606,7 @@ kernel void conv_add_relu_5x1_half(
 
   float4 output = float4(0.0, 0.0, 0.0, 0.0);
   if (param.hasAddOp) {
-    constant ElementwiseAddParam& addParam = param.addParam;
+    constant ElementwiseAddParam &addParam = param.addParam;
     output = float4(getBiasHalf(gid, addParam, biasTexture));
   }
 
@@ -1654,8 +1654,8 @@ kernel void conv_add_relu_1x5_half(
     texture2d_array<half, access::sample> inTexture[[texture(0)]],
     texture2d_array<half, access::sample> biasTexture[[texture(1)]],
     texture2d_array<half, access::write> outTexture[[texture(2)]],
-    constant MetalConvParam& param[[buffer(0)]],
-    const device half4* weights[[buffer(1)]],
+    constant MetalConvParam &param[[buffer(0)]],
+    const device half4 *weights[[buffer(1)]],
     uint3 gid[[thread_position_in_grid]]) {
   if (gid.x >= outTexture.get_width() || gid.y >= outTexture.get_height() ||
       gid.z >= outTexture.get_array_size()) {
@@ -1677,7 +1677,7 @@ kernel void conv_add_relu_1x5_half(
 
   float4 output = float4(0.0, 0.0, 0.0, 0.0);
   if (param.hasAddOp) {
-    constant ElementwiseAddParam& addParam = param.addParam;
+    constant ElementwiseAddParam &addParam = param.addParam;
     output = float4(getBiasHalf(gid, addParam, biasTexture));
   }
 

@@ -19,8 +19,8 @@ using namespace metal;
 kernel void conv_transpose2x2_stride2(
     texture2d_array<float, access::sample> inTexture[[texture(0)]],
     texture2d_array<float, access::write> outTexture[[texture(1)]],
-    constant MetalConvTransposeParam& param[[buffer(0)]],
-    const device float4* weights[[buffer(1)]],
+    constant MetalConvTransposeParam &param[[buffer(0)]],
+    const device float4 *weights[[buffer(1)]],
     uint3 gid[[thread_position_in_grid]]) {
   if (gid.x >= outTexture.get_width() || gid.y >= outTexture.get_height() ||
       gid.z >= outTexture.get_array_size()) {
@@ -62,8 +62,8 @@ kernel void conv_transpose2x2_stride2(
 kernel void conv_transpose2x2_stride2_half(
     texture2d_array<half, access::sample> inTexture[[texture(0)]],
     texture2d_array<half, access::write> outTexture[[texture(1)]],
-    constant MetalConvTransposeParam& param[[buffer(0)]],
-    const device half4* weights[[buffer(1)]],
+    constant MetalConvTransposeParam &param[[buffer(0)]],
+    const device half4 *weights[[buffer(1)]],
     uint3 gid[[thread_position_in_grid]]) {
   if (gid.x >= outTexture.get_width() || gid.y >= outTexture.get_height() ||
       gid.z >= outTexture.get_array_size()) {
@@ -176,8 +176,8 @@ kernel void conv_transpose3x3_stride2x2_half(
     texture2d_array<half, access::sample> inTexture[[texture(0)]],
     texture2d_array<half, access::sample> biasTexture[[texture(1)]],
     texture2d_array<half, access::write> outTexture[[texture(2)]],
-    constant MetalConvTransposeParam& param[[buffer(0)]],
-    const device half4* weights[[buffer(1)]],
+    constant MetalConvTransposeParam &param[[buffer(0)]],
+    const device half4 *weights[[buffer(1)]],
     uint3 gid[[thread_position_in_grid]]) {
   if (gid.x >= inTexture.get_width() || gid.y >= inTexture.get_height() ||
       gid.z >= outTexture.get_array_size()) {
@@ -192,7 +192,7 @@ kernel void conv_transpose3x3_stride2x2_half(
   half4 output1, output2, output3, output4;
   uint ox = 2 * gid.x, oy = 2 * gid.y;
   if (param.hasAddOp == 1) {
-    constant ElementwiseAddParam& addParam = param.addParam;
+    constant ElementwiseAddParam &addParam = param.addParam;
     output1 = getBiasHalf(uint3(ox, oy, gid.z), addParam, biasTexture);
     output2 = getBiasHalf(uint3(ox + 1, oy, gid.z), addParam, biasTexture);
     output3 = getBiasHalf(uint3(ox, oy + 1, gid.z), addParam, biasTexture);
@@ -241,8 +241,8 @@ kernel void depthwise_conv_transpose3x3_stride2x2_half(
     texture2d_array<half, access::sample> inTexture[[texture(0)]],
     texture2d_array<half, access::sample> biasTexture[[texture(1)]],
     texture2d_array<half, access::write> outTexture[[texture(2)]],
-    constant MetalConvTransposeParam& param[[buffer(0)]],
-    const device half4* weights[[buffer(1)]],
+    constant MetalConvTransposeParam &param[[buffer(0)]],
+    const device half4 *weights[[buffer(1)]],
     uint3 gid[[thread_position_in_grid]]) {
   if (gid.x >= inTexture.get_width() || gid.y >= inTexture.get_height() ||
       gid.z >= outTexture.get_array_size()) {
@@ -256,7 +256,7 @@ kernel void depthwise_conv_transpose3x3_stride2x2_half(
   half4 output1, output2, output3, output4;
   uint ox = 2 * gid.x, oy = 2 * gid.y;
   if (param.hasAddOp == 1) {
-    constant ElementwiseAddParam& addParam = param.addParam;
+    constant ElementwiseAddParam &addParam = param.addParam;
     output1 = getBiasHalf(uint3(ox, oy, gid.z), addParam, biasTexture);
     output2 = getBiasHalf(uint3(ox + 1, oy, gid.z), addParam, biasTexture);
     output3 = getBiasHalf(uint3(ox, oy + 1, gid.z), addParam, biasTexture);
@@ -311,8 +311,8 @@ kernel void conv_transpose3x3_stride2x2_quadruple_half(
     texture2d_array<half, access::sample> inTexture[[texture(0)]],
     texture2d_array<half, access::sample> biasTexture[[texture(1)]],
     texture2d_array<half, access::write> outTexture[[texture(2)]],
-    constant MetalConvTransposeParam& param[[buffer(0)]],
-    const device half4* weights[[buffer(1)]],
+    constant MetalConvTransposeParam &param[[buffer(0)]],
+    const device half4 *weights[[buffer(1)]],
     uint3 gid[[thread_position_in_grid]]) {
   uint tx = gid.x << 1, ty = gid.y << 1;
   if (tx >= inTexture.get_width() || ty >= inTexture.get_height() ||
@@ -330,7 +330,7 @@ kernel void conv_transpose3x3_stride2x2_quadruple_half(
       output16;
   uint ox = 2 * tx, oy = 2 * ty;
   if (param.hasAddOp == 1) {
-    constant ElementwiseAddParam& addParam = param.addParam;
+    constant ElementwiseAddParam &addParam = param.addParam;
     if (addParam.addByChannel == 1) {
       half4 b = getBiasHalf(uint3(ox, oy, gid.z), addParam, biasTexture);
       output1 = b;
@@ -435,7 +435,7 @@ kernel void conv_transpose3x3_stride2x2_quadruple_half(
 kernel void conv_transpose3x3_caculate_half(
     texture2d_array<half, access::read> inTexture[[texture(0)]],
     texture2d_array<half, access::write> outTexture[[texture(1)]],
-    const device half4* weights[[buffer(0)]],
+    const device half4 *weights[[buffer(0)]],
     uint3 gid[[thread_position_in_grid]]) {
   if (gid.x >= inTexture.get_width() || gid.y >= inTexture.get_height() ||
       gid.z >= outTexture.get_array_size()) {
@@ -542,7 +542,7 @@ kernel void conv_transpose3x3_stride2_shift_top_half(
 kernel void conv_transpose4x4_caculate_half(
     texture2d_array<half, access::read> inTexture[[texture(0)]],
     texture2d_array<half, access::write> outTexture[[texture(1)]],
-    const device half4* weights[[buffer(0)]],
+    const device half4 *weights[[buffer(0)]],
     uint3 gid[[thread_position_in_grid]]) {
   if (gid.x >= inTexture.get_width() || gid.y >= inTexture.get_height() ||
       gid.z >= outTexture.get_array_size()) {

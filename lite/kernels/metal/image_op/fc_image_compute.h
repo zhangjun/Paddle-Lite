@@ -45,16 +45,16 @@ class FCImageCompute : public KernelLite<TARGET(kMetal),
   void SaveOutput() override { MetalDebug::SaveOutput("fc", output_buffer_); };
 
  private:
-  const MetalImage* input_buffer_;
-  const MetalImage* weight_buffer_;
-  const MetalImage* bias_buffer_;
-  MetalImage* output_buffer_;
+  const MetalImage *input_buffer_;
+  const MetalImage *weight_buffer_;
+  const MetalImage *bias_buffer_;
+  MetalImage *output_buffer_;
 
   std::shared_ptr<MetalBuffer> param_buffer_;
   std::shared_ptr<MetalKernel> kernel_;
   std::shared_ptr<MetalQueue> queue_;
   std::shared_ptr<MetalEncoder> encoder_;
-  MetalContext* metal_context_;
+  MetalContext *metal_context_;
 
   Tensor shape_out_dev_;
   ReshapeImageCompute<P, PTYPE> reshape_;

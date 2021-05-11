@@ -33,11 +33,11 @@ bool TargetWrapperMetal::MPSVersionRequired() {
   return false;
 };
 
-void* TargetWrapperMetal::Malloc(size_t size) {
-  void* ptr{};
+void *TargetWrapperMetal::Malloc(size_t size) {
+  void *ptr{};
   auto device = ctx_.GetDefaultDevice();
   auto buffer = new MetalBuffer(*device, size);
-  return (void*)buffer;
+  return (void *)buffer;
 }
 
 void TargetWrapperMetal::WaitForCompleted() {
@@ -49,35 +49,35 @@ void TargetWrapperMetal::WaitForCompleted() {
 }
 
 template <>
-void* TargetWrapperMetal::MallocImage<float>(const DDim dim,
+void *TargetWrapperMetal::MallocImage<float>(const DDim dim,
                                              std::vector<int> transpose,
-                                             void* host_ptr) {
+                                             void *host_ptr) {
   auto device = ctx_.GetDefaultDevice();
   auto image =
       new MetalImage(*device, dim, transpose, METAL_PRECISION_TYPE::FLOAT);
   if (host_ptr)
-    image->CopyFromNCHW<float>((float*)host_ptr);
-  return (void*)image;
+    image->CopyFromNCHW<float>((float *)host_ptr);
+  return (void *)image;
 }
 
 template <>
-void* TargetWrapperMetal::MallocImage<MetalHalf>(const DDim dim,
+void *TargetWrapperMetal::MallocImage<MetalHalf>(const DDim dim,
                                                  std::vector<int> transpose,
-                                                 void* host_ptr) {
+                                                 void *host_ptr) {
   auto device = ctx_.GetDefaultDevice();
   auto image =
       new MetalImage(*device, dim, transpose, METAL_PRECISION_TYPE::HALF);
   if (host_ptr)
-    image->CopyFromNCHW<MetalHalf>((MetalHalf*)host_ptr);
-  return (void*)image;
+    image->CopyFromNCHW<MetalHalf>((MetalHalf *)host_ptr);
+  return (void *)image;
 }
 
 template <>
-void* TargetWrapperMetal::MallocBuffer<float>(const DDim dim,
+void *TargetWrapperMetal::MallocBuffer<float>(const DDim dim,
                                               bool transpose,
                                               bool to_nhwc,
                                               bool pad_when_one_c,
-                                              void* host_ptr) {
+                                              void *host_ptr) {
   auto device = ctx_.GetDefaultDevice();
 
   MetalBufferDescriptor desc;
@@ -89,16 +89,16 @@ void* TargetWrapperMetal::MallocBuffer<float>(const DDim dim,
   auto buffer = new MetalBuffer(*device, desc);
 
   if (host_ptr)
-    buffer->CopyFromNCHW<float>((float*)host_ptr);
-  return (void*)buffer;
+    buffer->CopyFromNCHW<float>((float *)host_ptr);
+  return (void *)buffer;
 }
 
 template <>
-void* TargetWrapperMetal::MallocBuffer<MetalHalf>(const DDim dim,
+void *TargetWrapperMetal::MallocBuffer<MetalHalf>(const DDim dim,
                                                   bool transpose,
                                                   bool to_nhwc,
                                                   bool pad_when_one_c,
-                                                  void* host_ptr) {
+                                                  void *host_ptr) {
   auto device = ctx_.GetDefaultDevice();
   MetalBufferDescriptor desc;
   desc.dim_ = dim;
@@ -108,45 +108,45 @@ void* TargetWrapperMetal::MallocBuffer<MetalHalf>(const DDim dim,
   desc.with_transpose_ = transpose;
   auto buffer = new MetalBuffer(*device, desc);
   if (host_ptr)
-    buffer->CopyFromNCHW<MetalHalf>((MetalHalf*)host_ptr);
-  return (void*)buffer;
+    buffer->CopyFromNCHW<MetalHalf>((MetalHalf *)host_ptr);
+  return (void *)buffer;
 }
 
-void TargetWrapperMetal::FreeImage(void* image) {
+void TargetWrapperMetal::FreeImage(void *image) {
   if (image != nullptr) {
-    delete (MetalImage*)image;
+    delete (MetalImage *)image;
     image = nullptr;
   }
 }
 
-void TargetWrapperMetal::Free(void* ptr) {
+void TargetWrapperMetal::Free(void *ptr) {
   if (ptr != nullptr) {
-    delete (MetalBuffer*)ptr;
+    delete (MetalBuffer *)ptr;
     ptr = nullptr;
   }
   return;
 }
 
-void TargetWrapperMetal::MemcpySync(void* dst,
-                                    const void* src,
+void TargetWrapperMetal::MemcpySync(void *dst,
+                                    const void *src,
                                     size_t size,
                                     IoDirection dir) {
   switch (dir) {
     case IoDirection::DtoD: {
-      auto dst_buffer = (MetalBuffer*)dst;
-      auto src_buffer = (MetalBuffer*)src;
+      auto dst_buffer = (MetalBuffer *)dst;
+      auto src_buffer = (MetalBuffer *)src;
       dst_buffer->Copy(
-          reinterpret_cast<const MetalBuffer&>(src_buffer), size, 0, 0);
+          reinterpret_cast<const MetalBuffer &>(src_buffer), size, 0, 0);
       break;
     }
     case IoDirection::HtoD: {
-      auto dst_buffer = (MetalBuffer*)dst;
-      dst_buffer->Read(const_cast<void*>(src), size, 0);
+      auto dst_buffer = (MetalBuffer *)dst;
+      dst_buffer->Read(const_cast<void *>(src), size, 0);
       break;
     }
     case IoDirection::DtoH: {
-      auto src_buffer = (MetalBuffer*)src;
-      src_buffer->Write(const_cast<void*>(dst), size, 0);
+      auto src_buffer = (MetalBuffer *)src;
+      src_buffer->Write(const_cast<void *>(dst), size, 0);
       break;
     }
     default:
@@ -154,7 +154,7 @@ void TargetWrapperMetal::MemcpySync(void* dst,
   }
 }
 
-void TargetWrapperMetal::MemsetSync(void* devPtr, int value, size_t count) {
+void TargetWrapperMetal::MemsetSync(void *devPtr, int value, size_t count) {
   return;
 }
 

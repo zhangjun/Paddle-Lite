@@ -23,11 +23,11 @@ namespace metal {
 
 template <typename P, PrecisionType PTYPE>
 void BatchNormImageCompute<P, PTYPE>::PrepareForRun() {
-  auto& context = this->ctx_->template As<ContextMetal>();
-  metal_context_ = (MetalContext*)context.context();
+  auto &context = this->ctx_->template As<ContextMetal>();
+  metal_context_ = (MetalContext *)context.context();
   auto device = metal_context_->GetDefaultDevice();
 
-  const auto& param = this->template Param<param_t>();
+  const auto &param = this->template Param<param_t>();
   auto output_dims = param.y->dims();
   auto input_dims = param.x->dims();
   auto scale_dims = param.scale->dims();
@@ -49,8 +49,8 @@ void BatchNormImageCompute<P, PTYPE>::PrepareForRun() {
     bias_buffer_ = std::make_shared<MetalBuffer>(
         *device, bias_dims, METAL_PRECISION_TYPE::FLOAT, true);
 
-    float* scale_buffer = (float*)malloc(count * sizeof(float));
-    float* bias_buffer = (float*)malloc(count * sizeof(float));
+    float *scale_buffer = (float *)malloc(count * sizeof(float));
+    float *bias_buffer = (float *)malloc(count * sizeof(float));
 
     for (int i = 0; i < count; i++) {
       auto inv_std = 1.0f / std::sqrt(variance_ptr[i] + param.epsilon);
@@ -69,8 +69,8 @@ void BatchNormImageCompute<P, PTYPE>::PrepareForRun() {
     bias_buffer_ = std::make_shared<MetalBuffer>(
         *device, bias_dims, METAL_PRECISION_TYPE::HALF, true);
 
-    MetalHalf* scale_buffer = (MetalHalf*)malloc(count * sizeof(MetalHalf));
-    MetalHalf* bias_buffer = (MetalHalf*)malloc(count * sizeof(MetalHalf));
+    MetalHalf *scale_buffer = (MetalHalf *)malloc(count * sizeof(MetalHalf));
+    MetalHalf *bias_buffer = (MetalHalf *)malloc(count * sizeof(MetalHalf));
 
     for (int i = 0; i < count; i++) {
       auto inv_std = 1.0f / std::sqrt(variance_ptr[i] + param.epsilon);
@@ -99,7 +99,7 @@ void BatchNormImageCompute<P, PTYPE>::PrepareForRun() {
 
 template <typename P, PrecisionType PTYPE>
 void BatchNormImageCompute<P, PTYPE>::Run() {
-  const auto& param = this->template Param<param_t>();
+  const auto &param = this->template Param<param_t>();
   auto input_dims = param.x->dims();
   auto output_dims = param.y->dims();
   auto output_width = output_dims[3];

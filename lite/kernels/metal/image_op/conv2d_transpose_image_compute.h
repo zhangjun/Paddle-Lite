@@ -48,23 +48,23 @@ class Conv2dTransposeImageCompute
   };
 
  private:
-  const MetalImage* input_buffer_;
+  const MetalImage *input_buffer_;
   std::shared_ptr<MetalBuffer> param_buffer_;
 
   static std::string KernelFunctionName(
-      const param_t& param, bool use_aggressive_optimization = false);
+      const param_t &param, bool use_aggressive_optimization = false);
 
-  static bool HasPrefix(const std::string& function_name,
-                        const std::string& prefix_name);
+  static bool HasPrefix(const std::string &function_name,
+                        const std::string &prefix_name);
 
  private:
   void SetupWithMPS();
   void SetupWithoutMPS();
 
-  MetalImage* output_buffer_;
+  MetalImage *output_buffer_;
   std::shared_ptr<MetalBuffer> filter_buffer_;
   std::shared_ptr<MetalBuffer> params_buffer_;
-  const MetalImage* bias_buffer_;
+  const MetalImage *bias_buffer_;
 
   Tensor blank_tensor_;
   std::string function_name_;
@@ -75,7 +75,7 @@ class Conv2dTransposeImageCompute
   std::shared_ptr<MetalKernel> kernel_;
   std::shared_ptr<MetalQueue> queue_;
   std::shared_ptr<MetalEncoder> encoder_;
-  MetalContext* metal_context_;
+  MetalContext *metal_context_;
 };
 
 }  // namespace metal

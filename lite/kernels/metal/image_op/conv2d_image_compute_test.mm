@@ -25,8 +25,8 @@ namespace lite {
 #define B(i, j) cur_b[i * ldb + j]
 #define C(i, j) cur_c[i * ldc + j]
 template <typename Dtype1, typename Dtype2>
-static void conv_basic(const Dtype1* din,
-                       Dtype2* dout,
+static void conv_basic(const Dtype1 *din,
+                       Dtype2 *dout,
                        int num,
                        int chout,
                        int hout,
@@ -34,8 +34,8 @@ static void conv_basic(const Dtype1* din,
                        int chin,
                        int hin,
                        int win,
-                       const Dtype1* weights,
-                       const Dtype2* bias,
+                       const Dtype1 *weights,
+                       const Dtype2 *bias,
                        int group,
                        int kernel_w,
                        int kernel_h,
@@ -117,18 +117,18 @@ static void conv_basic(const Dtype1* din,
 
 template <typename T>
 void gemm_batch_bias(const int batch_size,
-                     const T* a,
+                     const T *a,
                      const int M,
                      const int K,
-                     const T* b,
+                     const T *b,
                      const int K_,
                      const int N,
-                     T* biases,
-                     T* c) {
+                     T *biases,
+                     T *c) {
   EXPECT_TRUE(K_ == K && M > 0 && N > 0 && K > 0);
   for (int bidx = 0; bidx < batch_size; ++bidx) {
-    const T* cur_b = b + K * N * bidx;
-    T* cur_c = c + M * N * bidx;
+    const T *cur_b = b + K * N * bidx;
+    T *cur_c = c + M * N * bidx;
     EXPECT_TRUE(a && cur_b && cur_c);
     const int lda = K;
     const int ldb = N;
@@ -152,7 +152,7 @@ void gemm_batch_bias(const int batch_size,
 }
 
 void PrintData(std::string name,
-               float* a,
+               float *a,
                const int rows,
                const int cols,
                const int batch_size = 1) {
@@ -292,7 +292,7 @@ TEST(conv2d, compute_conv2d_gemm) {
                 context->As<ContextMetal>().CopySharedTo(
                     &(conv_context->As<ContextMetal>()));
 
-                auto mt = (MetalContext*)context->As<ContextMetal>().context();
+                auto mt = (MetalContext *)context->As<ContextMetal>().context();
                 mt->set_metal_path(
                     "/Users/liuzheyuan/code/Paddle-Lite/cmake-build-debug/lite/"
                     "backends/metal/lite.metallib");
@@ -315,9 +315,9 @@ TEST(conv2d, compute_conv2d_gemm) {
                 out.Resize(out_dim);
                 out_ref.Resize(out_dim);
 
-                auto* x_data_img = x.mutable_data<float, MetalImage>(x_dim);
-                auto* filter_data = filter.mutable_data<float>();
-                auto* bias_data =
+                auto *x_data_img = x.mutable_data<float, MetalImage>(x_dim);
+                auto *filter_data = filter.mutable_data<float>();
+                auto *bias_data =
                     bias.mutable_data<float, MetalImage>(bias_dim);
 
                 std::default_random_engine engine;
@@ -347,8 +347,8 @@ TEST(conv2d, compute_conv2d_gemm) {
                   }
                 }
 
-                float* bias_cpu_data =
-                    bias_flag ? reinterpret_cast<float*>(calloc(
+                float *bias_cpu_data =
+                    bias_flag ? reinterpret_cast<float *>(calloc(
                                     sizeof(float), bias_dim.production()))
                               : nullptr;
                 if (bias_flag) {
@@ -362,7 +362,7 @@ TEST(conv2d, compute_conv2d_gemm) {
                 kernel->Launch();
 
                 // run cpu ref
-                auto* out_ref_data = out_ref.mutable_data<float>(TARGET(kHost));
+                auto *out_ref_data = out_ref.mutable_data<float>(TARGET(kHost));
                 conv_basic<float, float>(x_data_cpu.data(),
                                          out_ref_data,
                                          batch_size,
@@ -386,7 +386,7 @@ TEST(conv2d, compute_conv2d_gemm) {
                                          bias_flag,
                                          relu_flag);
 
-                auto* out_data = out.data<float, MetalImage>();
+                auto *out_data = out.data<float, MetalImage>();
 
                 std::vector<float> out_data_cpu(out_dim.production());
                 out_data->CopyToNCHW<float>(out_data_cpu.data());
@@ -395,22 +395,22 @@ TEST(conv2d, compute_conv2d_gemm) {
                 // b: x_d      ==> <k, n> <=> <ic, ih*iw>
                 // c: output_d ==> <m, n> <=> <oc, ih*iw>
                 PrintData(
-                    "mapped_filter", static_cast<float*>(mapped_filter), m, k);
+                    "mapped_filter", static_cast<float *>(mapped_filter), m, k);
                 PrintData("mapped_x",
-                          static_cast<float*>(mapped_x),
+                          static_cast<float *>(mapped_x),
                           k,
                           n,
                           batch_size);
                 PrintData(
-                    "mapped_bias", static_cast<float*>(mapped_bias), m, 1);
+                    "mapped_bias", static_cast<float *>(mapped_bias), m, 1);
                 std::cout << "mapped_bias[0]:" << mapped_bias[0] << std::endl;
                 PrintData("out_ref_data",
-                          static_cast<float*>(out_ref_data),
+                          static_cast<float *>(out_ref_data),
                           m,
                           n,
                           batch_size);
                 PrintData("mapped_out",
-                          static_cast<float*>(mapped_out),
+                          static_cast<float *>(mapped_out),
                           m,
                           n,
                           batch_size);

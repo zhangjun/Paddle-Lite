@@ -26,11 +26,11 @@ namespace metal {
 
 template <typename P, PrecisionType PTYPE>
 void Conv2dImageCompute<P, PTYPE>::PrepareForRun() {
-  auto& context = this->ctx_->template As<ContextMetal>();
-  metal_context_ = (MetalContext*)context.context();
+  auto &context = this->ctx_->template As<ContextMetal>();
+  metal_context_ = (MetalContext *)context.context();
   auto device = metal_context_->GetDefaultDevice();
 
-  const auto& param = this->template Param<param_t>();
+  const auto &param = this->template Param<param_t>();
   auto output_dims = param.output->dims();
   auto input_dims = param.x->dims();
 
@@ -54,12 +54,12 @@ void Conv2dImageCompute<P, PTYPE>::PrepareForRun() {
   output_buffer_ =
       param.output->template mutable_data<P, MetalImage>(output_dims);
 
-  auto* blank_host = (float*)malloc(sizeof(float) * output_dims[1]);
+  auto *blank_host = (float *)malloc(sizeof(float) * output_dims[1]);
   memset(blank_host, 0, sizeof(float) * output_dims[1]);
 
   DDim blank_dim = DDimLite({output_dims[1]});
   blank_tensor_.Resize(blank_dim);
-  MetalImage* p =
+  MetalImage *p =
       blank_tensor_.mutable_data<P, MetalImage>(blank_dim, {0, 1, 2, 3});
 
   p->template CopyFromNCHW<float>(blank_host);
@@ -115,7 +115,7 @@ void Conv2dImageCompute<P, PTYPE>::PrepareForRun() {
 
 template <typename P, PrecisionType PTYPE>
 void Conv2dImageCompute<P, PTYPE>::Run() {
-  const auto& param = this->template Param<param_t>();
+  const auto &param = this->template Param<param_t>();
   auto output_width = output_buffer_->texture_width_;
   auto output_height = output_buffer_->texture_height_;
   auto output_array_length = output_buffer_->array_length_;
@@ -172,7 +172,7 @@ void Conv2dImageCompute<P, PTYPE>::Run() {
 
 template <typename P, PrecisionType PTYPE>
 std::string Conv2dImageCompute<P, PTYPE>::KernelFunctionName(
-    const param_t& param, bool use_aggressive_optimization) {
+    const param_t &param, bool use_aggressive_optimization) {
   auto filter_width = param.filter->dims()[3];
   auto filter_height = param.filter->dims()[2];
   auto filter_channel = param.filter->dims()[1];
@@ -256,7 +256,7 @@ std::string Conv2dImageCompute<P, PTYPE>::KernelFunctionName(
 
 template <typename P, PrecisionType PTYPE>
 bool Conv2dImageCompute<P, PTYPE>::IsWinoGrad(
-    const std::string& function_name) {
+    const std::string &function_name) {
   std::string suffix = "winograd";
   if (function_name.size() >= suffix.size() &&
       function_name.compare(
@@ -273,13 +273,13 @@ void Conv2dImageCompute<P, PTYPE>::SetupWithMPS() {
 
 template <typename P, PrecisionType PTYPE>
 void Conv2dImageCompute<P, PTYPE>::SetupWithoutMPS() {
-  const auto& param = this->template Param<param_t>();
+  const auto &param = this->template Param<param_t>();
   auto padLeft = (*param.paddings)[2];
   auto padTop = (*param.paddings)[0];
   assert((*param.paddings)[0] == (*param.paddings)[1]);
 
-  auto& context = this->ctx_->template As<ContextMetal>();
-  metal_context_ = (MetalContext*)context.context();
+  auto &context = this->ctx_->template As<ContextMetal>();
+  metal_context_ = (MetalContext *)context.context();
   auto device = metal_context_->GetDefaultDevice();
 
   int offsetX = static_cast<int>(
@@ -384,7 +384,7 @@ void Conv2dImageCompute<P, PTYPE>::SetupWithoutMPS() {
   }
   auto filter_buffer = param.filter->template data<float>();
   if (IsWinoGrad(function_name_)) {
-    DataConverter<float>* converter = new WinogradPointerConverter<float>();
+    DataConverter<float> *converter = new WinogradPointerConverter<float>();
     free(converter);
     throw std::logic_error("ERROR: still not finish winograd");
   }

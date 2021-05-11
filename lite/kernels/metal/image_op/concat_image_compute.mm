@@ -25,11 +25,11 @@ namespace metal {
 
 template <typename P, PrecisionType PTYPE>
 void ConcatImageCompute<P, PTYPE>::PrepareForRun() {
-  auto& context = this->ctx_->template As<ContextMetal>();
-  metal_context_ = (MetalContext*)context.context();
+  auto &context = this->ctx_->template As<ContextMetal>();
+  metal_context_ = (MetalContext *)context.context();
   auto device = metal_context_->GetDefaultDevice();
 
-  const auto& param = this->template Param<param_t>();
+  const auto &param = this->template Param<param_t>();
   auto output_dims = param.output->dims();
 
   int num = param.x.size();
@@ -43,9 +43,9 @@ void ConcatImageCompute<P, PTYPE>::PrepareForRun() {
       param.output->template mutable_data<P, MetalImage>(output_dims);
 
   int axis = 4 - output_buffer_->tensor_dim_.size() + param.axis;
-  auto* axis_tensor = param.axis_tensor;
+  auto *axis_tensor = param.axis_tensor;
   if (axis_tensor != nullptr) {
-    auto* axis_tensor_data = axis_tensor->template data<int>();
+    auto *axis_tensor_data = axis_tensor->template data<int>();
     axis = axis_tensor_data[0];
   }
   if (axis < 0) {
@@ -168,8 +168,8 @@ void ConcatImageCompute<P, PTYPE>::Run() {
   auto output_height = output_buffer_->texture_height_;
   auto output_array_length = output_buffer_->array_length_;
 
-  auto& context = this->ctx_->template As<ContextMetal>();
-  metal_context_ = (MetalContext*)context.context();
+  auto &context = this->ctx_->template As<ContextMetal>();
+  metal_context_ = (MetalContext *)context.context();
 
   auto encoder = std::make_shared<MetalEncoder>(metal_context_->cmd_buf_.get(),
                                                 &kernel_->program_);

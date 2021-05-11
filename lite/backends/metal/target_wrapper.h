@@ -38,7 +38,7 @@ class TargetWrapper<TARGET(kMetal)> {
 
   static bool MPSVersionRequired();
 
-  static void CreateCommandBuffer(RuntimeProgram* program) {
+  static void CreateCommandBuffer(RuntimeProgram *program) {
     assert(program);
     ctx_.CreateCommandBuffer(program);
     return;
@@ -61,31 +61,31 @@ class TargetWrapper<TARGET(kMetal)> {
   static void set_metal_use_mps(bool flag) { ctx_.set_use_mps(flag); }
 
   template <typename T>
-  static void* MallocImage(const DDim dim,
+  static void *MallocImage(const DDim dim,
                            std::vector<int> transport,
-                           void* host_ptr = nullptr);
+                           void *host_ptr = nullptr);
 
   template <typename T>
-  static void* MallocBuffer(const DDim dim,
+  static void *MallocBuffer(const DDim dim,
                             bool transpose,
                             bool to_nhwc,
                             bool pad_when_one_c,
-                            void* host_ptr);
+                            void *host_ptr);
 
-  static void FreeImage(void* image);
+  static void FreeImage(void *image);
 
-  static void* Malloc(size_t size);
-  static void Free(void* ptr);
+  static void *Malloc(size_t size);
+  static void Free(void *ptr);
 
-  static void MemcpySync(void* dst,
-                         const void* src,
+  static void MemcpySync(void *dst,
+                         const void *src,
                          size_t size,
                          IoDirection dir);
 
-  static void MemsetSync(void* devPtr, int value, size_t count);
+  static void MemsetSync(void *devPtr, int value, size_t count);
 
-  static void* Map(void* data, int offset, size_t size);
-  static void UnMap(void* data);
+  static void *Map(void *data, int offset, size_t size);
+  static void UnMap(void *data);
 
   static LITE_THREAD_LOCAL MetalContext ctx_;
 };

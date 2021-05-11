@@ -23,7 +23,7 @@
 kernel void FUNC(bilinear_interp,
                  P)(texture2d_array<P, access::read> input[[texture(0)]],
                     texture2d_array<P, access::write> output[[texture(1)]],
-                    constant bilinear_interp_param& pm[[buffer(0)]],
+                    constant bilinear_interp_param &pm[[buffer(0)]],
                     uint3 gid[[thread_position_in_grid]]) {
   VECTOR(P, 4) r;
   if ((input.get_width() == output.get_width()) &&

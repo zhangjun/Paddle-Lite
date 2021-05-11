@@ -21,11 +21,11 @@
 namespace paddle {
 namespace lite {
 
-void MetalDebug::DumpImage(const std::string& name,
-                           MetalImage* image,
+void MetalDebug::DumpImage(const std::string &name,
+                           MetalImage *image,
                            DumpMode mode) {
   int length = image->tensor_dim_.production();
-  auto buf = (float*)malloc(sizeof(float) * length);
+  auto buf = (float *)malloc(sizeof(float) * length);
   image->CopyToNCHW<float>(buf);
   std::string OUTPUT_BASE_PATH = "";
 #ifdef TARGET_IOS
@@ -35,7 +35,7 @@ void MetalDebug::DumpImage(const std::string& name,
                      "/";
 #endif
   std::string filename = OUTPUT_BASE_PATH + name + ".txt";
-  FILE* fp = fopen(filename.c_str(), "w");
+  FILE *fp = fopen(filename.c_str(), "w");
   for (int i = 0; i < length; ++i) {
     if (mode == DumpMode::kFile || mode == DumpMode::kBoth)
       fprintf(fp, "%f\n", buf[i]);
@@ -46,17 +46,17 @@ void MetalDebug::DumpImage(const std::string& name,
   fclose(fp);
 }
 
-void MetalDebug::DumpImage(const std::string& name,
-                           const MetalImage* image,
+void MetalDebug::DumpImage(const std::string &name,
+                           const MetalImage *image,
                            DumpMode mode) {
-  DumpImage(name, const_cast<MetalImage*>(image), mode);
+  DumpImage(name, const_cast<MetalImage *>(image), mode);
 }
 
-void MetalDebug::DumpImage(const std::string& name,
+void MetalDebug::DumpImage(const std::string &name,
                            std::shared_ptr<MetalImage> image,
                            DumpMode mode) {
   int length = image->tensor_dim_.production();
-  auto buf = (float*)malloc(sizeof(float) * length);
+  auto buf = (float *)malloc(sizeof(float) * length);
   std::string OUTPUT_BASE_PATH = "";
 #ifdef TARGET_IOS
   OUTPUT_BASE_PATH = std::string([[NSSearchPathForDirectoriesInDomains(
@@ -65,7 +65,7 @@ void MetalDebug::DumpImage(const std::string& name,
                      "/";
 #endif
   std::string filename = OUTPUT_BASE_PATH + name + ".txt";
-  FILE* fp = fopen(filename.c_str(), "w");
+  FILE *fp = fopen(filename.c_str(), "w");
   image->CopyToNCHW<float>(buf);
   for (int i = 0; i < length; ++i) {
     if (mode == DumpMode::kFile || mode == DumpMode::kBoth)
@@ -77,8 +77,8 @@ void MetalDebug::DumpImage(const std::string& name,
   fclose(fp);
 }
 
-void MetalDebug::DumpBuffer(const std::string& name,
-                            MetalBuffer* buffer,
+void MetalDebug::DumpBuffer(const std::string &name,
+                            MetalBuffer *buffer,
                             DumpMode mode) {
   std::string OUTPUT_BASE_PATH = "";
 #ifdef TARGET_IOS
@@ -89,9 +89,9 @@ void MetalDebug::DumpBuffer(const std::string& name,
 #endif
   if (buffer->type() == MetalBuffer::TYPE::kTensorBuffer) {
     int length = buffer->tensor_dim().production();
-    auto buf = (float*)malloc(sizeof(float) * length);
+    auto buf = (float *)malloc(sizeof(float) * length);
     std::string filename = OUTPUT_BASE_PATH + name + ".txt";
-    FILE* fp = fopen(filename.c_str(), "w");
+    FILE *fp = fopen(filename.c_str(), "w");
     buffer->CopyToNCHW<float>(buf);
     for (int i = 0; i < length; ++i) {
       if (mode == DumpMode::kFile || mode == DumpMode::kBoth)
@@ -103,9 +103,9 @@ void MetalDebug::DumpBuffer(const std::string& name,
     fclose(fp);
   } else if (buffer->type() == MetalBuffer::TYPE::kCommonBuffer) {
     int length = buffer->data_length();
-    auto buf = (float*)malloc(length);
+    auto buf = (float *)malloc(length);
     std::string filename = OUTPUT_BASE_PATH + name + ".txt";
-    FILE* fp = fopen(filename.c_str(), "w");
+    FILE *fp = fopen(filename.c_str(), "w");
     memcpy(buf, buffer->buffer().contents, length);
     for (int i = 0; i < length; ++i) {
       if (mode == DumpMode::kFile || mode == DumpMode::kBoth)
@@ -118,15 +118,15 @@ void MetalDebug::DumpBuffer(const std::string& name,
   }
 }
 
-void MetalDebug::DumpBuffer(const std::string& name,
-                            const MetalBuffer* buf,
+void MetalDebug::DumpBuffer(const std::string &name,
+                            const MetalBuffer *buf,
                             int length,
                             DumpMode mode) {
-  DumpBuffer(name, const_cast<MetalBuffer*>(buf), length, mode);
+  DumpBuffer(name, const_cast<MetalBuffer *>(buf), length, mode);
 }
 
-void MetalDebug::DumpNCHWFloat(const std::string& name,
-                               float* data,
+void MetalDebug::DumpNCHWFloat(const std::string &name,
+                               float *data,
                                int length,
                                DumpMode mode) {
   std::string OUTPUT_BASE_PATH = "";
@@ -137,7 +137,7 @@ void MetalDebug::DumpNCHWFloat(const std::string& name,
                      "/";
 #endif
   std::string filename = OUTPUT_BASE_PATH + name + ".txt";
-  FILE* fp = fopen(filename.c_str(), "w");
+  FILE *fp = fopen(filename.c_str(), "w");
   for (int i = 0; i < length; ++i) {
     if (mode == DumpMode::kFile || mode == DumpMode::kBoth)
       fprintf(fp, "%f\n", data[i]);
@@ -148,7 +148,7 @@ void MetalDebug::DumpNCHWFloat(const std::string& name,
   fclose(fp);
 }
 
-void MetalDebug::DumpBuffer(const std::string& name,
+void MetalDebug::DumpBuffer(const std::string &name,
                             std::shared_ptr<MetalBuffer> buffer,
                             int length,
                             DumpMode mode) {
@@ -159,9 +159,9 @@ void MetalDebug::DumpBuffer(const std::string& name,
                          objectAtIndex:0] UTF8String]) +
                      "/";
 #endif
-  auto buf = (float*)malloc(sizeof(float) * length);
+  auto buf = (float *)malloc(sizeof(float) * length);
   std::string filename = OUTPUT_BASE_PATH + name + ".txt";
-  FILE* fp = fopen(filename.c_str(), "w");
+  FILE *fp = fopen(filename.c_str(), "w");
   buffer->CopyToNCHW<float>(buf);
   for (int i = 0; i < length; ++i) {
     if (mode == DumpMode::kFile || mode == DumpMode::kBoth)

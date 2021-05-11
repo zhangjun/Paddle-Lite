@@ -23,7 +23,7 @@ void ContextMetal::InitOnce() {
   TargetWrapperMetal::ctx_.CreateLibraryWithFile(*device);
 }
 
-void ContextMetal::CopySharedTo(ContextMetal* ctx) {
+void ContextMetal::CopySharedTo(ContextMetal *ctx) {
   ctx->context_ = context_;
   return;
 }

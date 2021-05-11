@@ -46,12 +46,12 @@ class FetchImageCompute : public KernelLite<TARGET(kMetal),
 
  private:
   std::shared_ptr<MetalBuffer> output_buffer_;
-  const MetalImage* input_buffer_;
+  const MetalImage *input_buffer_;
   std::shared_ptr<MetalKernel> kernel_;
   std::shared_ptr<MetalQueue> queue_;
   std::shared_ptr<MetalEncoder> encoder_;
-  MetalContext* metal_context_;
-  const MetalDevice* device_;
+  MetalContext *metal_context_;
+  const MetalDevice *device_;
   std::vector<int> expected_transpose_ = {};
 
   ReshapeImageCompute<P, PTYPE> reshape_;

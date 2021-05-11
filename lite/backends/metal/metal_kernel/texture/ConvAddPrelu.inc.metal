@@ -20,7 +20,7 @@
 kernel void FUNC3_(conv_add_1x1, PRELU_TYPE, P)(
     texture2d_array<P, access::sample> inTexture[[texture(0)]],
     texture2d_array<P, access::write> outTexture[[texture(1)]],
-    constant MetalConvParam& param[[buffer(0)]],
+    constant MetalConvParam &param[[buffer(0)]],
     const device VECTOR(P, 4) * weights[[buffer(1)]],
     const device VECTOR(P, 4) * biase[[buffer(2)]],
 #ifdef PRELU_CHANNEL
@@ -30,7 +30,7 @@ kernel void FUNC3_(conv_add_1x1, PRELU_TYPE, P)(
     const device VECTOR(P, 4) * alpha[[buffer(3)]],
 #endif
 #ifdef PRELU_OTHER
-    const device P* alpha[[buffer(3)]],
+    const device P *alpha[[buffer(3)]],
 #endif
     uint3 gid[[thread_position_in_grid]]) {
 
@@ -103,7 +103,7 @@ kernel void FUNC3_(conv_add_1x1, PRELU_TYPE, P)(
 kernel void FUNC3_(conv_add_3x3, PRELU_TYPE, P)(
     texture2d_array<P, access::sample> inTexture[[texture(0)]],
     texture2d_array<P, access::write> outTexture[[texture(1)]],
-    constant MetalConvParam& param[[buffer(0)]],
+    constant MetalConvParam &param[[buffer(0)]],
     const device VECTOR(P, 4) * weights[[buffer(1)]],
     const device VECTOR(P, 4) * biase[[buffer(2)]],
 #ifdef PRELU_CHANNEL
@@ -113,7 +113,7 @@ kernel void FUNC3_(conv_add_3x3, PRELU_TYPE, P)(
     const device VECTOR(P, 4) * alpha[[buffer(3)]],
 #endif
 #ifdef PRELU_OTHER
-    const device P* alpha[[buffer(3)]],
+    const device P *alpha[[buffer(3)]],
 #endif
     uint3 gid[[thread_position_in_grid]]) {
   if (gid.x >= outTexture.get_width() || gid.y >= outTexture.get_height() ||
@@ -229,7 +229,7 @@ kernel void FUNC3_(conv_add_3x3, PRELU_TYPE, P)(
 kernel void FUNC3_(conv_add_5x1, PRELU_TYPE, P)(
     texture2d_array<P, access::sample> inTexture[[texture(0)]],
     texture2d_array<P, access::write> outTexture[[texture(1)]],
-    constant MetalConvParam& param[[buffer(0)]],
+    constant MetalConvParam &param[[buffer(0)]],
     const device VECTOR(P, 4) * weights[[buffer(1)]],
     const device VECTOR(P, 4) * biase[[buffer(2)]],
 #ifdef PRELU_CHANNEL
@@ -239,7 +239,7 @@ kernel void FUNC3_(conv_add_5x1, PRELU_TYPE, P)(
     const device VECTOR(P, 4) * alpha[[buffer(3)]],
 #endif
 #ifdef PRELU_OTHER
-    const device P* alpha[[buffer(3)]],
+    const device P *alpha[[buffer(3)]],
 #endif
     uint3 gid[[thread_position_in_grid]]) {
 
@@ -334,7 +334,7 @@ kernel void FUNC3_(conv_add_5x1, PRELU_TYPE, P)(
 kernel void FUNC3_(conv_add_1x5, PRELU_TYPE, P)(
     texture2d_array<P, access::sample> inTexture[[texture(0)]],
     texture2d_array<P, access::write> outTexture[[texture(1)]],
-    constant MetalConvParam& param[[buffer(0)]],
+    constant MetalConvParam &param[[buffer(0)]],
     const device VECTOR(P, 4) * weights[[buffer(1)]],
     const device VECTOR(P, 4) * biase[[buffer(2)]],
 #ifdef PRELU_CHANNEL
@@ -344,7 +344,7 @@ kernel void FUNC3_(conv_add_1x5, PRELU_TYPE, P)(
     const device VECTOR(P, 4) * alpha[[buffer(3)]],
 #endif
 #ifdef PRELU_OTHER
-    const device P* alpha[[buffer(3)]],
+    const device P *alpha[[buffer(3)]],
 #endif
     uint3 gid[[thread_position_in_grid]]) {
 
@@ -438,8 +438,8 @@ kernel void FUNC3_(conv_add_1x5, PRELU_TYPE, P)(
 kernel void FUNC3_(depthwise_conv_add_3x3, PRELU_TYPE, P)(
     texture2d_array<P, access::sample> inTexture[[texture(0)]],
     texture2d_array<P, access::write> outTexture[[texture(1)]],
-    constant MetalConvParam& param[[buffer(0)]],
-    const device P* weights[[buffer(1)]],
+    constant MetalConvParam &param[[buffer(0)]],
+    const device P *weights[[buffer(1)]],
     const device VECTOR(P, 4) * biase[[buffer(2)]],
 #ifdef PRELU_CHANNEL
     const device VECTOR(P, 4) * alpha[[buffer(3)]],
@@ -448,7 +448,7 @@ kernel void FUNC3_(depthwise_conv_add_3x3, PRELU_TYPE, P)(
     const device VECTOR(P, 4) * alpha[[buffer(3)]],
 #endif
 #ifdef PRELU_OTHER
-    const device P* alpha[[buffer(3)]],
+    const device P *alpha[[buffer(3)]],
 #endif
     uint3 gid[[thread_position_in_grid]]) {
 

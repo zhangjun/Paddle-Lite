@@ -19,7 +19,7 @@ using namespace metal;
 kernel void pad2d_half(
     texture2d_array<half, access::read> inTexture[[texture(0)]],
     texture2d_array<half, access::write> outTexture[[texture(1)]],
-    constant Pad2dParam& pm[[buffer(0)]],
+    constant Pad2dParam &pm[[buffer(0)]],
     uint3 gid[[thread_position_in_grid]]) {
   if (gid.x >= outTexture.get_width() || gid.y >= outTexture.get_height() ||
       gid.z >= outTexture.get_array_size())
@@ -56,7 +56,7 @@ kernel void pad2d_half(
 kernel void pad2d(
     texture2d_array<float, access::read> inTexture[[texture(0)]],
     texture2d_array<float, access::write> outTexture[[texture(1)]],
-    constant Pad2dParam& pm[[buffer(0)]],
+    constant Pad2dParam &pm[[buffer(0)]],
     uint3 gid[[thread_position_in_grid]]) {
   if (gid.x >= outTexture.get_width() || gid.y >= outTexture.get_height() ||
       gid.z >= outTexture.get_array_size())

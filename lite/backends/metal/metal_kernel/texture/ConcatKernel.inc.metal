@@ -61,7 +61,7 @@ kernel void FUNC(concat, R, N, VV, P)(
 #endif
     texture2d_array<P, access::read> inx[[texture(N)]],
     texture2d_array<P, access::write> out[[texture(N + 1)]],
-    constant ConcatParam& pm[[buffer(0)]],
+    constant ConcatParam &pm[[buffer(0)]],
     uint3 gid[[thread_position_in_grid]]) {
 
   ConcatParam cp = pm;
@@ -147,7 +147,7 @@ kernel void FUNC(concat, R, N, VV, P)(
     texture2d_array<P, access::read> in5[[texture(5)]],
 #endif  // N >= 6
     texture2d_array<P, access::write> out[[texture(N)]],
-    constant ConcatParam& pm[[buffer(0)]],
+    constant ConcatParam &pm[[buffer(0)]],
     uint3 gid[[thread_position_in_grid]]) {
   int x = gid.x - pm.offset;
   if (x < 0)
@@ -215,7 +215,7 @@ kernel void FUNC(concat, R, N, VV, P)(
     texture2d_array<P, access::read> in5[[texture(5)]],
 #endif  // N >= 6
     texture2d_array<P, access::write> out[[texture(N)]],
-    constant ConcatParam& pm[[buffer(0)]],
+    constant ConcatParam &pm[[buffer(0)]],
     uint3 gid[[thread_position_in_grid]]) {
   int y = gid.y - pm.offset;
   if (y < 0)
@@ -283,7 +283,7 @@ kernel void FUNC(concat, R, N, VV, P)(
     texture2d_array<P, access::read> in5[[texture(5)]],
 #endif  // N >= 6
     texture2d_array<P, access::write> out[[texture(N)]],
-    constant ConcatParam& pm[[buffer(0)]],
+    constant ConcatParam &pm[[buffer(0)]],
     uint3 gid[[thread_position_in_grid]]) {
   int z = gid.z - pm.offset;
   if (z < 0)

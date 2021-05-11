@@ -43,13 +43,13 @@ static int PoolOutputSize(int input_size,
   return output_size;
 }
 
-static std::vector<int64_t> compute_output_shape(operators::PoolParam* param_,
+static std::vector<int64_t> compute_output_shape(operators::PoolParam *param_,
                                                  bool is_nchw) {
   int axis = 2;
   if (!is_nchw)
     axis = 1;
   const auto x_dims = param_->x->dims();
-  std::vector<int>& ksize = param_->ksize;
+  std::vector<int> &ksize = param_->ksize;
   if (param_->global_pooling) {
     ksize.resize(static_cast<size_t>(x_dims.size()) - 2);
     auto paddings = *param_->paddings;
@@ -82,12 +82,12 @@ static std::vector<int64_t> compute_output_shape(operators::PoolParam* param_,
   return output_shape;
 }
 
-void pool_compute_ref(const operators::PoolParam& param) {
-  auto& in_dims = param.x->dims();
-  auto& out_dims = param.output->dims();
+void pool_compute_ref(const operators::PoolParam &param) {
+  auto &in_dims = param.x->dims();
+  auto &out_dims = param.output->dims();
 
-  const float* src_ptr = param.x->data<const float>();
-  float* dst_ptr = param.output->mutable_data<float>();
+  const float *src_ptr = param.x->data<const float>();
+  float *dst_ptr = param.output->mutable_data<float>();
 
   std::vector<int> ksize = param.ksize;
   std::vector<int> strides = param.strides;
@@ -123,7 +123,7 @@ void pool_compute_ref(const operators::PoolParam& param) {
   if (global_pooling == true) {
     for (int n = 0; n < in_n; ++n) {
       for (int c = 0; c < in_c; ++c) {
-        const float* src = src_ptr + n * size_in_n + c * size_in_c;
+        const float *src = src_ptr + n * size_in_n + c * size_in_c;
         float res = src[0];
         if (pooling_type == "max") {
           for (int i = 1; i < size_in_c; ++i) {
@@ -253,15 +253,15 @@ TEST(pool_metal, compute) {
                         param.adaptive = false;
                         param.use_quantizer = false;
 
-                        const std::vector<int64_t>& output_shape =
+                        const std::vector<int64_t> &output_shape =
                             compute_output_shape(&param, true);
 
                         y.Resize(output_shape);
                         y_dev.Resize(output_shape);
                         y_ref.Resize(output_shape);
 
-                        auto* x_data = x.mutable_data<float>();
-                        auto* y_data = y.mutable_data<float>();
+                        auto *x_data = x.mutable_data<float>();
+                        auto *y_data = y.mutable_data<float>();
 
                         for (int i = 0; i < x.dims().production(); ++i) {
                           float sign = i % 3 == 0 ? -0.03 : 0.05f;
@@ -269,7 +269,7 @@ TEST(pool_metal, compute) {
                         }
 
                         auto x_dev_ptr = x_dev.mutable_data<float, MetalImage>(
-                            x_dev.dims(), {0, 2, 3, 1}, (void*)x_data);
+                            x_dev.dims(), {0, 2, 3, 1}, (void *)x_data);
                         auto y_host_ptr = y.mutable_data<float>();
 
                         {
@@ -290,7 +290,7 @@ TEST(pool_metal, compute) {
                         std::unique_ptr<KernelContext> ctx(new KernelContext);
                         ctx->As<ContextMetal>().InitOnce();
                         auto mt =
-                            (MetalContext*)ctx->As<ContextMetal>().context();
+                            (MetalContext *)ctx->As<ContextMetal>().context();
                         mt->set_metal_path(
                             "/Users/liuzheyuan/code/Paddle-Lite/"
                             "cmake-build-debug/lite/"
@@ -307,7 +307,7 @@ TEST(pool_metal, compute) {
                         param.x = &x;
                         param.output = &y_ref;
                         pool_compute_ref(param);
-                        auto* y_ref_data = y_ref.mutable_data<float>();
+                        auto *y_ref_data = y_ref.mutable_data<float>();
 
                         for (int i = 0; i < y.dims().production(); i++) {
                           ASSERT_NEAR(y_data[i], y_ref_data[i], 1e-5);

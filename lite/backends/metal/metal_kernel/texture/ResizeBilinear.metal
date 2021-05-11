@@ -25,7 +25,7 @@ struct resize_bilinear_param {
 kernel void resize_bilinear(
     texture2d_array<float, access::read> input[[texture(0)]],
     texture2d_array<float, access::write> output[[texture(2)]],
-    constant resize_bilinear_param& pm[[buffer(0)]],
+    constant resize_bilinear_param &pm[[buffer(0)]],
     uint3 gid[[thread_position_in_grid]]) {
   float4 r;
   if ((input.get_width() == output.get_width()) &&
@@ -55,7 +55,7 @@ kernel void resize_bilinear(
 kernel void resize_bilinear_half(
     texture2d_array<half, access::read> input[[texture(0)]],
     texture2d_array<half, access::write> output[[texture(2)]],
-    constant resize_bilinear_param& pm[[buffer(0)]],
+    constant resize_bilinear_param &pm[[buffer(0)]],
     uint3 gid[[thread_position_in_grid]]) {
   half4 r;
   if ((input.get_width() == output.get_width()) &&

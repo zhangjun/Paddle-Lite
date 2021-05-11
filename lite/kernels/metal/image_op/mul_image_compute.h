@@ -47,17 +47,17 @@ class MulImageCompute : public KernelLite<TARGET(kMetal),
   void SaveOutput() override { MetalDebug::SaveOutput("mul", output_buffer_); };
 
  private:
-  const MetalImage* input_buffer_x_;
-  const MetalImage* input_buffer_y_;
+  const MetalImage *input_buffer_x_;
+  const MetalImage *input_buffer_y_;
 
-  MetalImage* output_buffer_;
+  MetalImage *output_buffer_;
 
   std::shared_ptr<MetalBuffer> params_buffer_;
 
   std::shared_ptr<MetalKernel> kernel_;
   std::shared_ptr<MetalQueue> queue_;
   std::shared_ptr<MetalEncoder> encoder_;
-  MetalContext* metal_context_;
+  MetalContext *metal_context_;
   DDim input_x_mul_dim_;
 
   ReshapeImageCompute<P, PTYPE> reshape_;

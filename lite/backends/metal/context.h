@@ -27,12 +27,12 @@ template <>
 class Context<TargetType::kMetal> {
  public:
   void InitOnce();
-  void CopySharedTo(ContextMetal* ctx);
+  void CopySharedTo(ContextMetal *ctx);
 
-  void* context() { return context_; }
+  void *context() { return context_; }
 
  private:
-  void* context_;
+  void *context_;
 };
 
 }  // namespace lite

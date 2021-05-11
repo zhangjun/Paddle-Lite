@@ -19,7 +19,7 @@ using namespace metal;
 kernel void lrn_half(
     texture2d_array<half, access::sample> inTexture[[texture(0)]],
     texture2d_array<half, access::write> outTexture[[texture(1)]],
-    constant LrnParam& param[[buffer(0)]],
+    constant LrnParam &param[[buffer(0)]],
     uint3 gid[[thread_position_in_grid]]) {
   if (gid.x >= outTexture.get_width() || gid.y >= outTexture.get_height() ||
       gid.z >= outTexture.get_array_size())
@@ -56,7 +56,7 @@ kernel void lrn_half(
 
 kernel void lrn(texture2d_array<float, access::sample> inTexture[[texture(0)]],
                 texture2d_array<float, access::write> outTexture[[texture(1)]],
-                constant LrnParam& param[[buffer(0)]],
+                constant LrnParam &param[[buffer(0)]],
                 uint3 gid[[thread_position_in_grid]]) {
   if (gid.x >= outTexture.get_width() || gid.y >= outTexture.get_height() ||
       gid.z >= outTexture.get_array_size())

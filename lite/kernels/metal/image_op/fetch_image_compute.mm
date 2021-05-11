@@ -24,20 +24,20 @@ namespace metal {
 
 template <typename P, PrecisionType PTYPE>
 void FetchImageCompute<P, PTYPE>::PrepareForRun() {
-  auto& context = this->ctx_->template As<ContextMetal>();
-  metal_context_ = (MetalContext*)context.context();
+  auto &context = this->ctx_->template As<ContextMetal>();
+  metal_context_ = (MetalContext *)context.context();
   device_ = metal_context_->GetDefaultDevice();
 
-  const auto& param = this->template Param<param_t>();
+  const auto &param = this->template Param<param_t>();
   auto input_dims = param.input->dims();
   input_buffer_ = param.input->template data<P, MetalImage>();
 
-  auto* fetch_list = param.fetch_list;
+  auto *fetch_list = param.fetch_list;
   if (fetch_list->size() <= static_cast<size_t>(param.col)) {
     fetch_list->resize(static_cast<unsigned long>(param.col + 1));
   }
 
-  auto& dst = fetch_list->at(param.col);
+  auto &dst = fetch_list->at(param.col);
   dst.Resize(param.input->dims());
 
   std::string function_name = "";
@@ -102,11 +102,11 @@ void FetchImageCompute<P, PTYPE>::PrepareForRun() {
 
 template <typename P, PrecisionType PTYPE>
 void FetchImageCompute<P, PTYPE>::Run() {
-  auto& context = this->ctx_->template As<ContextMetal>();
-  metal_context_ = (MetalContext*)context.context();
+  auto &context = this->ctx_->template As<ContextMetal>();
+  metal_context_ = (MetalContext *)context.context();
   auto mtl_dev = metal_context_->GetDefaultDevice();
-  const auto& param = this->template Param<param_t>();
-  Tensor& output_tensor = param.fetch_list->at(param.col);
+  const auto &param = this->template Param<param_t>();
+  Tensor &output_tensor = param.fetch_list->at(param.col);
   auto output_buffer = output_tensor.mutable_data<float>();
   auto output_dims = output_tensor.dims();
   auto mem_size = output_dims.production() * sizeof(float);

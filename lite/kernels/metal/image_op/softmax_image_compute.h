@@ -50,14 +50,14 @@ class SoftmaxImageCompute
   };
 
  private:
-  std::string GetFunctionName(const DDimLite& input_dims, int axis) const;
-  const MetalImage* input_buffer_;
-  MetalImage* output_buffer_;
+  std::string GetFunctionName(const DDimLite &input_dims, int axis) const;
+  const MetalImage *input_buffer_;
+  MetalImage *output_buffer_;
   std::shared_ptr<MetalBuffer> param_buffer_;
   std::shared_ptr<MetalKernel> kernel_;
   std::shared_ptr<MetalQueue> queue_;
   std::shared_ptr<MetalEncoder> encoder_;
-  MetalContext* metal_context_;
+  MetalContext *metal_context_;
 };
 
 }  // namespace metal

@@ -35,8 +35,8 @@ struct MetalKernelProgram {
   id<MTLFunction> function_{nil};
   id<MTLComputePipelineState> pipeline_state_{nil};
 #else
-  void* function_{nullptr};
-  void* pipeline_state_{nullptr};
+  void *function_{nullptr};
+  void *pipeline_state_{nullptr};
 #endif
 
   virtual ~MetalKernelProgram();
@@ -49,12 +49,12 @@ class MetalKernel {
   ~MetalKernel() = default;
 
  public:
-  void Execute(const MetalEncoder& encoder,
-               const MetalUint3& texture_array_3d,
+  void Execute(const MetalEncoder &encoder,
+               const MetalUint3 &texture_array_3d,
                const int groupDepth);
 
-  void Execute(const MetalEncoder& encoder,
-               const MetalUint3& texture_array_3d,
+  void Execute(const MetalEncoder &encoder,
+               const MetalUint3 &texture_array_3d,
                bool quadruple);
 };
 }  // namespace lite

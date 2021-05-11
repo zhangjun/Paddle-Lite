@@ -22,13 +22,13 @@
 namespace paddle {
 namespace lite {
 
-MetalQueue::MetalQueue(const MetalDevice* device, id<MTLCommandQueue> queue)
+MetalQueue::MetalQueue(const MetalDevice *device, id<MTLCommandQueue> queue)
     : queue_(queue) {
-  mtl_device_ = const_cast<MetalDevice*>(device);
+  mtl_device_ = const_cast<MetalDevice *>(device);
 }
 
 std::unique_ptr<MetalCommandBuffer> MetalQueue::CreateCommandBuffer(
-    RuntimeProgram* program) {
+    RuntimeProgram *program) {
   id<MTLCommandBuffer> cmd_buffer = [queue_ commandBuffer];
   [cmd_buffer addCompletedHandler:^(id<MTLCommandBuffer> buffer) {
 #if LITE_METAL_SAVE_TENSOR
@@ -43,8 +43,8 @@ std::unique_ptr<MetalCommandBuffer> MetalQueue::CreateCommandBuffer(
   return ret;
 }
 
-MetalEncoder::MetalEncoder(MetalCommandBuffer* buffer,
-                           MetalKernelProgram* program) {
+MetalEncoder::MetalEncoder(MetalCommandBuffer *buffer,
+                           MetalKernelProgram *program) {
   metal_command_buffer_ = buffer->metal_command_buffer_;
   metal_command_encoder_ =
       [buffer->metal_command_buffer_ computeCommandEncoder];

@@ -24,7 +24,7 @@ struct ScaleParam {
 kernel void scale_before_bias_float(
     texture2d_array<float, access::read> inTexture[[texture(0)]],
     texture2d_array<float, access::write> outTexture[[texture(1)]],
-    constant ScaleParam& pm[[buffer(0)]],
+    constant ScaleParam &pm[[buffer(0)]],
     uint3 gid[[thread_position_in_grid]]) {
   if (gid.x >= outTexture.get_width() || gid.y >= outTexture.get_height() ||
       gid.z >= outTexture.get_array_size())
@@ -40,7 +40,7 @@ kernel void scale_before_bias_float(
 kernel void scale_after_bias_float(
     texture2d_array<float, access::read> inTexture[[texture(0)]],
     texture2d_array<float, access::write> outTexture[[texture(1)]],
-    constant ScaleParam& pm[[buffer(0)]],
+    constant ScaleParam &pm[[buffer(0)]],
     uint3 gid[[thread_position_in_grid]]) {
   if (gid.x >= outTexture.get_width() || gid.y >= outTexture.get_height() ||
       gid.z >= outTexture.get_array_size())
@@ -56,7 +56,7 @@ kernel void scale_after_bias_float(
 kernel void scale_before_bias_half(
     texture2d_array<half, access::read> inTexture[[texture(0)]],
     texture2d_array<half, access::write> outTexture[[texture(1)]],
-    constant ScaleParam& pm[[buffer(0)]],
+    constant ScaleParam &pm[[buffer(0)]],
     uint3 gid[[thread_position_in_grid]]) {
   if (gid.x >= outTexture.get_width() || gid.y >= outTexture.get_height() ||
       gid.z >= outTexture.get_array_size())
@@ -72,7 +72,7 @@ kernel void scale_before_bias_half(
 kernel void scale_after_bias_half(
     texture2d_array<half, access::read> inTexture[[texture(0)]],
     texture2d_array<half, access::write> outTexture[[texture(1)]],
-    constant ScaleParam& pm[[buffer(0)]],
+    constant ScaleParam &pm[[buffer(0)]],
     uint3 gid[[thread_position_in_grid]]) {
   if (gid.x >= outTexture.get_width() || gid.y >= outTexture.get_height() ||
       gid.z >= outTexture.get_array_size())

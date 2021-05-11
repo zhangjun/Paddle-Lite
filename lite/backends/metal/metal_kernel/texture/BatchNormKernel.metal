@@ -18,8 +18,8 @@ using namespace metal;
 kernel void batchnorm(
     texture2d_array<float, access::read> inTexture[[texture(0)]],
     texture2d_array<float, access::write> outTexture[[texture(1)]],
-    const device float4* nscale[[buffer(0)]],
-    const device float4* nbias[[buffer(1)]],
+    const device float4 *nscale[[buffer(0)]],
+    const device float4 *nbias[[buffer(1)]],
     uint3 gid[[thread_position_in_grid]]) {
   if (gid.x >= outTexture.get_width() || gid.y >= outTexture.get_height() ||
       gid.z >= outTexture.get_array_size())
@@ -32,8 +32,8 @@ kernel void batchnorm(
 kernel void batchnorm_half(
     texture2d_array<half, access::read> inTexture[[texture(0)]],
     texture2d_array<half, access::write> outTexture[[texture(1)]],
-    const device half4* newScale[[buffer(0)]],
-    const device half4* newBias[[buffer(1)]],
+    const device half4 *newScale[[buffer(0)]],
+    const device half4 *newBias[[buffer(1)]],
     uint3 gid[[thread_position_in_grid]]) {
   if (gid.x >= outTexture.get_width() || gid.y >= outTexture.get_height() ||
       gid.z >= outTexture.get_array_size())

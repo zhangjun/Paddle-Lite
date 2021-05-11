@@ -52,7 +52,7 @@ MetalDevice::~MetalDevice() {
 
 id<MTLDevice> MetalDevice::device() const { return device_; }
 void MetalDevice::set_device(id<MTLDevice> device) { device_ = device; }
-void MetalDevice::set_context(MetalContext* context) { context_ = context; }
-void MetalDevice::set_name(const char* name) { name_ = name; }
+void MetalDevice::set_context(MetalContext *context) { context_ = context; }
+void MetalDevice::set_name(const char *name) { name_ = name; }
 }
 }

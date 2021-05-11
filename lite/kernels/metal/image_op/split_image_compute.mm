@@ -25,11 +25,11 @@ namespace metal {
 
 template <typename P, PrecisionType PTYPE>
 void SplitImageCompute<P, PTYPE>::PrepareForRun() {
-  auto& context = this->ctx_->template As<ContextMetal>();
-  metal_context_ = (MetalContext*)context.context();
+  auto &context = this->ctx_->template As<ContextMetal>();
+  metal_context_ = (MetalContext *)context.context();
   auto device = metal_context_->GetDefaultDevice();
 
-  const auto& param = this->template Param<param_t>();
+  const auto &param = this->template Param<param_t>();
   auto outputs = param.output;
 
   size_t num = outputs.size();
@@ -43,9 +43,9 @@ void SplitImageCompute<P, PTYPE>::PrepareForRun() {
   }
 
   int axis = param.axis;
-  auto* axis_tensor = param.axis_tensor;
+  auto *axis_tensor = param.axis_tensor;
   if (axis_tensor != nullptr) {
-    auto* axis_tensor_data = axis_tensor->template data<int>();
+    auto *axis_tensor_data = axis_tensor->template data<int>();
     axis = axis_tensor_data[0];
   }
   if (axis < 0) {

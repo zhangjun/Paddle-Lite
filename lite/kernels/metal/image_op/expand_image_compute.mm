@@ -27,11 +27,11 @@ namespace metal {
 
 template <typename P, PrecisionType PTYPE>
 void ExpandImageCompute<P, PTYPE>::PrepareForRun() {
-  auto& context = this->ctx_->template As<ContextMetal>();
-  metal_context_ = (MetalContext*)context.context();
+  auto &context = this->ctx_->template As<ContextMetal>();
+  metal_context_ = (MetalContext *)context.context();
   auto device = metal_context_->GetDefaultDevice();
 
-  const auto& param = this->template Param<param_t>();
+  const auto &param = this->template Param<param_t>();
   auto output_dims = param.Out->dims();
 
   input_buffer_ = param.X->template data<P, MetalImage>();

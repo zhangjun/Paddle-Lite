@@ -22,7 +22,7 @@
 kernel void FUNC2_(hard_swish,
                    P)(texture2d_array<P, access::read> input[[texture(0)]],
                       texture2d_array<P, access::write> output[[texture(1)]],
-                      constant HardSwishParam& pm[[buffer(0)]],
+                      constant HardSwishParam &pm[[buffer(0)]],
                       uint3 gid[[thread_position_in_grid]]) {
   if (gid.x >= output.get_width() || gid.y >= output.get_height() ||
       gid.z >= output.get_array_size()) {

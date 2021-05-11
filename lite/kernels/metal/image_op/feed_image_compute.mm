@@ -22,14 +22,14 @@ namespace metal {
 
 template <typename P, PrecisionType PTYPE>
 void FeedImageCompute<P, PTYPE>::PrepareForRun() {
-  auto& context = this->ctx_->template As<ContextMetal>();
-  metal_context_ = (MetalContext*)context.context();
+  auto &context = this->ctx_->template As<ContextMetal>();
+  metal_context_ = (MetalContext *)context.context();
   device_ = metal_context_->GetDefaultDevice();
 
-  const auto& param = this->template Param<param_t>();
+  const auto &param = this->template Param<param_t>();
   auto output_dims = param.out->dims();
 
-  Tensor& input_tensor = param.feed_list->at(param.col);
+  Tensor &input_tensor = param.feed_list->at(param.col);
   auto input_dims = input_tensor.dims();
   int input_channel = input_dims[1];
   param.out->Resize(input_dims);
@@ -61,11 +61,11 @@ void FeedImageCompute<P, PTYPE>::PrepareForRun() {
 
 template <typename P, PrecisionType PTYPE>
 void FeedImageCompute<P, PTYPE>::Run() {
-  auto& context = this->ctx_->template As<ContextMetal>();
-  metal_context_ = (MetalContext*)context.context();
+  auto &context = this->ctx_->template As<ContextMetal>();
+  metal_context_ = (MetalContext *)context.context();
   auto mtl_dev = metal_context_->GetDefaultDevice();
-  const auto& param = this->template Param<param_t>();
-  Tensor& input_tensor = param.feed_list->at(param.col);
+  const auto &param = this->template Param<param_t>();
+  Tensor &input_tensor = param.feed_list->at(param.col);
   auto input_buffer = input_tensor.mutable_data<float>();
   auto input_dims = input_tensor.dims();
   auto mem_size = input_dims.production() * sizeof(float);

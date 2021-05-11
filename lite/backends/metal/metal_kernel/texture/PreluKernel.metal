@@ -18,7 +18,7 @@ using namespace metal;
 kernel void prelu_channel(
     texture2d_array<float, access::sample> inTexture[[texture(0)]],
     texture2d_array<float, access::write> outTexture[[texture(1)]],
-    const device float4* alpha[[buffer(0)]],
+    const device float4 *alpha[[buffer(0)]],
     uint3 gid[[thread_position_in_grid]]) {
   if (gid.x >= outTexture.get_width() || gid.y >= outTexture.get_height() ||
       gid.z >= outTexture.get_array_size()) {
@@ -40,7 +40,7 @@ kernel void prelu_channel(
 kernel void prelu_element(
     texture2d_array<float, access::sample> inTexture[[texture(0)]],
     texture2d_array<float, access::write> outTexture[[texture(1)]],
-    const device float4* alpha[[buffer(0)]],
+    const device float4 *alpha[[buffer(0)]],
     uint3 gid[[thread_position_in_grid]]) {
   if (gid.x >= outTexture.get_width() || gid.y >= outTexture.get_height() ||
       gid.z >= outTexture.get_array_size()) {
@@ -66,7 +66,7 @@ kernel void prelu_element(
 kernel void prelu_other(
     texture2d_array<float, access::sample> inTexture[[texture(0)]],
     texture2d_array<float, access::write> outTexture[[texture(1)]],
-    const device float* alpha[[buffer(0)]],
+    const device float *alpha[[buffer(0)]],
     uint3 gid[[thread_position_in_grid]]) {
   if (gid.x >= outTexture.get_width() || gid.y >= outTexture.get_height() ||
       gid.z >= outTexture.get_array_size()) {
@@ -88,7 +88,7 @@ kernel void prelu_other(
 kernel void prelu_channel_half(
     texture2d_array<half, access::sample> inTexture[[texture(0)]],
     texture2d_array<half, access::write> outTexture[[texture(1)]],
-    const device half4* alpha[[buffer(0)]],
+    const device half4 *alpha[[buffer(0)]],
     uint3 gid[[thread_position_in_grid]]) {
   if (gid.x >= outTexture.get_width() || gid.y >= outTexture.get_height() ||
       gid.z >= outTexture.get_array_size()) {
@@ -110,7 +110,7 @@ kernel void prelu_channel_half(
 kernel void prelu_element_half(
     texture2d_array<half, access::sample> inTexture[[texture(0)]],
     texture2d_array<half, access::write> outTexture[[texture(1)]],
-    const device half4* alpha[[buffer(0)]],
+    const device half4 *alpha[[buffer(0)]],
     uint3 gid[[thread_position_in_grid]]) {
   if (gid.x >= outTexture.get_width() || gid.y >= outTexture.get_height() ||
       gid.z >= outTexture.get_array_size()) {
@@ -136,7 +136,7 @@ kernel void prelu_element_half(
 kernel void prelu_other_half(
     texture2d_array<half, access::sample> inTexture[[texture(0)]],
     texture2d_array<half, access::write> outTexture[[texture(1)]],
-    const device half* alpha[[buffer(0)]],
+    const device half *alpha[[buffer(0)]],
     uint3 gid[[thread_position_in_grid]]) {
   if (gid.x >= outTexture.get_width() || gid.y >= outTexture.get_height() ||
       gid.z >= outTexture.get_array_size()) {

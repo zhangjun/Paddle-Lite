@@ -26,7 +26,7 @@ namespace kernels {
 namespace metal {
 
 template <typename dtype>
-void batch_norm_compute_ref(const operators::BatchNormParam& param) {
+void batch_norm_compute_ref(const operators::BatchNormParam &param) {
   DDim x_dims = param.x->dims();
   auto x_data = param.x->mutable_data<dtype>();
   auto scale_data = param.scale->mutable_data<dtype>();
@@ -157,12 +157,12 @@ TEST(batch_norm_metal, compute) {
                     saved_variance_ref.Resize({c});
 
                     // initialize the data of input tensors
-                    auto* x_data = x.mutable_data<float>();
-                    auto* scale_data = scale.mutable_data<float>();
-                    auto* bias_data = bias.mutable_data<float>();
-                    auto* mean_data = mean.mutable_data<float>();
-                    auto* variance_data = variance.mutable_data<float>();
-                    auto* y_data = y.mutable_data<float>();
+                    auto *x_data = x.mutable_data<float>();
+                    auto *scale_data = scale.mutable_data<float>();
+                    auto *bias_data = bias.mutable_data<float>();
+                    auto *mean_data = mean.mutable_data<float>();
+                    auto *variance_data = variance.mutable_data<float>();
+                    auto *y_data = y.mutable_data<float>();
                     for (int i = 0; i < x.dims().production(); i++) {
                       x_data[i] = static_cast<float>(i % 64);
                     }
@@ -180,7 +180,7 @@ TEST(batch_norm_metal, compute) {
                     }
 
                     auto x_dev_ptr = x_dev.mutable_data<float, MetalImage>(
-                        x.dims(), {0, 2, 3, 1}, (void*)x_data);
+                        x.dims(), {0, 2, 3, 1}, (void *)x_data);
                     auto y_host_ptr = y.mutable_data<float>();
 
                     if (false) {
@@ -198,7 +198,7 @@ TEST(batch_norm_metal, compute) {
                     BatchNormImageCompute<float, PRECISION(kFloat)> batch_norm;
                     std::unique_ptr<KernelContext> ctx(new KernelContext);
                     ctx->As<ContextMetal>().InitOnce();
-                    auto mt = (MetalContext*)ctx->As<ContextMetal>().context();
+                    auto mt = (MetalContext *)ctx->As<ContextMetal>().context();
                     mt->set_metal_path(
                         "/Users/liuzheyuan/code1/Paddle-Lite/cmake-build-debug/"
                         "lite/"
@@ -247,7 +247,7 @@ TEST(batch_norm_metal, compute) {
                     param.saved_variance = &saved_variance_ref;
 
                     batch_norm_compute_ref<float>(param);
-                    auto* y_ref_data = y_ref.mutable_data<float>();
+                    auto *y_ref_data = y_ref.mutable_data<float>();
 
                     for (int i = 0; i < y.dims().production(); i++) {
                       if (true)

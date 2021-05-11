@@ -27,11 +27,11 @@ namespace metal {
 
 template <typename P, PrecisionType PTYPE>
 void PoolImageCompute<P, PTYPE>::PrepareForRun() {
-  auto& context = this->ctx_->template As<ContextMetal>();
-  metal_context_ = (MetalContext*)context.context();
+  auto &context = this->ctx_->template As<ContextMetal>();
+  metal_context_ = (MetalContext *)context.context();
   auto device = metal_context_->GetDefaultDevice();
 
-  const auto& param = this->template Param<param_t>();
+  const auto &param = this->template Param<param_t>();
   auto output_dims = param.output->dims();
   auto input_dims = param.x->dims();
   auto global_pool = param.global_pooling;
@@ -84,7 +84,7 @@ void PoolImageCompute<P, PTYPE>::PrepareForRun() {
 
 template <typename P, PrecisionType PTYPE>
 void PoolImageCompute<P, PTYPE>::Run() {
-  const auto& param = this->template Param<param_t>();
+  const auto &param = this->template Param<param_t>();
   auto input_dims = param.x->dims();
   auto output_dims = param.output->dims();
 

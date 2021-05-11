@@ -21,8 +21,8 @@ namespace lite {
 
 MetalKernel::MetalKernel(const MetalKernelProgram kernel) : program_(kernel) {}
 
-void MetalKernel::Execute(const MetalEncoder& encoder,
-                          const MetalUint3& global_work_size,
+void MetalKernel::Execute(const MetalEncoder &encoder,
+                          const MetalUint3 &global_work_size,
                           const int groupDepth) {
   auto slices = (global_work_size.z * 4 + 3) / 4;
 
@@ -44,8 +44,8 @@ void MetalKernel::Execute(const MetalEncoder& encoder,
   return;
 }
 
-void MetalKernel::Execute(const MetalEncoder& encoder,
-                          const MetalUint3& texture_array_3d,
+void MetalKernel::Execute(const MetalEncoder &encoder,
+                          const MetalUint3 &texture_array_3d,
                           bool quadruple) {
   auto slices = (texture_array_3d.z * 4 + 3) / 4;
   int width = 0, height = 0, group_width = 0, group_height = 0;

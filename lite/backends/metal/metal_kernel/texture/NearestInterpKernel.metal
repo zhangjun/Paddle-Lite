@@ -24,7 +24,7 @@ struct NearestInterpParam {
 kernel void nearest_interp(
     texture2d_array<float, access::sample> inTexture[[texture(0)]],
     texture2d_array<float, access::write> outTexture[[texture(1)]],
-    constant NearestInterpParam& param[[buffer(0)]],
+    constant NearestInterpParam &param[[buffer(0)]],
     uint3 gid[[thread_position_in_grid]]) {
   if (gid.x >= outTexture.get_width() || gid.y >= outTexture.get_height() ||
       gid.z >= outTexture.get_array_size())
@@ -43,7 +43,7 @@ kernel void nearest_interp(
 kernel void nearest_interp_half(
     texture2d_array<half, access::sample> inTexture[[texture(0)]],
     texture2d_array<half, access::write> outTexture[[texture(1)]],
-    constant NearestInterpParam& param[[buffer(0)]],
+    constant NearestInterpParam &param[[buffer(0)]],
     uint3 gid[[thread_position_in_grid]]) {
   if (gid.x >= outTexture.get_width() || gid.y >= outTexture.get_height() ||
       gid.z >= outTexture.get_array_size())

@@ -51,7 +51,7 @@ kernel void relu(texture2d_array<float, access::sample> inTexture[[texture(0)]],
 kernel void relu6_half(
     texture2d_array<half, access::sample> inTexture[[texture(0)]],
     texture2d_array<half, access::write> outTexture[[texture(1)]],
-    constant Relu6Param& pm[[buffer(0)]],
+    constant Relu6Param &pm[[buffer(0)]],
     uint3 gid[[thread_position_in_grid]]) {
   if (gid.x >= outTexture.get_width() || gid.y >= outTexture.get_height() ||
       gid.z >= outTexture.get_array_size())
@@ -66,7 +66,7 @@ kernel void relu6_half(
 kernel void relu6(
     texture2d_array<float, access::sample> inTexture[[texture(0)]],
     texture2d_array<float, access::write> outTexture[[texture(1)]],
-    constant Relu6Param& pm[[buffer(0)]],
+    constant Relu6Param &pm[[buffer(0)]],
     uint3 gid[[thread_position_in_grid]]) {
   if (gid.x >= outTexture.get_width() || gid.y >= outTexture.get_height() ||
       gid.z >= outTexture.get_array_size())
@@ -81,7 +81,7 @@ kernel void relu6(
 kernel void leaky_relu(
     texture2d_array<float, access::sample> inTexture[[texture(0)]],
     texture2d_array<float, access::write> outTexture[[texture(1)]],
-    constant LeakyReluParam& pm[[buffer(0)]],
+    constant LeakyReluParam &pm[[buffer(0)]],
     uint3 gid[[thread_position_in_grid]]) {
   if (gid.x >= outTexture.get_width() || gid.y >= outTexture.get_height() ||
       gid.z >= outTexture.get_array_size())
@@ -96,7 +96,7 @@ kernel void leaky_relu(
 kernel void leaky_relu_half(
     texture2d_array<half, access::sample> inTexture[[texture(0)]],
     texture2d_array<half, access::write> outTexture[[texture(1)]],
-    constant LeakyReluParam& pm[[buffer(0)]],
+    constant LeakyReluParam &pm[[buffer(0)]],
     uint3 gid[[thread_position_in_grid]]) {
   if (gid.x >= outTexture.get_width() || gid.y >= outTexture.get_height() ||
       gid.z >= outTexture.get_array_size())

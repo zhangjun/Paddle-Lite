@@ -38,7 +38,7 @@ class MetalDebug {
   static void set_enable(bool flag) { enable_ = flag; }
 
   static void SaveOutput(std::string name,
-                         MetalBuffer* buffer,
+                         MetalBuffer *buffer,
                          DumpMode mode = DumpMode::kBoth) {
     layer_count_++;
     if (op_stats_.count(name) > 0) {
@@ -55,7 +55,7 @@ class MetalDebug {
   }
 
   static void SaveOutput(std::string name,
-                         MetalImage* image,
+                         MetalImage *image,
                          DumpMode mode = DumpMode::kBoth) {
     layer_count_++;
     if (op_stats_.count(name) > 0) {
@@ -72,9 +72,9 @@ class MetalDebug {
   }
 
   static void SaveOutput(std::string name,
-                         const MetalBuffer* image,
+                         const MetalBuffer *image,
                          DumpMode mode = DumpMode::kBoth) {
-    SaveOutput(name, const_cast<MetalBuffer*>(image), mode);
+    SaveOutput(name, const_cast<MetalBuffer *>(image), mode);
   }
 
   static void SaveOutput(std::string name,
@@ -84,9 +84,9 @@ class MetalDebug {
   }
 
   static void SaveOutput(std::string name,
-                         const MetalImage* image,
+                         const MetalImage *image,
                          DumpMode mode = DumpMode::kBoth) {
-    SaveOutput(name, const_cast<MetalImage*>(image), mode);
+    SaveOutput(name, const_cast<MetalImage *>(image), mode);
   }
 
   static void SaveOutput(std::string name,
@@ -95,34 +95,34 @@ class MetalDebug {
     SaveOutput(name, image.get(), mode);
   }
 
-  static void DumpImage(const std::string& name,
-                        MetalImage* image,
+  static void DumpImage(const std::string &name,
+                        MetalImage *image,
                         DumpMode mode = DumpMode::kBoth);
 
-  static void DumpImage(const std::string& name,
-                        const MetalImage* image,
+  static void DumpImage(const std::string &name,
+                        const MetalImage *image,
                         DumpMode mode = DumpMode::kBoth);
 
-  static void DumpImage(const std::string& name,
+  static void DumpImage(const std::string &name,
                         std::shared_ptr<MetalImage> image,
                         DumpMode mode = DumpMode::kBoth);
 
-  static void DumpBuffer(const std::string& name,
-                         MetalBuffer* image,
+  static void DumpBuffer(const std::string &name,
+                         MetalBuffer *image,
                          DumpMode mode = DumpMode::kBoth);
 
-  static void DumpBuffer(const std::string& name,
-                         const MetalBuffer* image,
+  static void DumpBuffer(const std::string &name,
+                         const MetalBuffer *image,
                          int length,
                          DumpMode mode = DumpMode::kBoth);
 
-  static void DumpBuffer(const std::string& name,
+  static void DumpBuffer(const std::string &name,
                          std::shared_ptr<MetalBuffer> buffer,
                          int length,
                          DumpMode mode = DumpMode::kBoth);
 
-  static void DumpNCHWFloat(const std::string& name,
-                            float* data,
+  static void DumpNCHWFloat(const std::string &name,
+                            float *data,
                             int length,
                             DumpMode mode = DumpMode::kBoth);
 

@@ -35,25 +35,25 @@ class MetalBuffer {
  public:
   enum class TYPE { kCommonBuffer, kTensorBuffer, kUnknownBuffer };
 
-  MetalBuffer(const MetalDevice& device, const MetalBufferDescriptor& desc);
+  MetalBuffer(const MetalDevice &device, const MetalBufferDescriptor &desc);
 
 #ifdef __OBJC__
-  MetalBuffer(const MetalDevice& device, id<MTLBuffer> buffer);
+  MetalBuffer(const MetalDevice &device, id<MTLBuffer> buffer);
 #else
-  MetalBuffer(const MetalDevice& device, void* buffer);
+  MetalBuffer(const MetalDevice &device, void *buffer);
 #endif
 
-  MetalBuffer(const MetalDevice& device,
+  MetalBuffer(const MetalDevice &device,
               size_t size,
               METAL_ACCESS_FLAG flag = METAL_ACCESS_FLAG::CPUReadWrite);
 
-  MetalBuffer(const MetalDevice& device,
-              void* data,
+  MetalBuffer(const MetalDevice &device,
+              void *data,
               size_t size,
               METAL_ACCESS_FLAG flag = METAL_ACCESS_FLAG::CPUReadWrite);
 
-  MetalBuffer(const MetalDevice& device,
-              const DDim& in_dim,
+  MetalBuffer(const MetalDevice &device,
+              const DDim &in_dim,
               METAL_PRECISION_TYPE precision = METAL_PRECISION_TYPE::FLOAT,
               bool pad_when_one_c = false,
               bool convert_to_NHWC = true,
@@ -65,42 +65,42 @@ class MetalBuffer {
   ~MetalBuffer();
 
   template <typename P>
-  P* Convert(DataConverter<P>* converter);
+  P *Convert(DataConverter<P> *converter);
 
-  void Read(void* data, size_t size, size_t offset) const;
-  void Read(void* data,
+  void Read(void *data, size_t size, size_t offset) const;
+  void Read(void *data,
             size_t size,
             size_t offset,
-            const MetalQueue& queue) const;
+            const MetalQueue &queue) const;
 
-  void Write(const void* src,
+  void Write(const void *src,
              size_t size,
              size_t offset,
-             const MetalQueue& queue) const;
-  void Write(const void* src, size_t size, size_t offset) const;
+             const MetalQueue &queue) const;
+  void Write(const void *src, size_t size, size_t offset) const;
 
-  void Copy(const MetalQueue& queue,
-            const MetalBuffer& src,
+  void Copy(const MetalQueue &queue,
+            const MetalBuffer &src,
             size_t size,
             size_t src_offset,
             size_t dst_offset) const;
-  void Copy(const MetalBuffer& src,
+  void Copy(const MetalBuffer &src,
             size_t size,
             size_t src_offset,
             size_t dst_offset) const;
 
   template <typename SP>
-  void CopyFromNCHW(const SP* src);
+  void CopyFromNCHW(const SP *src);
 
   template <typename DP>
-  void CopyToNCHW(DP* dst);
+  void CopyToNCHW(DP *dst);
 
 #if defined(__OBJC__)
   id<MTLBuffer> buffer() const;
   id<MTLBuffer> buffer_{nil};
 #else
-  void* buffer() const;
-  void* buffer_{nullptr};
+  void *buffer() const;
+  void *buffer_{nullptr};
 #endif
 
   int offset() const;
@@ -121,11 +121,11 @@ class MetalBuffer {
   DDim tensor_dim_;
   __unused DDim pad_to_four_dim_;
   DDim dim_;
-  void* data_ = nullptr;
+  void *data_ = nullptr;
 
   int precision_size_;
   size_t data_length_;
-  MetalDevice* mtl_device_;
+  MetalDevice *mtl_device_;
   int c_;
   int c_slices_;
   int padded_c_;

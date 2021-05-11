@@ -33,8 +33,8 @@ static MTLResourceOptions OptionForAccess(METAL_ACCESS_FLAG flag) {
   }
 }
 
-MetalImage::MetalImage(const MetalDevice& device,
-                       const DDim& in_dim,
+MetalImage::MetalImage(const MetalDevice &device,
+                       const DDim &in_dim,
                        std::vector<int> in_transpose,
                        const METAL_PRECISION_TYPE precision_type,
                        const METAL_ACCESS_FLAG flag)
@@ -58,7 +58,7 @@ MetalImage::MetalImage(const MetalDevice& device,
   // TODO:(lzy) Do we need clear the buffer here
 }
 
-void MetalImage::UpdateDims(const DDim& in_tensor_dim) {
+void MetalImage::UpdateDims(const DDim &in_tensor_dim) {
   auto four_dim = MetalImage::FourDimFrom(in_tensor_dim);
   tensor_dim_ = in_tensor_dim;
   pad_to_four_dim_ = four_dim;
@@ -173,14 +173,14 @@ DDim MetalImage::FourDimFrom(DDim in_dim) {
 #if defined(__OBJC__)
 id<MTLTexture> MetalImage::image() const
 #else
-void* metal_image::image() const
+void *metal_image::image() const
 #endif
 {
   return image_;
 }
 
 template <typename SP>
-void MetalImage::CopyFromNCHW(const SP* src) {
+void MetalImage::CopyFromNCHW(const SP *src) {
   size_t new_dims[] = {1, 1, 1, 1};
   for (int i = 0; i < tensor_dim_.size(); ++i) {
     new_dims[4 - tensor_dim_.size() + i] = static_cast<size_t>(tensor_dim_[i]);
@@ -196,7 +196,7 @@ void MetalImage::CopyFromNCHW(const SP* src) {
 
   if (precision_type_ == METAL_PRECISION_TYPE::FLOAT &&
       std::is_same<SP, float>::value) {
-    auto nvalue = (float*)malloc(sizeof(float) * rcount);
+    auto nvalue = (float *)malloc(sizeof(float) * rcount);
     if (tensor_dim_.size() == 4) {
       for (int i0 = 0; i0 < N; ++i0) {
         for (int i1 = 0; i1 < C; ++i1) {
@@ -267,7 +267,7 @@ void MetalImage::CopyFromNCHW(const SP* src) {
     free(nvalue);
   } else if (precision_type_ == METAL_PRECISION_TYPE::HALF &&
              std::is_same<SP, float>::value) {
-    auto nvalue = (MetalHalf*)malloc(sizeof(MetalHalf) * rcount);
+    auto nvalue = (MetalHalf *)malloc(sizeof(MetalHalf) * rcount);
     if (tensor_dim_.size() == 4) {
       for (int i0 = 0; i0 < N; ++i0) {
         for (int i1 = 0; i1 < C; ++i1) {
@@ -338,7 +338,7 @@ void MetalImage::CopyFromNCHW(const SP* src) {
     free(nvalue);
   } else if (precision_type_ == METAL_PRECISION_TYPE::HALF &&
              std::is_same<SP, MetalHalf>::value) {
-    auto nvalue = (MetalHalf*)malloc(sizeof(MetalHalf) * rcount);
+    auto nvalue = (MetalHalf *)malloc(sizeof(MetalHalf) * rcount);
     if (tensor_dim_.size() == 4) {
       for (int i0 = 0; i0 < N; ++i0) {
         for (int i1 = 0; i1 < C; ++i1) {
@@ -427,7 +427,7 @@ __unused void MetalImage::Zero() const {
   else if (precision_type_ == METAL_PRECISION_TYPE::HALF)
     size_p = 2;
   auto rcount = texture_width_ * texture_height_ * 1 * channels_per_pixel_;
-  char* nvalue = (char*)malloc(size_p * rcount);
+  char *nvalue = (char *)malloc(size_p * rcount);
   memset(nvalue, 0, size_p * rcount);
 
   auto bytes_per_row =
@@ -454,7 +454,7 @@ __unused void MetalImage::Zero() const {
 }
 
 template <typename P>
-void MetalImage::CopyToNCHW(P* dst) const {
+void MetalImage::CopyToNCHW(P *dst) const {
   size_t new_dims[] = {1, 1, 1, 1};
   for (int i = 0; i < tensor_dim_.size(); ++i) {
     new_dims[4 - tensor_dim_.size() + i] = static_cast<size_t>(tensor_dim_[i]);
@@ -470,7 +470,7 @@ void MetalImage::CopyToNCHW(P* dst) const {
 
   if (precision_type_ == METAL_PRECISION_TYPE::FLOAT &&
       std::is_same<P, float>::value) {
-    auto pointer = (float*)malloc(sizeof(float) * dstCounts);
+    auto pointer = (float *)malloc(sizeof(float) * dstCounts);
 
     auto bytes_per_row =
         image_.width * image_.depth * channels_per_pixel_ * sizeof(float);
@@ -541,7 +541,7 @@ void MetalImage::CopyToNCHW(P* dst) const {
     free(pointer);
   } else if (precision_type_ == METAL_PRECISION_TYPE::HALF &&
              std::is_same<P, float>::value) {
-    auto pointer = (MetalHalf*)malloc(sizeof(MetalHalf) * dstCounts);
+    auto pointer = (MetalHalf *)malloc(sizeof(MetalHalf) * dstCounts);
 
     auto bytes_per_row =
         image_.width * image_.depth * channels_per_pixel_ * sizeof(MetalHalf);
@@ -613,7 +613,7 @@ void MetalImage::CopyToNCHW(P* dst) const {
     free(pointer);
   } else if (precision_type_ == METAL_PRECISION_TYPE::HALF &&
              std::is_same<P, MetalHalf>::value) {
-    auto pointer = (MetalHalf*)malloc(sizeof(MetalHalf) * dstCounts);
+    auto pointer = (MetalHalf *)malloc(sizeof(MetalHalf) * dstCounts);
 
     auto bytes_per_row =
         image_.width * image_.depth * channels_per_pixel_ * sizeof(MetalHalf);
@@ -696,9 +696,9 @@ MetalImage::~MetalImage() {
   device_ = nullptr;
 }
 
-template void MetalImage::CopyFromNCHW(const float* src);
-template void MetalImage::CopyFromNCHW(const MetalHalf* src);
-template void MetalImage::CopyToNCHW(float* dst) const;
-template void MetalImage::CopyToNCHW(MetalHalf* dst) const;
+template void MetalImage::CopyFromNCHW(const float *src);
+template void MetalImage::CopyFromNCHW(const MetalHalf *src);
+template void MetalImage::CopyToNCHW(float *dst) const;
+template void MetalImage::CopyToNCHW(MetalHalf *dst) const;
 }
 }

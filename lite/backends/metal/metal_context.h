@@ -36,10 +36,10 @@ class MetalContext {
   /// device
   void PrepareDevices();
   int GetDevicesNum();
-  MetalDevice* GetDeviceByID(int id);
-  const MetalDevice* GetDefaultDevice();
+  MetalDevice *GetDeviceByID(int id);
+  const MetalDevice *GetDefaultDevice();
 
-  void CreateCommandBuffer(RuntimeProgram* program = nullptr);
+  void CreateCommandBuffer(RuntimeProgram *program = nullptr);
   void WaitUntilCompleted();
 
   void set_metal_path(std::string path);
@@ -51,29 +51,29 @@ class MetalContext {
   }
 
   /// queue
-  std::shared_ptr<MetalQueue> GetDefaultQueue(const MetalDevice& device);
-  std::shared_ptr<MetalQueue> CreateQueue(const MetalDevice& device);
+  std::shared_ptr<MetalQueue> GetDefaultQueue(const MetalDevice &device);
+  std::shared_ptr<MetalQueue> CreateQueue(const MetalDevice &device);
 
   /// program
-  std::shared_ptr<MetalKernel> GetKernel(const MetalDevice& device,
+  std::shared_ptr<MetalKernel> GetKernel(const MetalDevice &device,
                                          const std::string function_name);
 
-  void CreateLibraryWithFile(const MetalDevice& device,
+  void CreateLibraryWithFile(const MetalDevice &device,
                              std::string library_name = "");
 
   /// buffer_and_image
   std::shared_ptr<MetalBuffer> CreateBuffer(
-      const MetalDevice& device,
+      const MetalDevice &device,
       size_t length,
       METAL_ACCESS_FLAG flags = METAL_ACCESS_FLAG::CPUReadWrite);
 
   std::shared_ptr<MetalBuffer> CreateBuffer(
-      const MetalDevice& device,
-      void* data,
+      const MetalDevice &device,
+      void *data,
       size_t length,
       METAL_ACCESS_FLAG flags = METAL_ACCESS_FLAG::CPUReadWrite);
 
-  MetalDevice* best_metal_device_{nullptr};
+  MetalDevice *best_metal_device_{nullptr};
   mutable std::vector<std::shared_ptr<MetalDevice>> devices_ = {};
 
   std::unique_ptr<MetalCommandBuffer> cmd_buf_;
@@ -82,8 +82,8 @@ class MetalContext {
   id<MTLLibrary> library_ = nil;
   std::map<size_t, id<MTLLibrary>> library_map_;
 #else
-  void* library_ = nullptr;
-  std::map<size_t, void*> library_map_;
+  void *library_ = nullptr;
+  std::map<size_t, void *> library_map_;
 #endif
 
  private:
@@ -91,7 +91,7 @@ class MetalContext {
   std::string metal_path_;
   bool use_aggressive_optimization_{false};
   bool use_mps_{false};
-  RuntimeProgram* program_ = nullptr;
+  RuntimeProgram *program_ = nullptr;
 };
 }  // namespace lite
 }  // namespace paddle

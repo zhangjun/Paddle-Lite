@@ -28,7 +28,7 @@ kernel void FUNC(reshape,
                  ROUT,
                  P)(texture2d_array<P, access::read> inTexture[[texture(0)]],
                     texture2d_array<P, access::write> outTexture[[texture(1)]],
-                    constant ReshapeParam& rp[[buffer(0)]],
+                    constant ReshapeParam &rp[[buffer(0)]],
                     uint3 gid[[thread_position_in_grid]]) {
   if (gid.x >= outTexture.get_width() || gid.y >= outTexture.get_height() ||
       gid.z >= outTexture.get_array_size())

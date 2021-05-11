@@ -38,13 +38,13 @@ class MetalDevice {
   id<MTLDevice> device() const;
   void set_device(id<MTLDevice> device);
 #else
-  void* device() const;
-  void set_device(void* device);
+  void *device() const;
+  void set_device(void *device);
 #endif
 
-  void set_context(MetalContext* context);
-  void set_name(const char* name);
-  MetalContext* context() { return context_; }
+  void set_context(MetalContext *context);
+  void set_name(const char *name);
+  MetalContext *context() { return context_; }
   std::string name() { return name_; }
   virtual ~MetalDevice();
 
@@ -52,10 +52,10 @@ class MetalDevice {
 #if defined(__OBJC__)
   id<MTLDevice> device_;
 #else
-  void* device_;
+  void *device_;
 #endif
 
-  MetalContext* context_;
+  MetalContext *context_;
   mutable std::vector<std::shared_ptr<MetalQueue>> queues_;
   std::string name_;
 };

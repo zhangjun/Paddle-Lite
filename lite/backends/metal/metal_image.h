@@ -32,20 +32,20 @@ class MetalImage {
 #if defined(__OBJC__)
   id<MTLTexture> image() const;
 #else
-  void* image() const;
+  void *image() const;
 #endif
 
-  MetalImage(const MetalDevice& device,
-             const DDim& in_dim,
+  MetalImage(const MetalDevice &device,
+             const DDim &in_dim,
              std::vector<int> in_transpose = {0, 2, 3, 1},
              METAL_PRECISION_TYPE precision_type = METAL_PRECISION_TYPE::FLOAT,
              METAL_ACCESS_FLAG flag = METAL_ACCESS_FLAG::CPUReadWrite);
 
   template <typename SP>
-  void CopyFromNCHW(const SP* src);
+  void CopyFromNCHW(const SP *src);
 
   template <typename DP>
-  void CopyToNCHW(DP* dst) const;
+  void CopyToNCHW(DP *dst) const;
 
   static DDim FourDimFrom(DDim in_dim);
   __unused void Zero() const;
@@ -64,19 +64,19 @@ class MetalImage {
   std::vector<int> transpose_ = {0, 1, 2, 3};
 
  private:
-  void UpdateDims(const DDim& in_tensor_dim);
+  void UpdateDims(const DDim &in_tensor_dim);
   void InitTexture();
   const METAL_PRECISION_TYPE precision_type_;
   const METAL_ACCESS_FLAG flag_;
 
-  const MetalDevice* device_;
+  const MetalDevice *device_;
 
 #if defined(__OBJC__)
   id<MTLTexture> image_{nil};
-  MTLTextureDescriptor* desc_{nil};
+  MTLTextureDescriptor *desc_{nil};
 #else
-  void* image_{nullptr};
-  void* desc_{nullptr};
+  void *image_{nullptr};
+  void *desc_{nullptr};
 #endif
 };
 

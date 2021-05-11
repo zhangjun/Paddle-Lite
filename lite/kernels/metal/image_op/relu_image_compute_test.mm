@@ -25,7 +25,7 @@ namespace kernels {
 namespace metal {
 
 template <typename dtype>
-void relu_compute_ref(const operators::ActivationParam& param) {
+void relu_compute_ref(const operators::ActivationParam &param) {
   DDim x_dims = param.X->dims();
   auto x_data = param.X->data<dtype>();
   auto y_data = param.Out->mutable_data<dtype>();
@@ -38,7 +38,7 @@ void relu_compute_ref(const operators::ActivationParam& param) {
   channel_size = x_dims[1];
   inner_size = x_dims.Slice(2, x_dims.size()).production();
 
-  auto x_ptr = const_cast<dtype*>(x_data);
+  auto x_ptr = const_cast<dtype *>(x_data);
   auto y_ptr = y_data;
   for (int o = 0; o < outer_size; o++) {
     for (int c = 0; c < channel_size; c++) {
@@ -125,8 +125,8 @@ TEST(relu_metal, compute) {
                     saved_mean_ref.Resize({c});
                     saved_variance_ref.Resize({c});
                     // initialize the data of input tensors
-                    auto* x_data = x.mutable_data<float>();
-                    auto* y_data = y.mutable_data<float>();
+                    auto *x_data = x.mutable_data<float>();
+                    auto *y_data = y.mutable_data<float>();
 
                     for (int i = 0; i < x.dims().production(); i++) {
                       auto sign = pow(-1, i);
@@ -134,7 +134,7 @@ TEST(relu_metal, compute) {
                     }
 
                     auto x_dev_ptr = x_dev.mutable_data<float, MetalImage>(
-                        x_dev.dims(), {0, 2, 3, 1}, (void*)x_data);
+                        x_dev.dims(), {0, 2, 3, 1}, (void *)x_data);
                     auto y_host_ptr = y.mutable_data<float>();
 
                     {
@@ -153,7 +153,7 @@ TEST(relu_metal, compute) {
                     std::unique_ptr<KernelContext> ctx(new KernelContext);
                     ctx->As<ContextMetal>().InitOnce();
 
-                    auto mt = (MetalContext*)ctx->As<ContextMetal>().context();
+                    auto mt = (MetalContext *)ctx->As<ContextMetal>().context();
                     mt->set_metal_path(
                         "/Users/liuzheyuan/code/Paddle-Lite/cmake-build-debug/"
                         "lite/"
@@ -173,7 +173,7 @@ TEST(relu_metal, compute) {
                     param.X = &x;
                     param.Out = &y_ref;
                     relu_compute_ref<float>(param);
-                    auto* y_ref_data = y_ref.mutable_data<float>();
+                    auto *y_ref_data = y_ref.mutable_data<float>();
 
                     for (int i = 0; i < y.dims().production(); i++) {
                       ASSERT_NEAR(y_data[i], y_ref_data[i], 1e-5);
@@ -262,8 +262,8 @@ TEST(relu_metal_half, compute) {
                     saved_mean_ref.Resize({c});
                     saved_variance_ref.Resize({c});
                     // initialize the data of input tensors
-                    auto* x_data = x.mutable_data<float>();
-                    auto* y_data = y.mutable_data<float>();
+                    auto *x_data = x.mutable_data<float>();
+                    auto *y_data = y.mutable_data<float>();
 
                     for (int i = 0; i < x.dims().production(); i++) {
                       auto sign = pow(-1, i);
@@ -285,7 +285,7 @@ TEST(relu_metal_half, compute) {
                       x_from_dev.Resize(in_out_shape);
                       auto x_from_dev_ptr = x_from_dev.mutable_data<float>();
                       x_dev_ptr->CopyToNCHW<float>(
-                          reinterpret_cast<float*>(x_from_dev_ptr));
+                          reinterpret_cast<float *>(x_from_dev_ptr));
                       for (int i = 0; i < x_from_dev.dims().production(); i++) {
                         ASSERT_NEAR(x_from_dev_ptr[i], x_data[i], 1e-5);
                       }
@@ -309,7 +309,7 @@ TEST(relu_metal_half, compute) {
                     param.X = &x;
                     param.Out = &y_ref;
                     relu_compute_ref<float>(param);
-                    auto* y_ref_data = y_ref.mutable_data<float>();
+                    auto *y_ref_data = y_ref.mutable_data<float>();
 
                     for (int i = 0; i < y.dims().production(); i++) {
                       ASSERT_NEAR(y_data[i], y_ref_data[i], 1e-5);

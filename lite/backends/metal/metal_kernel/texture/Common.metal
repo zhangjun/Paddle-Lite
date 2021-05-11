@@ -203,7 +203,7 @@ struct B2TParam {
 };
 
 inline half4 getBiasHalf(uint3 gid,
-                         constant ElementwiseAddParam& addParam,
+                         constant ElementwiseAddParam &addParam,
                          texture2d_array<half, access::sample> biasTexture) {
   half4 output;
   if (addParam.fast == 1) {
@@ -240,7 +240,7 @@ inline half4 getBiasHalf(uint3 gid,
 }
 
 inline float4 getBias(uint3 gid,
-                      constant ElementwiseAddParam& addParam,
+                      constant ElementwiseAddParam &addParam,
                       texture2d_array<float, access::sample> biasTexture) {
   float4 output;
   if (addParam.fast == 1) {
