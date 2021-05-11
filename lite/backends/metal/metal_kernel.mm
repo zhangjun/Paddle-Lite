@@ -27,13 +27,15 @@ void MetalKernel::Execute(const MetalEncoder& encoder,
   auto slices = (global_work_size.z * 4 + 3) / 4;
 
   auto width = (MetalUint)program_.pipeline_state_.threadExecutionWidth;
-  auto height = (MetalUint)program_.pipeline_state_.maxTotalThreadsPerThreadgroup / width;
+  auto height =
+      (MetalUint)program_.pipeline_state_.maxTotalThreadsPerThreadgroup / width;
   auto threads_per_group = MTLSizeMake(width, height, 1);
 
   auto group_width = (global_work_size.x + width - 1) / width;
   auto group_height = (global_work_size.y + height - 1) / height;
 
-  MTLSize groups = MTLSizeMake(group_width, group_height, groupDepth ? groupDepth : slices);
+  MTLSize groups =
+      MTLSizeMake(group_width, group_height, groupDepth ? groupDepth : slices);
   assert(groups.width > 0 && groups.height > 0 && groups.depth > 0);
 
   [encoder.metal_command_encoder_ dispatchThreadgroups:groups
@@ -58,7 +60,8 @@ void MetalKernel::Execute(const MetalEncoder& encoder,
   } else {
     width = (int)program_.pipeline_state_.threadExecutionWidth;
     width = std::min<int>(width, texture_array_3d.x);
-    height = (int)program_.pipeline_state_.maxTotalThreadsPerThreadgroup / width;
+    height =
+        (int)program_.pipeline_state_.maxTotalThreadsPerThreadgroup / width;
     height = std::min<int>(height, texture_array_3d.y);
     group_width = (texture_array_3d.x + width - 1) / width;
     group_height = (texture_array_3d.y + height - 1) / height;
@@ -73,7 +76,6 @@ void MetalKernel::Execute(const MetalEncoder& encoder,
   return;
 }
 
-MetalKernelProgram::~MetalKernelProgram(){
-}
+MetalKernelProgram::~MetalKernelProgram() {}
 }
 }

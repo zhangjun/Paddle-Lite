@@ -12,5 +12,4 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-
 #include "lite/backends/metal/metal_converter.h"

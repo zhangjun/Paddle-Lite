@@ -24,7 +24,7 @@
 
 kernel void FUNC_T(fetch,
                    P)(texture2d_array<P, access::read> inTexture[[texture(0)]],
-                      device float *output[[buffer(0)]],
+                      device float* output[[buffer(0)]],
                       uint3 gid[[thread_position_in_grid]]) {
   uint input_width = inTexture.get_width();
   uint input_height = inTexture.get_height();
@@ -46,7 +46,7 @@ kernel void FUNC_T(fetch,
 kernel void FUNC(fetch,
                  1or2,
                  P)(texture2d_array<P, access::read> inTexture[[texture(0)]],
-                    device float4 *output[[buffer(0)]],
+                    device float4* output[[buffer(0)]],
                     uint3 gid[[thread_position_in_grid]]) {
   if (gid.x >= inTexture.get_width() || gid.y >= inTexture.get_height() ||
       gid.z >= inTexture.get_array_size()) {

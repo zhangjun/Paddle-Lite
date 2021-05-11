@@ -19,7 +19,7 @@ using namespace metal;
 kernel void instance_norm_relu(
     texture2d_array<float, access::read> in[[texture(0)]],
     texture2d_array<float, access::write> out[[texture(1)]],
-    constant MetalInstanceNormReluParam &param[[buffer(0)]],
+    constant MetalInstanceNormReluParam& param[[buffer(0)]],
     ushort3 gid[[thread_position_in_grid]],
     ushort tid[[thread_index_in_threadgroup]],
     ushort3 tg_size[[threads_per_threadgroup]]) {
@@ -110,7 +110,7 @@ kernel void instance_norm_relu(
 kernel void instance_norm_relu_half(
     texture2d_array<half, access::read> in[[texture(0)]],
     texture2d_array<half, access::write> out[[texture(1)]],
-    constant MetalInstanceNormReluParam &param[[buffer(0)]],
+    constant MetalInstanceNormReluParam& param[[buffer(0)]],
     ushort3 gid[[thread_position_in_grid]],
     ushort tid[[thread_index_in_threadgroup]],
     ushort3 tg_size[[threads_per_threadgroup]]) {

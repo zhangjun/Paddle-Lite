@@ -19,7 +19,7 @@ kernel void grid_sampler(
     texture2d_array<float, access::sample> inTexture[[texture(0)]],
     texture2d_array<float, access::write> outTexture[[texture(1)]],
     texture2d_array<float, access::read> gridTexture[[texture(2)]],
-    const device float2 *grid[[buffer(0)]],
+    const device float2* grid[[buffer(0)]],
     uint3 gid[[thread_position_in_grid]]) {
   if (gid.x >= outTexture.get_width() || gid.y >= outTexture.get_height() ||
       gid.z >= outTexture.get_array_size()) {

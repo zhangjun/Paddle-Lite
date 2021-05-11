@@ -16,7 +16,7 @@
 using namespace metal;
 
 kernel void buffer_to_texture_kernel(
-    const device float *input[[buffer(0)]],
+    const device float* input[[buffer(0)]],
     texture2d<float, access::write> outTexture[[texture(0)]],
     uint2 gid[[thread_position_in_grid]]) {
   if (gid.x >= outTexture.get_width() || gid.y >= outTexture.get_height()) {
@@ -28,7 +28,7 @@ kernel void buffer_to_texture_kernel(
 }
 
 kernel void buffer_to_texture_kernel_half(
-    const device float *input[[buffer(0)]],
+    const device float* input[[buffer(0)]],
     texture2d<half, access::write> outTexture[[texture(0)]],
     uint2 gid[[thread_position_in_grid]]) {
   if (gid.x >= outTexture.get_width() || gid.y >= outTexture.get_height()) {
@@ -40,7 +40,7 @@ kernel void buffer_to_texture_kernel_half(
 }
 
 kernel void buffer_to_texture_kernel_channel_3(
-    const device float *input[[buffer(0)]],
+    const device float* input[[buffer(0)]],
     texture2d<float, access::write> outTexture[[texture(0)]],
     uint2 gid[[thread_position_in_grid]]) {
   if (gid.x >= outTexture.get_width() || gid.y >= outTexture.get_height()) {
@@ -55,7 +55,7 @@ kernel void buffer_to_texture_kernel_channel_3(
 }
 
 kernel void buffer_to_texture_kernel_half_channel_3(
-    const device float *input[[buffer(0)]],
+    const device float* input[[buffer(0)]],
     texture2d<half, access::write> outTexture[[texture(0)]],
     uint2 gid[[thread_position_in_grid]]) {
   if (gid.x >= outTexture.get_width() || gid.y >= outTexture.get_height()) {

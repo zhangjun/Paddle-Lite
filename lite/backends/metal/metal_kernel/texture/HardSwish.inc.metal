@@ -22,7 +22,7 @@
 kernel void FUNC2_(hard_swish,
                    P)(texture2d_array<P, access::read> input[[texture(0)]],
                       texture2d_array<P, access::write> output[[texture(1)]],
-                      constant HardSwishParam &pm[[buffer(0)]],
+                      constant HardSwishParam& pm[[buffer(0)]],
                       uint3 gid[[thread_position_in_grid]]) {
   if (gid.x >= output.get_width() || gid.y >= output.get_height() ||
       gid.z >= output.get_array_size()) {
@@ -31,9 +31,9 @@ kernel void FUNC2_(hard_swish,
 
   VECTOR(P, 4) input_value = input.read(gid.xy, gid.z);
   VECTOR(P, 4)
-  output_value =
-      input_value * (min(max(0.0, input_value + pm.offset), pm.threshold)) /
-      pm.scale;
+  output_value = input_value *
+                 (min(max(0.0, input_value + pm.offset), pm.threshold)) /
+                 pm.scale;
   output.write(output_value, gid.xy, gid.z);
 }
 

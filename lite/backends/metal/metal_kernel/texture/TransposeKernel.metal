@@ -25,14 +25,14 @@ struct TransposeParam {
 kernel void transpose_copy_float(
     texture2d_array<float, access::read> inTexture[[texture(0)]],
     texture2d_array<float, access::write> outTexture[[texture(1)]],
-    constant TransposeParam &pm[[buffer(0)]],
+    constant TransposeParam& pm[[buffer(0)]],
     uint3 gid[[thread_position_in_grid]]) {
   outTexture.write(inTexture.read(gid.xy, gid.z), gid.xy, gid.z);
 }
 kernel void transpose_copy_half(
     texture2d_array<half, access::read> inTexture[[texture(0)]],
     texture2d_array<half, access::write> outTexture[[texture(1)]],
-    constant TransposeParam &pm[[buffer(0)]],
+    constant TransposeParam& pm[[buffer(0)]],
     uint3 gid[[thread_position_in_grid]]) {
   outTexture.write(inTexture.read(gid.xy, gid.z), gid.xy, gid.z);
 }

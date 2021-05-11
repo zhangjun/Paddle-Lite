@@ -21,10 +21,10 @@ using namespace metal;
 kernel void conv_batch_norm_relu_1x1(
     texture2d_array<float, access::sample> inTexture[[texture(0)]],
     texture2d_array<float, access::write> outTexture[[texture(1)]],
-    constant MetalConvParam &param[[buffer(0)]],
-    const device float4 *weights[[buffer(1)]],
-    const device float4 *new_scale[[buffer(2)]],
-    const device float4 *new_biase[[buffer(3)]],
+    constant MetalConvParam& param[[buffer(0)]],
+    const device float4* weights[[buffer(1)]],
+    const device float4* new_scale[[buffer(2)]],
+    const device float4* new_biase[[buffer(3)]],
     uint3 gid[[thread_position_in_grid]]) {
   if (gid.x >= outTexture.get_width() || gid.y >= outTexture.get_height() ||
       gid.z >= outTexture.get_array_size()) {
@@ -66,10 +66,10 @@ kernel void conv_batch_norm_relu_1x1(
 kernel void conv_batch_norm_relu_3x3(
     texture2d_array<float, access::sample> inTexture[[texture(0)]],
     texture2d_array<float, access::write> outTexture[[texture(1)]],
-    constant MetalConvParam &param[[buffer(0)]],
-    const device float4 *weights[[buffer(1)]],
-    const device float4 *new_scale[[buffer(2)]],
-    const device float4 *new_biase[[buffer(3)]],
+    constant MetalConvParam& param[[buffer(0)]],
+    const device float4* weights[[buffer(1)]],
+    const device float4* new_scale[[buffer(2)]],
+    const device float4* new_biase[[buffer(3)]],
     uint3 gid[[thread_position_in_grid]]) {
   if (gid.x >= outTexture.get_width() || gid.y >= outTexture.get_height() ||
       gid.z >= outTexture.get_array_size()) {
@@ -132,10 +132,10 @@ kernel void conv_batch_norm_relu_3x3(
 kernel void depthwise_conv_batch_norm_relu_3x3(
     texture2d_array<float, access::sample> inTexture[[texture(0)]],
     texture2d_array<float, access::write> outTexture[[texture(1)]],
-    constant MetalConvParam &param[[buffer(0)]],
-    const device float *weights[[buffer(1)]],
-    const device float4 *new_scale[[buffer(2)]],
-    const device float4 *new_biase[[buffer(3)]],
+    constant MetalConvParam& param[[buffer(0)]],
+    const device float* weights[[buffer(1)]],
+    const device float4* new_scale[[buffer(2)]],
+    const device float4* new_biase[[buffer(3)]],
     uint3 gid[[thread_position_in_grid]]) {
   if (gid.x >= outTexture.get_width() || gid.y >= outTexture.get_height() ||
       gid.z >= outTexture.get_array_size()) {
@@ -184,10 +184,10 @@ kernel void depthwise_conv_batch_norm_relu_3x3(
 kernel void conv_batch_norm_relu_1x1_half(
     texture2d_array<half, access::sample> inTexture[[texture(0)]],
     texture2d_array<half, access::write> outTexture[[texture(1)]],
-    constant MetalConvParam &param[[buffer(0)]],
-    const device half4 *weights[[buffer(1)]],
-    const device half4 *new_scale[[buffer(2)]],
-    const device half4 *new_biase[[buffer(3)]],
+    constant MetalConvParam& param[[buffer(0)]],
+    const device half4* weights[[buffer(1)]],
+    const device half4* new_scale[[buffer(2)]],
+    const device half4* new_biase[[buffer(3)]],
     uint3 gid[[thread_position_in_grid]]) {
   if (gid.x >= outTexture.get_width() || gid.y >= outTexture.get_height() ||
       gid.z >= outTexture.get_array_size()) {
@@ -230,10 +230,10 @@ kernel void conv_batch_norm_relu_1x1_half(
 kernel void conv_batch_norm_relu_3x3_half(
     texture2d_array<half, access::sample> inTexture[[texture(0)]],
     texture2d_array<half, access::write> outTexture[[texture(1)]],
-    constant MetalConvParam &param[[buffer(0)]],
-    const device half4 *weights[[buffer(1)]],
-    const device half4 *new_scale[[buffer(2)]],
-    const device half4 *new_biase[[buffer(3)]],
+    constant MetalConvParam& param[[buffer(0)]],
+    const device half4* weights[[buffer(1)]],
+    const device half4* new_scale[[buffer(2)]],
+    const device half4* new_biase[[buffer(3)]],
     uint3 gid[[thread_position_in_grid]]) {
   if (gid.x >= outTexture.get_width() || gid.y >= outTexture.get_height() ||
       gid.z >= outTexture.get_array_size()) {
@@ -297,10 +297,10 @@ kernel void conv_batch_norm_relu_3x3_half(
 kernel void group_conv_batch_norm_relu_3x3_half(
     texture2d_array<half, access::sample> inTexture[[texture(0)]],
     texture2d_array<half, access::write> outTexture[[texture(1)]],
-    constant MetalConvParam &param[[buffer(0)]],
-    const device half *weights[[buffer(1)]],
-    const device half4 *new_scale[[buffer(2)]],
-    const device half4 *new_biase[[buffer(3)]],
+    constant MetalConvParam& param[[buffer(0)]],
+    const device half* weights[[buffer(1)]],
+    const device half4* new_scale[[buffer(2)]],
+    const device half4* new_biase[[buffer(3)]],
     uint3 gid[[thread_position_in_grid]]) {
   if (gid.x >= outTexture.get_width() || gid.y >= outTexture.get_height() ||
       gid.z >= outTexture.get_array_size()) {
@@ -384,10 +384,10 @@ kernel void group_conv_batch_norm_relu_3x3_half(
 kernel void depthwise_conv_batch_norm_relu_3x3_half(
     texture2d_array<half, access::sample> inTexture[[texture(0)]],
     texture2d_array<half, access::write> outTexture[[texture(1)]],
-    constant MetalConvParam &param[[buffer(0)]],
-    const device half *weights[[buffer(1)]],
-    const device half4 *new_scale[[buffer(2)]],
-    const device half4 *new_biase[[buffer(3)]],
+    constant MetalConvParam& param[[buffer(0)]],
+    const device half* weights[[buffer(1)]],
+    const device half4* new_scale[[buffer(2)]],
+    const device half4* new_biase[[buffer(3)]],
     uint3 gid[[thread_position_in_grid]]) {
   if (gid.x >= outTexture.get_width() || gid.y >= outTexture.get_height() ||
       gid.z >= outTexture.get_array_size()) {

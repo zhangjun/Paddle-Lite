@@ -47,7 +47,7 @@ kernel void FUNC(split, R, N, VV, P)(
 #if N >= 4
     texture2d_array<P, access::write> out4[[texture(4)]],
 #endif  // N >= 4
-    constant SplitParam &sp[[buffer(0)]],
+    constant SplitParam& sp[[buffer(0)]],
     uint3 gid[[thread_position_in_grid]]) {
 
   VECTOR(P, 4) r = input.read(gid.xy, gid.z);
@@ -89,7 +89,7 @@ kernel void FUNC(split, R, N, VV, P)(
 #if N >= 4
     texture2d_array<P, access::write> out4[[texture(4)]],
 #endif  // N >= 4
-    constant SplitParam &sp[[buffer(0)]],
+    constant SplitParam& sp[[buffer(0)]],
     uint3 gid[[thread_position_in_grid]]) {
   VECTOR(P, 4) r = input.read(gid.xy, gid.z);
   int x = gid.x;
@@ -130,7 +130,7 @@ kernel void FUNC(split, R, N, VV, P)(
 #if N >= 4
     texture2d_array<P, access::write> out4[[texture(4)]],
 #endif  // N >= 4
-    constant SplitParam &sp[[buffer(0)]],
+    constant SplitParam& sp[[buffer(0)]],
     uint3 gid[[thread_position_in_grid]]) {
   VECTOR(P, 4) r = input.read(gid.xy, gid.z);
   int z = gid.z;
@@ -171,7 +171,7 @@ kernel void FUNC(split, R, N, VV, P)(
 #if N >= 4
     texture2d_array<P, access::write> out4[[texture(4)]],
 #endif  // N >= 4
-    constant SplitParam &sp[[buffer(0)]],
+    constant SplitParam& sp[[buffer(0)]],
     uint3 gid[[thread_position_in_grid]]) {
   int index = 0;
   int z = gid.z;

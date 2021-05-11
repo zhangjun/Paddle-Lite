@@ -76,7 +76,8 @@ struct MetalUint4 {
 #define ROUND_UP(x, y) (((x) + (y)-1) / (y) * (y))
 
 static uint32_t SmallestLog2(uint32_t integer) {
-  if (integer == 0) return 0;
+  if (integer == 0)
+    return 0;
   uint32_t power = 0;
   while ((integer & 0b1) == 0) {
     integer = integer >> 1;

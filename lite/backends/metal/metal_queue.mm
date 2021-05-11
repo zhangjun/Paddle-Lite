@@ -27,13 +27,14 @@ MetalQueue::MetalQueue(const MetalDevice* device, id<MTLCommandQueue> queue)
   mtl_device_ = const_cast<MetalDevice*>(device);
 }
 
-std::unique_ptr<MetalCommandBuffer> MetalQueue::CreateCommandBuffer(RuntimeProgram* program) {
+std::unique_ptr<MetalCommandBuffer> MetalQueue::CreateCommandBuffer(
+    RuntimeProgram* program) {
   id<MTLCommandBuffer> cmd_buffer = [queue_ commandBuffer];
   [cmd_buffer addCompletedHandler:^(id<MTLCommandBuffer> buffer) {
 #if LITE_METAL_SAVE_TENSOR
-  if( program != nullptr ) {
-    program->SaveOutput();
-  }
+    if (program != nullptr) {
+      program->SaveOutput();
+    }
 #endif
   }];
   auto cmd_buf = new MetalCommandBuffer();
@@ -42,22 +43,20 @@ std::unique_ptr<MetalCommandBuffer> MetalQueue::CreateCommandBuffer(RuntimeProgr
   return ret;
 }
 
-
-MetalEncoder::MetalEncoder(MetalCommandBuffer* buffer, MetalKernelProgram* program){
-    metal_command_buffer_ = buffer->metal_command_buffer_;
-    metal_command_encoder_ = [buffer->metal_command_buffer_ computeCommandEncoder];
-    [metal_command_encoder_ setComputePipelineState:(program->pipeline_state_)];
-    buffer->have_command_ = true;
+MetalEncoder::MetalEncoder(MetalCommandBuffer* buffer,
+                           MetalKernelProgram* program) {
+  metal_command_buffer_ = buffer->metal_command_buffer_;
+  metal_command_encoder_ =
+      [buffer->metal_command_buffer_ computeCommandEncoder];
+  [metal_command_encoder_ setComputePipelineState:(program->pipeline_state_)];
+  buffer->have_command_ = true;
 }
 
-MetalEncoder::~MetalEncoder() {
-  metal_command_buffer_ = nil;
-}
+MetalEncoder::~MetalEncoder() { metal_command_buffer_ = nil; }
 
 MetalCommandBuffer::~MetalCommandBuffer() {
-    metal_command_buffer_ = nil;
-    have_command_ = false;
+  metal_command_buffer_ = nil;
+  have_command_ = false;
 }
-
 }
 }

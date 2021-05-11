@@ -18,8 +18,8 @@ using namespace metal;
 kernel void batch_norm_relu_3x3(
     texture2d_array<float, access::sample> inTexture[[texture(0)]],
     texture2d_array<float, access::write> outTexture[[texture(1)]],
-    const device float4 *new_scale[[buffer(0)]],
-    const device float4 *new_biase[[buffer(1)]],
+    const device float4* new_scale[[buffer(0)]],
+    const device float4* new_biase[[buffer(1)]],
     uint3 gid[[thread_position_in_grid]]) {
   if (gid.x >= outTexture.get_width() || gid.y >= outTexture.get_height() ||
       gid.z >= outTexture.get_array_size()) {

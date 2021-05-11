@@ -23,7 +23,7 @@ kernel void FUNC3_(elementwise_add, PRELU_TYPE, P)(
     texture2d_array<P, access::read> inputX[[texture(0)]],
     texture2d_array<P, access::read> inputY[[texture(1)]],
     texture2d_array<P, access::write> outTexture[[texture(2)]],
-    constant ElementwiseAddParam &pm[[buffer(0)]],
+    constant ElementwiseAddParam& pm[[buffer(0)]],
 #ifdef PRELU_CHANNEL
     const device VECTOR(P, 4) * alpha[[buffer(1)]],
 #endif
@@ -31,7 +31,7 @@ kernel void FUNC3_(elementwise_add, PRELU_TYPE, P)(
     const device VECTOR(P, 4) * alpha[[buffer(1)]],
 #endif
 #ifdef PRELU_OTHER
-    const device P *alpha[[buffer(1)]],
+    const device P* alpha[[buffer(1)]],
 #endif
     uint3 gid[[thread_position_in_grid]]) {
   if (gid.x >= outTexture.get_width() || gid.y >= outTexture.get_height() ||

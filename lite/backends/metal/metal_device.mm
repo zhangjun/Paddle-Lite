@@ -12,7 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-
 #include "lite/backends/metal/metal_device.h"
 #include "lite/utils/cp_logging.h"
 #include "lite/backends/metal/metal_queue.h"
@@ -41,19 +40,19 @@ std::shared_ptr<MetalQueue> MetalDevice::GetDefaultQueue() const {
   }
 }
 
-MetalDevice::~MetalDevice(){
+MetalDevice::~MetalDevice() {
 #if (!__has_feature(objc_arc))
-    for(auto item : queues_) {
-      [item->queue() release];
-      queues_.pop_back();
-    }
-    queues_.clear();
+  for (auto item : queues_) {
+    [item->queue() release];
+    queues_.pop_back();
+  }
+  queues_.clear();
 #endif
 }
 
 id<MTLDevice> MetalDevice::device() const { return device_; }
 void MetalDevice::set_device(id<MTLDevice> device) { device_ = device; }
-void MetalDevice::set_context(MetalContext *context) { context_ = context; }
-void MetalDevice::set_name(const char *name) { name_ = name; }
+void MetalDevice::set_context(MetalContext* context) { context_ = context; }
+void MetalDevice::set_name(const char* name) { name_ = name; }
 }
 }

@@ -75,7 +75,8 @@ kernel void FUNC(concat, R, N, VV, P)(
     FUNC_R(xyzn2abcd, R)(xyzn, abcd);
 #endif
     int k = abcd[cp.axis] - cp.offset;
-    if (k < 0) continue;
+    if (k < 0)
+      continue;
     int j = 0;
     for (; j < N; j++) {
       if (k < cp.vdim[j]) {
@@ -149,7 +150,8 @@ kernel void FUNC(concat, R, N, VV, P)(
     constant ConcatParam& pm[[buffer(0)]],
     uint3 gid[[thread_position_in_grid]]) {
   int x = gid.x - pm.offset;
-  if (x < 0) return;
+  if (x < 0)
+    return;
   if (x < pm.vdim[0]) {
     VECTOR(P, 4) r = in0.read(gid.xy, gid.z);
     out.write(r, gid.xy, gid.z);
@@ -216,7 +218,8 @@ kernel void FUNC(concat, R, N, VV, P)(
     constant ConcatParam& pm[[buffer(0)]],
     uint3 gid[[thread_position_in_grid]]) {
   int y = gid.y - pm.offset;
-  if (y < 0) return;
+  if (y < 0)
+    return;
   if (y < pm.vdim[0]) {
     VECTOR(P, 4) r = in0.read(gid.xy, gid.z);
     out.write(r, gid.xy, gid.z);
@@ -283,7 +286,8 @@ kernel void FUNC(concat, R, N, VV, P)(
     constant ConcatParam& pm[[buffer(0)]],
     uint3 gid[[thread_position_in_grid]]) {
   int z = gid.z - pm.offset;
-  if (z < 0) return;
+  if (z < 0)
+    return;
   if (z < pm.vdim[0]) {
     VECTOR(P, 4) r = in0.read(gid.xy, gid.z);
     out.write(r, gid.xy, gid.z);

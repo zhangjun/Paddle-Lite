@@ -100,7 +100,7 @@ TEST(batch_norm_metal, init) {
 }
 
 TEST(batch_norm_metal, compute) {
-  for (auto n : {1/*,  2*/}) {
+  for (auto n : {1 /*,  2*/}) {
     for (auto c : {/*6,  32 , */ 128}) {
       for (auto h : {/*9,  18 , 56 , 112, 224,*/ 512}) {
         for (auto w : {18 /*, 56, 112, 224, 512*/}) {
@@ -250,8 +250,11 @@ TEST(batch_norm_metal, compute) {
                     auto* y_ref_data = y_ref.mutable_data<float>();
 
                     for (int i = 0; i < y.dims().production(); i++) {
-                        if (true)
-//                      if (std::abs(y_data[i] - y_ref_data[i]) > 1e-5)if (std::abs(y_data[i] - y_ref_data[i]) > 1e-5)
+                      if (true)
+                        //                      if (std::abs(y_data[i] -
+                        //                      y_ref_data[i]) > 1e-5)if
+                        //                      (std::abs(y_data[i] -
+                        //                      y_ref_data[i]) > 1e-5)
                         //                      if(i> 103678)
                         std::cout << "[" << n << "] "
                                   << "[" << c << "] "
@@ -259,7 +262,8 @@ TEST(batch_norm_metal, compute) {
                                   << "[" << w << "] "
                                   << "[" << i << "] " << y_data[i] << " : "
                                   << y_ref_data[i] << std::endl;
-//                      ASSERT_NEAR(y_data[i], y_ref_data[i], 1e-5);
+                      //                      ASSERT_NEAR(y_data[i],
+                      //                      y_ref_data[i], 1e-5);
                     }
 
                     std::cout << std::endl;

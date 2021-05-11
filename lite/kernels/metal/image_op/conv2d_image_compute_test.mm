@@ -81,8 +81,10 @@ static void conv_basic(const Dtype1* din,
                 for (int kw = 0; kw < kernel_w; ++kw) {
                   int iw = ow * stride_w - pad_w + kw * (dila_w);
                   int ih = oh * stride_h - pad_h + kh * (dila_h);
-                  if (iw < 0 || iw >= in_w) continue;
-                  if (ih < 0 || ih >= in_h) continue;
+                  if (iw < 0 || iw >= in_w)
+                    continue;
+                  if (ih < 0 || ih >= in_h)
+                    continue;
 
                   int iidx = n * in_channel * in_h * in_w +
                              g * in_c_group * in_h * in_w + ic * in_h * in_w +
@@ -220,9 +222,9 @@ TEST(conv2d, compute_conv2d_gemm) {
 
 #ifdef LOOP_TEST
   for (int batch_size = 1; batch_size < 3; ++batch_size) {
-    for (int oc = 1; oc < 10; oc += 1) {        // m
-      for (int ih = 1; ih < 10; ih += 1) {      // ih
-        for (int iw = 1; iw < 10; iw += 1) {    // iw
+    for (int oc = 1; oc < 10; oc += 1) {  // m
+      for (int ih = 1; ih < 10; ih += 1) {  // ih
+        for (int iw = 1; iw < 10; iw += 1) {  // iw
           for (int ic = 1; ic < 10; ic += 1) {  // k
             for (bool bias_flag : {true, false}) {
               for (std::string relu_flag : {"relu", "relu6", "None"}) {
@@ -421,15 +423,16 @@ TEST(conv2d, compute_conv2d_gemm) {
                               << abs(out_data_cpu.data()[i] - out_ref_data[i]);
                   }
                 }
-                if (bias_cpu_data) free(bias_cpu_data);
+                if (bias_cpu_data)
+                  free(bias_cpu_data);
 #ifdef LOOP_TEST
               }  // with_relu
-            }    // with_bias
-          }      // ic
-        }        // iw
-      }          // ih
-    }            // oc
-  }              // batch_size
+            }  // with_bias
+          }  // ic
+        }  // iw
+      }  // ih
+    }  // oc
+  }  // batch_size
 #endif
 }
 

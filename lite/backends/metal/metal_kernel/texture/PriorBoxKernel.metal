@@ -36,9 +36,9 @@ kernel void prior_box(
     texture2d_array<float, access::read> inTexture[[texture(0)]],
     texture2d_array<float, access::write> outBoxTexture[[texture(1)]],
     texture2d_array<float, access::write> varianceTexture[[texture(2)]],
-    const device float *aspect_ratios[[buffer(0)]],
-    constant PriorBoxMetalParam &param[[buffer(1)]],
-    const device float4 *variances[[buffer(2)]],
+    const device float* aspect_ratios[[buffer(0)]],
+    constant PriorBoxMetalParam& param[[buffer(1)]],
+    const device float4* variances[[buffer(2)]],
     uint3 gid[[thread_position_in_grid]]) {
   if (gid.x >= outBoxTexture.get_width() ||
       gid.y >= outBoxTexture.get_height() ||
@@ -102,9 +102,9 @@ kernel void prior_box_half(
     texture2d_array<half, access::read> inTexture[[texture(0)]],
     texture2d_array<half, access::write> outBoxTexture[[texture(1)]],
     texture2d_array<half, access::write> varianceTexture[[texture(2)]],
-    const device half *aspect_ratios[[buffer(0)]],
-    constant PriorBoxMetalParam &param[[buffer(1)]],
-    const device float4 *variances[[buffer(2)]],
+    const device half* aspect_ratios[[buffer(0)]],
+    constant PriorBoxMetalParam& param[[buffer(1)]],
+    const device float4* variances[[buffer(2)]],
     uint3 gid[[thread_position_in_grid]]) {
   if (gid.x >= outBoxTexture.get_width() ||
       gid.y >= outBoxTexture.get_height() ||
@@ -168,9 +168,9 @@ kernel void prior_box_MinMaxAspectRatiosOrder(
     texture2d_array<float, access::read> inTexture[[texture(0)]],
     texture2d_array<float, access::write> outBoxTexture[[texture(1)]],
     texture2d_array<float, access::write> varianceTexture[[texture(2)]],
-    const device float *aspect_ratios[[buffer(0)]],
-    constant PriorBoxMetalParam &param[[buffer(1)]],
-    const device float4 *variances[[buffer(2)]],
+    const device float* aspect_ratios[[buffer(0)]],
+    constant PriorBoxMetalParam& param[[buffer(1)]],
+    const device float4* variances[[buffer(2)]],
     uint3 gid[[thread_position_in_grid]]) {
   if (gid.x >= outBoxTexture.get_width() ||
       gid.y >= outBoxTexture.get_height() ||
@@ -269,9 +269,9 @@ kernel void prior_box_MinMaxAspectRatiosOrder_half(
     texture2d_array<half, access::read> inTexture[[texture(0)]],
     texture2d_array<half, access::write> outBoxTexture[[texture(1)]],
     texture2d_array<half, access::write> varianceTexture[[texture(2)]],
-    const device half *aspect_ratios[[buffer(0)]],
-    constant PriorBoxMetalParam &param[[buffer(1)]],
-    const device float4 *variances[[buffer(2)]],
+    const device half* aspect_ratios[[buffer(0)]],
+    constant PriorBoxMetalParam& param[[buffer(1)]],
+    const device float4* variances[[buffer(2)]],
     uint3 gid[[thread_position_in_grid]]) {
   if (gid.x >= outBoxTexture.get_width() ||
       gid.y >= outBoxTexture.get_height() ||

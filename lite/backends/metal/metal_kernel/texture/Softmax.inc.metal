@@ -23,7 +23,7 @@
 kernel void FUNC(softmax,
                  P)(texture2d_array<P, access::read> inTexture[[texture(0)]],
                     texture2d_array<P, access::write> outTexture[[texture(1)]],
-                    constant SoftmaxParam &sp[[buffer(0)]],
+                    constant SoftmaxParam& sp[[buffer(0)]],
                     uint3 gid[[thread_position_in_grid]]) {
   if (gid.x >= outTexture.get_width() || gid.y >= outTexture.get_height() ||
       gid.z >= outTexture.get_array_size())
@@ -77,7 +77,7 @@ kernel void FUNC(softmax,
 kernel void FUNC(softmax2,
                  P)(texture2d_array<P, access::read> inTexture[[texture(0)]],
                     texture2d_array<P, access::write> outTexture[[texture(1)]],
-                    constant SoftmaxParam &sp[[buffer(0)]],
+                    constant SoftmaxParam& sp[[buffer(0)]],
                     uint3 gid[[thread_position_in_grid]]) {
   if (gid.x >= outTexture.get_width() || gid.y >= outTexture.get_height() ||
       gid.z >= outTexture.get_array_size())
@@ -114,7 +114,7 @@ kernel void FUNC(softmax2,
 kernel void FUNC(softmax_c_d3_common,
                  P)(texture2d_array<P, access::read> inTexture[[texture(0)]],
                     texture2d_array<P, access::write> outTexture[[texture(1)]],
-                    constant SoftmaxParam2 &sp[[buffer(0)]],
+                    constant SoftmaxParam2& sp[[buffer(0)]],
                     uint3 gid[[thread_position_in_grid]]) {
   if (gid.x >= outTexture.get_width() || gid.y >= outTexture.get_height() ||
       gid.z >= outTexture.get_array_size())
@@ -177,7 +177,7 @@ kernel void FUNC(softmax_c_d3_common,
 kernel void FUNC(softmax_w_d3_common,
                  P)(texture2d_array<P, access::read> inTexture[[texture(0)]],
                     texture2d_array<P, access::write> outTexture[[texture(1)]],
-                    constant SoftmaxParam2 &sp[[buffer(0)]],
+                    constant SoftmaxParam2& sp[[buffer(0)]],
                     uint3 gid[[thread_position_in_grid]]) {
   if (gid.x >= outTexture.get_width() || gid.y >= outTexture.get_height() ||
       gid.z >= outTexture.get_array_size())
@@ -207,7 +207,7 @@ kernel void FUNC(softmax_w_d3_common,
 kernel void FUNC(softmax_h_d3_common,
                  P)(texture2d_array<P, access::read> inTexture[[texture(0)]],
                     texture2d_array<P, access::write> outTexture[[texture(1)]],
-                    constant SoftmaxParam2 &sp[[buffer(0)]],
+                    constant SoftmaxParam2& sp[[buffer(0)]],
                     uint3 gid[[thread_position_in_grid]]) {
   if (gid.x >= outTexture.get_width() || gid.y >= outTexture.get_height() ||
       gid.z >= outTexture.get_array_size())
@@ -238,7 +238,7 @@ kernel void FUNC(softmax_h_d3_common,
 kernel void FUNC(softmax_h_2d_common,
                  P)(texture2d_array<P, access::read> inTexture[[texture(0)]],
                     texture2d_array<P, access::write> outTexture[[texture(1)]],
-                    constant SoftmaxParam2 &sp[[buffer(0)]],
+                    constant SoftmaxParam2& sp[[buffer(0)]],
                     uint3 gid[[thread_position_in_grid]]) {
   if (gid.x >= outTexture.get_width() || gid.y >= outTexture.get_height() ||
       gid.z >= outTexture.get_array_size())
@@ -269,7 +269,7 @@ kernel void FUNC(softmax_h_2d_common,
 kernel void FUNC(softmax_w_2d_common,
                  P)(texture2d_array<P, access::read> inTexture[[texture(0)]],
                     texture2d_array<P, access::write> outTexture[[texture(1)]],
-                    constant SoftmaxParam2 &sp[[buffer(0)]],
+                    constant SoftmaxParam2& sp[[buffer(0)]],
                     uint3 gid[[thread_position_in_grid]]) {
   if (gid.x >= outTexture.get_width() || gid.y >= outTexture.get_height() ||
       gid.z >= outTexture.get_array_size())

@@ -25,7 +25,7 @@ kernel void FUNC(transpose,
                  R,
                  P)(texture2d_array<P, access::read> inTexture[[texture(0)]],
                     texture2d_array<P, access::write> outTexture[[texture(1)]],
-                    constant TransposeParam &pm[[buffer(0)]],
+                    constant TransposeParam& pm[[buffer(0)]],
                     uint3 gid[[thread_position_in_grid]]) {
   VECTOR(P, 4) r;
   int oxyzn[4] = {int(gid.x), int(gid.y), int(gid.z), 0};

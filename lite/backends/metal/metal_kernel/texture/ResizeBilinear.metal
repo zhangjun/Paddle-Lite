@@ -38,8 +38,10 @@ kernel void resize_bilinear(
     uint w1 = w0 + 1, h1 = h0 + 1;
     float w1lambda = w - w0, h1lambda = h - h0;
     float w2lambda = 1.0 - w1lambda, h2lambda = 1.0 - h1lambda;
-    if (w1 >= input.get_width()) w1 = w0;
-    if (h1 >= input.get_height()) h1 = h0;
+    if (w1 >= input.get_width())
+      w1 = w0;
+    if (h1 >= input.get_height())
+      h1 = h0;
     float4 r0 = input.read(uint2(w0, h0), gid.z);
     float4 r1 = input.read(uint2(w1, h0), gid.z);
     float4 r2 = input.read(uint2(w0, h1), gid.z);
@@ -66,8 +68,10 @@ kernel void resize_bilinear_half(
     uint w1 = w0 + 1, h1 = h0 + 1;
     half w1lambda = w - w0, h1lambda = h - h0;
     half w2lambda = 1.0 - w1lambda, h2lambda = 1.0 - h1lambda;
-    if (w1 >= input.get_width()) w1 = w0;
-    if (h1 >= input.get_height()) h1 = h0;
+    if (w1 >= input.get_width())
+      w1 = w0;
+    if (h1 >= input.get_height())
+      h1 = h0;
     half4 r0 = input.read(uint2(w0, h0), gid.z);
     half4 r1 = input.read(uint2(w1, h0), gid.z);
     half4 r2 = input.read(uint2(w0, h1), gid.z);

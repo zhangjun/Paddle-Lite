@@ -21,27 +21,34 @@
 namespace paddle {
 namespace lite {
 
-void MetalDebug::DumpImage(const std::string& name, MetalImage* image, DumpMode mode) {
+void MetalDebug::DumpImage(const std::string& name,
+                           MetalImage* image,
+                           DumpMode mode) {
   int length = image->tensor_dim_.production();
   auto buf = (float*)malloc(sizeof(float) * length);
   image->CopyToNCHW<float>(buf);
   std::string OUTPUT_BASE_PATH = "";
 #ifdef TARGET_IOS
   OUTPUT_BASE_PATH = std::string([[NSSearchPathForDirectoriesInDomains(
-                         NSDocumentDirectory, NSUserDomainMask, YES) objectAtIndex:0] UTF8String]) +
+                         NSDocumentDirectory, NSUserDomainMask, YES)
+                         objectAtIndex:0] UTF8String]) +
                      "/";
 #endif
   std::string filename = OUTPUT_BASE_PATH + name + ".txt";
   FILE* fp = fopen(filename.c_str(), "w");
   for (int i = 0; i < length; ++i) {
-    if (mode == DumpMode::kFile || mode == DumpMode::kBoth) fprintf(fp, "%f\n", buf[i]);
-    if (mode == DumpMode::kStd || mode == DumpMode::kBoth) VLOG(4) << buf[i];
+    if (mode == DumpMode::kFile || mode == DumpMode::kBoth)
+      fprintf(fp, "%f\n", buf[i]);
+    if (mode == DumpMode::kStd || mode == DumpMode::kBoth)
+      VLOG(4) << buf[i];
   }
   free(buf);
   fclose(fp);
 }
 
-void MetalDebug::DumpImage(const std::string& name, const MetalImage* image, DumpMode mode) {
+void MetalDebug::DumpImage(const std::string& name,
+                           const MetalImage* image,
+                           DumpMode mode) {
   DumpImage(name, const_cast<MetalImage*>(image), mode);
 }
 
@@ -53,25 +60,31 @@ void MetalDebug::DumpImage(const std::string& name,
   std::string OUTPUT_BASE_PATH = "";
 #ifdef TARGET_IOS
   OUTPUT_BASE_PATH = std::string([[NSSearchPathForDirectoriesInDomains(
-                         NSDocumentDirectory, NSUserDomainMask, YES) objectAtIndex:0] UTF8String]) +
+                         NSDocumentDirectory, NSUserDomainMask, YES)
+                         objectAtIndex:0] UTF8String]) +
                      "/";
 #endif
   std::string filename = OUTPUT_BASE_PATH + name + ".txt";
   FILE* fp = fopen(filename.c_str(), "w");
   image->CopyToNCHW<float>(buf);
   for (int i = 0; i < length; ++i) {
-    if (mode == DumpMode::kFile || mode == DumpMode::kBoth) fprintf(fp, "%f\n", buf[i]);
-    if (mode == DumpMode::kStd || mode == DumpMode::kBoth) VLOG(4) << buf[i];
+    if (mode == DumpMode::kFile || mode == DumpMode::kBoth)
+      fprintf(fp, "%f\n", buf[i]);
+    if (mode == DumpMode::kStd || mode == DumpMode::kBoth)
+      VLOG(4) << buf[i];
   }
   free(buf);
   fclose(fp);
 }
 
-void MetalDebug::DumpBuffer(const std::string& name, MetalBuffer* buffer, DumpMode mode) {
+void MetalDebug::DumpBuffer(const std::string& name,
+                            MetalBuffer* buffer,
+                            DumpMode mode) {
   std::string OUTPUT_BASE_PATH = "";
 #ifdef TARGET_IOS
   OUTPUT_BASE_PATH = std::string([[NSSearchPathForDirectoriesInDomains(
-                         NSDocumentDirectory, NSUserDomainMask, YES) objectAtIndex:0] UTF8String]) +
+                         NSDocumentDirectory, NSUserDomainMask, YES)
+                         objectAtIndex:0] UTF8String]) +
                      "/";
 #endif
   if (buffer->type() == MetalBuffer::TYPE::kTensorBuffer) {
@@ -81,8 +94,10 @@ void MetalDebug::DumpBuffer(const std::string& name, MetalBuffer* buffer, DumpMo
     FILE* fp = fopen(filename.c_str(), "w");
     buffer->CopyToNCHW<float>(buf);
     for (int i = 0; i < length; ++i) {
-      if (mode == DumpMode::kFile || mode == DumpMode::kBoth) fprintf(fp, "%f\n", buf[i]);
-      if (mode == DumpMode::kStd || mode == DumpMode::kBoth) VLOG(4) << buf[i];
+      if (mode == DumpMode::kFile || mode == DumpMode::kBoth)
+        fprintf(fp, "%f\n", buf[i]);
+      if (mode == DumpMode::kStd || mode == DumpMode::kBoth)
+        VLOG(4) << buf[i];
     }
     free(buf);
     fclose(fp);
@@ -93,8 +108,10 @@ void MetalDebug::DumpBuffer(const std::string& name, MetalBuffer* buffer, DumpMo
     FILE* fp = fopen(filename.c_str(), "w");
     memcpy(buf, buffer->buffer().contents, length);
     for (int i = 0; i < length; ++i) {
-      if (mode == DumpMode::kFile || mode == DumpMode::kBoth) fprintf(fp, "%f\n", buf[i]);
-      if (mode == DumpMode::kStd || mode == DumpMode::kBoth) VLOG(4) << buf[i];
+      if (mode == DumpMode::kFile || mode == DumpMode::kBoth)
+        fprintf(fp, "%f\n", buf[i]);
+      if (mode == DumpMode::kStd || mode == DumpMode::kBoth)
+        VLOG(4) << buf[i];
     }
     free(buf);
     fclose(fp);
@@ -108,18 +125,24 @@ void MetalDebug::DumpBuffer(const std::string& name,
   DumpBuffer(name, const_cast<MetalBuffer*>(buf), length, mode);
 }
 
-void MetalDebug::DumpNCHWFloat(const std::string& name, float* data, int length, DumpMode mode) {
+void MetalDebug::DumpNCHWFloat(const std::string& name,
+                               float* data,
+                               int length,
+                               DumpMode mode) {
   std::string OUTPUT_BASE_PATH = "";
 #ifdef TARGET_IOS
   OUTPUT_BASE_PATH = std::string([[NSSearchPathForDirectoriesInDomains(
-                         NSDocumentDirectory, NSUserDomainMask, YES) objectAtIndex:0] UTF8String]) +
+                         NSDocumentDirectory, NSUserDomainMask, YES)
+                         objectAtIndex:0] UTF8String]) +
                      "/";
 #endif
   std::string filename = OUTPUT_BASE_PATH + name + ".txt";
   FILE* fp = fopen(filename.c_str(), "w");
   for (int i = 0; i < length; ++i) {
-    if (mode == DumpMode::kFile || mode == DumpMode::kBoth) fprintf(fp, "%f\n", data[i]);
-    if (mode == DumpMode::kStd || mode == DumpMode::kBoth) VLOG(4) << data[i];
+    if (mode == DumpMode::kFile || mode == DumpMode::kBoth)
+      fprintf(fp, "%f\n", data[i]);
+    if (mode == DumpMode::kStd || mode == DumpMode::kBoth)
+      VLOG(4) << data[i];
   }
   free(data);
   fclose(fp);
@@ -132,7 +155,8 @@ void MetalDebug::DumpBuffer(const std::string& name,
   std::string OUTPUT_BASE_PATH = "";
 #ifdef TARGET_IOS
   OUTPUT_BASE_PATH = std::string([[NSSearchPathForDirectoriesInDomains(
-                         NSDocumentDirectory, NSUserDomainMask, YES) objectAtIndex:0] UTF8String]) +
+                         NSDocumentDirectory, NSUserDomainMask, YES)
+                         objectAtIndex:0] UTF8String]) +
                      "/";
 #endif
   auto buf = (float*)malloc(sizeof(float) * length);
@@ -140,8 +164,10 @@ void MetalDebug::DumpBuffer(const std::string& name,
   FILE* fp = fopen(filename.c_str(), "w");
   buffer->CopyToNCHW<float>(buf);
   for (int i = 0; i < length; ++i) {
-    if (mode == DumpMode::kFile || mode == DumpMode::kBoth) fprintf(fp, "%f\n", buf[i]);
-    if (mode == DumpMode::kStd || mode == DumpMode::kBoth) VLOG(4) << buf[i];
+    if (mode == DumpMode::kFile || mode == DumpMode::kBoth)
+      fprintf(fp, "%f\n", buf[i]);
+    if (mode == DumpMode::kStd || mode == DumpMode::kBoth)
+      VLOG(4) << buf[i];
   }
   free(buf);
   fclose(fp);

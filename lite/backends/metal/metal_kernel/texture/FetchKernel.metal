@@ -29,10 +29,10 @@ using namespace metal;
 
 kernel void fetch_placeholder(
     texture2d_array<float, access::read> inTexture[[texture(0)]],
-    device float *output[[buffer(0)]],
+    device float* output[[buffer(0)]],
     uint3 gid[[thread_position_in_grid]]) {}
 
 kernel void fetch_placeholder_half(
     texture2d_array<half, access::read> inTexture[[texture(0)]],
-    device float *output[[buffer(0)]],
+    device float* output[[buffer(0)]],
     uint3 gid[[thread_position_in_grid]]) {}
