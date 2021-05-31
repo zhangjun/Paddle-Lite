@@ -58,25 +58,26 @@ void ElementwiseSubImageCompute<P, PTYPE>::PrepareForRun() {
         if (valid) {
             by_channel = 0;
         }
-  }
-  if (!valid) {
-    throw std::logic_error("ERROR: elementwise_sub only supports : 1. input shapes are the same. "
-                           "2. multiply by channel.");
-  }
-  ElementwiseMetalParam element_params = {by_channel};
-  params_buffer_ = metal_context_->CreateBuffer(
-      *device, &element_params, sizeof(element_params), METAL_ACCESS_FLAG::CPUWriteOnly);
+    }
+    if (!valid) {
+        throw std::logic_error(
+            "ERROR: elementwise_sub only supports : 1. input shapes are the same. "
+            "2. multiply by channel.");
+    }
+    ElementwiseMetalParam element_params = {by_channel};
+    params_buffer_ = metal_context_->CreateBuffer(
+        *device, &element_params, sizeof(element_params), METAL_ACCESS_FLAG::CPUWriteOnly);
 
-  std::string function_name = "";
-  if (std::is_same<float, P>::value) {
-    function_name = "elementwise_sub";
-  } else if (std::is_same<MetalHalf, P>::value) {
-    function_name = "elementwise_sub_half";
-  }
+    std::string function_name = "";
+    if (std::is_same<float, P>::value) {
+        function_name = "elementwise_sub";
+    } else if (std::is_same<MetalHalf, P>::value) {
+        function_name = "elementwise_sub_half";
+    }
 
-  assert(!function_name.empty());
-  queue_ = metal_context_->GetDefaultQueue(*device);
-  kernel_ = metal_context_->GetKernel(*device, function_name);
+    assert(!function_name.empty());
+    queue_ = metal_context_->GetDefaultQueue(*device);
+    kernel_ = metal_context_->GetKernel(*device, function_name);
 }
 
 template <typename P, PrecisionType PTYPE>

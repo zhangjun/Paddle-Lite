@@ -256,6 +256,12 @@ class LITE_API RuntimeProgram {
                           bool use_aggressive = false);
 #endif
 
+#ifdef LITE_WITH_METAL
+  void ConfigMetalContext(std::string lib_path,
+                          bool use_mps = false,
+                          bool use_aggressive = false);
+#endif
+
  private:
   RuntimeProgram(const RuntimeProgram&) = delete;
   std::vector<std::vector<Instruction>> instructions_;

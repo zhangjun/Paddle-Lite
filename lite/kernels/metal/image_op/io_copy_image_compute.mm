@@ -151,7 +151,6 @@ class IoCopykMetalTextureToHost
 }  // namespace lite
 }  // namespace paddle
 
-
 REGISTER_LITE_KERNEL(io_copy,
     kMetal,
     kFloat,

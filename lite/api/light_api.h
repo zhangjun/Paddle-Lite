@@ -91,6 +91,11 @@ class LITE_API LightPredictor {
 #endif
 
  private:
+  // check if the input tensor precision type is correct.
+  // would be called in Run().
+  void CheckInputValid();
+
+ private:
   void Build(const std::string& lite_model_file,
              bool model_from_memory = false);
 
