@@ -82,6 +82,14 @@ class LITE_API LightPredictor {
   void PrepareFeedFetch();
   Scope* scope() { return scope_.get(); }
 
+#ifdef LITE_WITH_METAL
+  void ConfigMetalContext(const lite_api::MobileConfig& config) {
+    program_->ConfigMetalContext(config.metal_lib_path(),
+                                 config.metal_use_mps(),
+                                 config.metal_use_aggressive());
+  }
+#endif
+
  private:
   void Build(const std::string& lite_model_file,
              bool model_from_memory = false);
