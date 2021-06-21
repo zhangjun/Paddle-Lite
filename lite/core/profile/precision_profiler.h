@@ -581,6 +581,8 @@ class PrecisionProfiler {
 #ifdef LITE_WITH_ANDROID
   std::string log_dir_{"/storage/emulated/0/PaddleLite_" + get_date_str() +
                        "/"};
+#elif defined(_MSC_VER)
+  std::string log_dir_{"C:\\profile_log\\PaddleLite_" + get_date_str() + "\\"};
 #else
   std::string log_dir_{"/tmp/PaddleLite_" + get_date_str() + "/"};
 #endif

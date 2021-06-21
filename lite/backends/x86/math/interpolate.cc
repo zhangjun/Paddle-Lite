@@ -104,18 +104,18 @@ void bilinear_interp(const float* input_data,
   int out_stride = h_out * w_out;
   int total = n * c;
 
-#ifdef PADDLE_WITH_MKLML
-#pragma omp parallel for
-#endif
+//#ifdef PADDLE_WITH_MKLML
+//#pragma omp parallel for
+//#endif
+  float* rowsbuf0 =
+      static_cast<float*>(lite::host::malloc(sizeof(int) * w_out));
+  float* rowsbuf1 =
+      static_cast<float*>(lite::host::malloc(sizeof(int) * w_out));
   for (int nc = 0; nc < total; ++nc) {
     const float* src = input_data + nc * in_stride;
     float* dst = output_data + nc * out_stride;
     const float* betap = beta;
 
-    float* rowsbuf0 =
-        static_cast<float*>(lite::host::malloc(sizeof(int) * w_out));
-    float* rowsbuf1 =
-        static_cast<float*>(lite::host::malloc(sizeof(int) * w_out));
     float* rows0 = rowsbuf0;
     float* rows1 = rowsbuf1;
     // h_bound loop
@@ -445,9 +445,18 @@ void bilinear_interp(const float* input_data,
 
       betap += 2;
     }  // end h_bound - h_out loop
-    lite::host::free(rowsbuf0);
-    lite::host::free(rowsbuf1);
+    // print last two
+    if(nc >= total - 2 ) {
+	  STL::stringstream ss;
+      ss << "[nc: " << nc << "] ";
+      for(int idx = 0; idx < 10; ++ idx) {
+	    ss << idx << " ";
+      }
+      std::cout << ss.str() << std::endl;
+    }
   }
+  lite::host::free(rowsbuf0);
+  lite::host::free(rowsbuf1);
   lite::host::free(buf);
 }
 
