@@ -446,14 +446,14 @@ void bilinear_interp(const float* input_data,
       betap += 2;
     }  // end h_bound - h_out loop
     // print last two
-    if(nc >= total - 2 ) {
-	  STL::stringstream ss;
-      ss << "[nc: " << nc << "] ";
-      for(int idx = 0; idx < 10; ++ idx) {
-	    ss << idx << " ";
-      }
-      std::cout << ss.str() << std::endl;
-    }
+    //if(nc >= total - 2 ) {
+    //  STL::stringstream ss;
+    //  ss << "[nc: " << nc << "] ";
+    //  for(int idx = 0; idx < 10; ++ idx) {
+    //        ss << idx << " ";
+    //  }
+    //  std::cout << ss.str() << std::endl;
+    //}
   }
   lite::host::free(rowsbuf0);
   lite::host::free(rowsbuf1);
