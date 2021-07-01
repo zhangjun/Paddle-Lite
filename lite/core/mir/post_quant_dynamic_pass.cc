@@ -22,7 +22,7 @@
 #include "lite/core/mir/pass_registry.h"
 
 namespace paddle {
-namespace lite {
+namespace lite_metal {
 namespace mir {
 
 const std::vector<std::string> PostQuantDynamicPass::quant_axis1_ops = {
@@ -156,9 +156,9 @@ void PostQuantDynamicPerChannel(OpInfo* op_info,
 
 void PostQuantDynamicPass::Apply(const std::unique_ptr<SSAGraph>& graph) {
   int quant_bits = 16;
-  if (quant_type_ == lite_api::QuantType::QUANT_INT8) {
+  if (quant_type_ == lite_metal_api::QuantType::QUANT_INT8) {
     quant_bits = 8;
-  } else if (quant_type_ == lite_api::QuantType::QUANT_INT16) {
+  } else if (quant_type_ == lite_metal_api::QuantType::QUANT_INT16) {
     quant_bits = 16;
   } else {
     LOG(FATAL) << "Not support quant type:" << static_cast<int>(quant_type_);
@@ -205,5 +205,5 @@ void PostQuantDynamicPass::Apply(const std::unique_ptr<SSAGraph>& graph) {
 }  // namespace paddle
 
 REGISTER_MIR_PASS(post_quant_dynamic_pass,
-                  paddle::lite::mir::PostQuantDynamicPass)
+                  paddle::lite_metal::mir::PostQuantDynamicPass)
     .BindTargets({TARGET(kAny)});

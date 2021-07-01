@@ -20,7 +20,7 @@
 #endif
 
 namespace paddle {
-namespace lite {
+namespace lite_metal {
 namespace kernels {
 namespace opencl {
 
@@ -74,7 +74,7 @@ class PoolComputeImage2D : public KernelLite<TARGET(kOpenCL),
   }
 
 #ifdef LITE_WITH_PROFILE
-  void SetProfileRuntimeKernelInfo(paddle::lite::profile::OpCharacter* ch) {
+  void SetProfileRuntimeKernelInfo(paddle::lite_metal::profile::OpCharacter* ch) {
     ch->kernel_func_name = kernel_func_name_;
     ch->cl_event =
         event_;  // `event_` defined in `kernel.h`, valid after kernel::Run
@@ -120,7 +120,7 @@ class PoolComputeImage2D : public KernelLite<TARGET(kOpenCL),
       uint32_t workgroup_size = 0;
 
       int type_size =
-          (CLRuntime::Global()->get_precision() == lite_api::CL_PRECISION_FP16)
+          (CLRuntime::Global()->get_precision() == lite_metal_api::CL_PRECISION_FP16)
               ? sizeof(uint16_t)
               : sizeof(float);
       if (pooling_type == "avg") {
@@ -279,7 +279,7 @@ REGISTER_LITE_KERNEL(pool2d,
                      kOpenCL,
                      kFP16,
                      kImageDefault,
-                     paddle::lite::kernels::opencl::PoolComputeImage2D,
+                     paddle::lite_metal::kernels::opencl::PoolComputeImage2D,
                      image2d)
     .BindInput("X",
                {LiteType::GetTensorTy(TARGET(kOpenCL),

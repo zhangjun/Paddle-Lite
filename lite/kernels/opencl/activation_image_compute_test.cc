@@ -23,7 +23,7 @@
 #define FP16_MAX_DIFF (1e0)
 
 namespace paddle {
-namespace lite {
+namespace lite_metal {
 
 template <typename dtype>
 void act_compute_ref(const dtype *x_data,
@@ -163,7 +163,7 @@ TEST(act_image2d_fp16, compute) {
                 // layout(buf->img): x -> act_in
                 // relu(img): act_in -> act_out
                 // layout(img->buf): act_out -> y
-                lite::Tensor x, y, act_in, act_out, y_ref;
+                lite_metal::Tensor x, y, act_in, act_out, y_ref;
                 operators::LayoutParam BufferToImageParam;
                 operators::LayoutParam ImageToBufferParam;
                 BufferToImageParam.x = &x;
@@ -174,7 +174,7 @@ TEST(act_image2d_fp16, compute) {
                 actParam.X = &act_in;
                 actParam.Out = &act_out;
                 actParam.active_type =
-                    (paddle::lite_api::ActivationType)act_type;
+                    (paddle::lite_metal_api::ActivationType)act_type;
                 actParam.Relu_clipped_coef = threshold;
                 actParam.Leaky_relu_alpha = scale;
                 actParam.Swish_beta = scale;
@@ -190,7 +190,7 @@ TEST(act_image2d_fp16, compute) {
                 act_out.Resize(x_dim);
                 y_ref.Resize(x_dim);
                 auto act_image2d_shape =
-                    paddle::lite::kernels::opencl::InitImageDimInfoWith(x_dim);
+                    paddle::lite_metal::kernels::opencl::InitImageDimInfoWith(x_dim);
 
                 // initialize tensors
                 LOG(INFO) << "initialize tensors";

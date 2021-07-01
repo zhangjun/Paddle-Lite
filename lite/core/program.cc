@@ -27,7 +27,7 @@
 #endif
 
 namespace paddle {
-namespace lite {
+namespace lite_metal {
 
 #ifndef LITE_ON_TINY_PUBLISH
 void RuntimeProgram::SaveToProgram(
@@ -100,7 +100,7 @@ void RuntimeProgram::SaveToProgram(
             op_info->GetOutputArgname(var_name, &arg_name);
             decl_type = kernel->GetOutputDeclType(arg_name);
           }
-          if (decl_type->IsTensor() && var->IsType<lite::Tensor>()) {
+          if (decl_type->IsTensor() && var->IsType<lite_metal::Tensor>()) {
             v->SetType(cpp::VarDesc::Type::LOD_TENSOR);
             auto tensor = scope->FindVar(var_name)->GetMutable<Tensor>();
             v->SetPersistable(tensor->persistable());
@@ -128,7 +128,7 @@ void RuntimeProgram::SaveToProgram(
               }
             }
           } else if (decl_type->IsTensorList() ||
-                     var->IsType<std::vector<lite::Tensor>>()) {
+                     var->IsType<std::vector<lite_metal::Tensor>>()) {
             // Set persistable=false for tensor array
             v->SetType(cpp::VarDesc::Type::LOD_TENSOR_ARRAY);
             v->SetPersistable(false);
@@ -175,8 +175,8 @@ RuntimeProgram::RuntimeProgram(
     int block_idx)
     : exec_scope_(exec_scope) {
 #ifdef LITE_WITH_OPENCL
-  bool opencl_valid = paddle::lite::CLWrapper::Global()->OpenclLibFound() &&
-                      paddle::lite::CLWrapper::Global()->DlsymSuccess() &&
+  bool opencl_valid = paddle::lite_metal::CLWrapper::Global()->OpenclLibFound() &&
+                      paddle::lite_metal::CLWrapper::Global()->DlsymSuccess() &&
                       CLRuntime::Global()->OpenCLAvaliableForDevice();
   using OpenCLContext = Context<TargetType::kOpenCL>;
   std::unique_ptr<KernelContext> unique_opencl_ctx(new KernelContext());
@@ -346,7 +346,7 @@ void RuntimeProgram::SaveOutput() {
 
 void RuntimeProgram::Run() {
 #ifdef LITE_WITH_PRECISION_PROFILE
-  auto inst_precision_profiler = paddle::lite::profile::PrecisionProfiler();
+  auto inst_precision_profiler = paddle::lite_metal::profile::PrecisionProfiler();
   std::string precision_profiler_summary =
       inst_precision_profiler.GetSummaryHeader();
 #endif
@@ -356,7 +356,7 @@ void RuntimeProgram::Run() {
   NVTXRangeAnnotation annotation_one_loop = annotator.AnnotateBlock();
   if (annotator.IsEnabled()) {
     annotation_one_loop.generate(register_layer_names_.back(),
-                                 lite::Color::Engine);
+                                 lite_metal::Color::Engine);
   }
 #endif
 
@@ -376,7 +376,7 @@ void RuntimeProgram::Run() {
     NVTXRangeAnnotation annotation = annotator.AnnotateBlock();
     nvtxStringHandle_t registered_name = register_layer_names_[idx];
     if (annotator.IsEnabled()) {
-      annotation.generate(registered_name, lite::Color::Runner);
+      annotation.generate(registered_name, lite_metal::Color::Runner);
     }
 #endif
 #ifdef LITE_WITH_CUDA
@@ -455,29 +455,29 @@ void Program::PrepareWorkspace(
   CHECK(!exec_scope_) << "Duplicate PrepareWorkspace found";
   exec_scope_ = &scope_->NewScope();
   // Create Feed and Fetch var.
-  scope_->Var("feed")->GetMutable<std::vector<lite::Tensor>>();
-  scope_->Var("fetch")->GetMutable<std::vector<lite::Tensor>>();
+  scope_->Var("feed")->GetMutable<std::vector<lite_metal::Tensor>>();
+  scope_->Var("fetch")->GetMutable<std::vector<lite_metal::Tensor>>();
   vars_.push_back("feed");
   vars_.push_back("fetch");
 
   auto VarDescType2PrecisionType =
-      [](const lite::VarDescAPI::Type& type) -> PrecisionType {
+      [](const lite_metal::VarDescAPI::Type& type) -> PrecisionType {
     switch (type) {
-      case lite::VarDescAPI::Type::BOOL:
+      case lite_metal::VarDescAPI::Type::BOOL:
         return PRECISION(kBool);
-      case lite::VarDescAPI::Type::FP32:
+      case lite_metal::VarDescAPI::Type::FP32:
         return PRECISION(kFloat);
-      case lite::VarDescAPI::Type::FP16:
+      case lite_metal::VarDescAPI::Type::FP16:
         return PRECISION(kFP16);
-      case lite::VarDescAPI::Type::INT8:
+      case lite_metal::VarDescAPI::Type::INT8:
         return PRECISION(kInt8);
-      case lite::VarDescAPI::Type::INT16:
+      case lite_metal::VarDescAPI::Type::INT16:
         return PRECISION(kInt16);
-      case lite::VarDescAPI::Type::INT32:
+      case lite_metal::VarDescAPI::Type::INT32:
         return PRECISION(kInt32);
-      case lite::VarDescAPI::Type::INT64:
+      case lite_metal::VarDescAPI::Type::INT64:
         return PRECISION(kInt64);
-      case lite::VarDescAPI::Type::UINT8:
+      case lite_metal::VarDescAPI::Type::UINT8:
         return PRECISION(kUInt8);
       default:
         LOG(WARNING) << "Unable to convert var desc type("
@@ -502,7 +502,7 @@ void Program::PrepareWorkspace(
       if (!var_desc->Persistable()) {
 #endif
         // Collect precision info into var_type_map_
-        if (var_type == lite::VarDescAPI::Type::LOD_TENSOR) {
+        if (var_type == lite_metal::VarDescAPI::Type::LOD_TENSOR) {
           const auto& var_data_type =
               VarDescType2PrecisionType(var_desc->GetDataType());
           if (var_data_type != PRECISION(kUnk)) {
@@ -510,7 +510,7 @@ void Program::PrepareWorkspace(
                 TARGET(kUnk), var_data_type, DATALAYOUT(kUnk));
           }
           VLOG(4) << " - data type " << static_cast<int>(var_data_type);
-        } else if (var_type == lite::VarDescAPI::Type::LOD_TENSOR_ARRAY) {
+        } else if (var_type == lite_metal::VarDescAPI::Type::LOD_TENSOR_ARRAY) {
           var_type_map_[var_name] = LiteType::GetTensorListTy(
               TARGET(kUnk), PRECISION(kUnk), DATALAYOUT(kUnk));
         }
@@ -522,7 +522,7 @@ void Program::PrepareWorkspace(
       if (!var_desc->Persistable()) {
         vars_.push_back(var_name);
         auto* var = exec_scope_->Var(var_name);
-        if (var_type == lite::VarDescAPI::Type::LOD_TENSOR) {
+        if (var_type == lite_metal::VarDescAPI::Type::LOD_TENSOR) {
           const auto& var_data_type =
               VarDescType2PrecisionType(var_desc->GetDataType());
           if (var_data_type != PRECISION(kUnk)) {
@@ -535,13 +535,13 @@ void Program::PrepareWorkspace(
           // with the real shape before accessing its data, because the
           // var_shape may be [-1,3,224,224]
           const auto& var_shape = var_desc->GetShape();
-          auto* tensor = var->GetMutable<lite::Tensor>();
+          auto* tensor = var->GetMutable<lite_metal::Tensor>();
           if (tensor->dims().empty() && !var_shape.empty()) {
             tensor->Resize(var_shape);
             VLOG(4) << " - dims " << tensor->dims().repr();
           }
           tensor->set_precision(var_data_type);
-        } else if (var_type == lite::VarDescAPI::Type::LOD_TENSOR_ARRAY) {
+        } else if (var_type == lite_metal::VarDescAPI::Type::LOD_TENSOR_ARRAY) {
           var_type_map_[var_name] = LiteType::GetTensorListTy(
               TARGET(kUnk), PRECISION(kUnk), DATALAYOUT(kUnk));
         }

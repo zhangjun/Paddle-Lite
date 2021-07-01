@@ -26,7 +26,7 @@ limitations under the License. */
 #include "lite/operators/op_params.h"
 
 namespace paddle {
-namespace lite {
+namespace lite_metal {
 namespace kernels {
 namespace arm {
 
@@ -87,7 +87,7 @@ void SequenceConvCompute::Run() {
   auto hidden_dim = static_cast<int64_t>(param.X->dims()[1]);
   auto sequence_len = static_cast<int64_t>(param.X->dims()[0]);
   auto lod = param.X->lod();
-  lite::Tensor col;
+  lite_metal::Tensor col;
   col.Resize({sequence_len, kernel_size * hidden_dim});
   auto* col_data = col.mutable_data<float>();
   auto lod_level_0 = lod[0];
@@ -118,8 +118,8 @@ void SequenceConvCompute::Run() {
   // [sequence_len, kernel_size * hidden_dim] * [kernel_size * hidden_dim,
   // kernel_num]
   // = [sequence_len, kernel_num]
-  paddle::lite::operators::ActivationParam act_param;
-  paddle::lite::arm::math::sgemm(false,
+  paddle::lite_metal::operators::ActivationParam act_param;
+  paddle::lite_metal::arm::math::sgemm(false,
                                  false,                     // is_transB,
                                  sequence_len,              // M
                                  kernel_num,                // N
@@ -147,7 +147,7 @@ REGISTER_LITE_KERNEL(sequence_conv,
                      kARM,
                      kFloat,
                      kNCHW,
-                     paddle::lite::kernels::arm::SequenceConvCompute,
+                     paddle::lite_metal::kernels::arm::SequenceConvCompute,
                      def)
     .BindInput("X", {LiteType::GetTensorTy(TARGET(kARM))})
     .BindInput("Filter", {LiteType::GetTensorTy(TARGET(kARM))})

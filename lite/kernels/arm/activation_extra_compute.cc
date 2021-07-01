@@ -16,7 +16,7 @@
 #include "lite/backends/arm/math/funcs.h"
 
 namespace paddle {
-namespace lite {
+namespace lite_metal {
 namespace kernels {
 namespace arm {
 
@@ -27,7 +27,7 @@ void ReluClippedCompute::Run() {
   auto x_data = param.X->data<float>();
   auto coef = param.Relu_clipped_coef;
   auto output_data = param.Out->mutable_data<float>();
-  lite::arm::math::act_clipped_relu<float>(
+  lite_metal::arm::math::act_clipped_relu<float>(
       x_data, output_data, x_dims.production(), coef, ctx.threads());
 }
 
@@ -38,7 +38,7 @@ void SwishCompute::Run() {
   auto x_data = param.X->data<float>();
   auto beta = param.Swish_beta;
   auto output_data = param.Out->mutable_data<float>();
-  lite::arm::math::act_swish<float>(
+  lite_metal::arm::math::act_swish<float>(
       x_data, output_data, x_dims.production(), beta, ctx.threads());
 }
 
@@ -48,7 +48,7 @@ void LogCompute::Run() {
   auto x_dims = param.X->dims();
   auto x_data = param.X->data<float>();
   auto output_data = param.Out->mutable_data<float>();
-  lite::arm::math::act_log<float>(
+  lite_metal::arm::math::act_log<float>(
       x_data, output_data, x_dims.production(), ctx.threads());
 }
 
@@ -58,7 +58,7 @@ void ExpCompute::Run() {
   auto x_dims = param.X->dims();
   auto x_data = param.X->data<float>();
   auto output_data = param.Out->mutable_data<float>();
-  lite::arm::math::act_exp<float>(
+  lite_metal::arm::math::act_exp<float>(
       x_data, output_data, x_dims.production(), ctx.threads());
 }
 
@@ -68,7 +68,7 @@ void FloorCompute::Run() {
   auto x_dims = param.X->dims();
   auto x_data = param.X->data<float>();
   auto output_data = param.Out->mutable_data<float>();
-  lite::arm::math::act_floor<float>(
+  lite_metal::arm::math::act_floor<float>(
       x_data, output_data, x_dims.production(), ctx.threads());
 }
 
@@ -80,7 +80,7 @@ void HardSigmoidCompute::Run() {
   float slope = param.hard_sigmoid_slope;
   float offset = param.hard_sigmoid_offset;
   auto output_data = param.Out->mutable_data<float>();
-  lite::arm::math::act_hard_sigmoid<float>(
+  lite_metal::arm::math::act_hard_sigmoid<float>(
       x_data, output_data, x_dims.production(), slope, offset, ctx.threads());
 }
 
@@ -90,7 +90,7 @@ void SqrtCompute::Run() {
   auto x_dims = param.X->dims();
   auto x_data = param.X->data<float>();
   auto output_data = param.Out->mutable_data<float>();
-  lite::arm::math::act_sqrt<float>(
+  lite_metal::arm::math::act_sqrt<float>(
       x_data, output_data, x_dims.production(), ctx.threads());
 }
 
@@ -100,7 +100,7 @@ void RsqrtCompute::Run() {
   auto x_dims = param.X->dims();
   auto x_data = param.X->data<float>();
   auto output_data = param.Out->mutable_data<float>();
-  lite::arm::math::act_rsqrt<float>(
+  lite_metal::arm::math::act_rsqrt<float>(
       x_data, output_data, x_dims.production(), ctx.threads());
 }
 
@@ -110,7 +110,7 @@ void SquareCompute::Run() {
   auto x_dims = param.X->dims();
   auto x_data = param.X->data<float>();
   auto output_data = param.Out->mutable_data<float>();
-  lite::arm::math::act_square<float>(
+  lite_metal::arm::math::act_square<float>(
       x_data, output_data, x_dims.production(), ctx.threads());
 }
 
@@ -123,7 +123,7 @@ void HardSwishCompute::Run() {
   float threshold = param.hard_swish_threshold;
   float scale = param.hard_swish_scale;
   float offset = param.hard_swish_offset;
-  lite::arm::math::act_hard_swish<float>(x_data,
+  lite_metal::arm::math::act_hard_swish<float>(x_data,
                                          output_data,
                                          x_dims.production(),
                                          threshold,
@@ -138,7 +138,7 @@ void ReciprocalCompute::Run() {
   auto x_dims = param.X->dims();
   auto x_data = param.X->data<float>();
   auto output_data = param.Out->mutable_data<float>();
-  lite::arm::math::act_reciprocal<float>(
+  lite_metal::arm::math::act_reciprocal<float>(
       x_data, output_data, x_dims.production(), ctx.threads());
 }
 
@@ -148,7 +148,7 @@ void AbsCompute::Run() {
   auto x_dims = param.X->dims();
   auto x_data = param.X->data<float>();
   auto output_data = param.Out->mutable_data<float>();
-  lite::arm::math::act_abs<float>(
+  lite_metal::arm::math::act_abs<float>(
       x_data, output_data, x_dims.production(), ctx.threads());
 }
 
@@ -159,7 +159,7 @@ void GeluCompute::Run() {
   auto x_data = param.X->data<float>();
   auto output_data = param.Out->mutable_data<float>();
   bool approximate = param.gelu_approximate;
-  lite::arm::math::act_gelu<float>(
+  lite_metal::arm::math::act_gelu<float>(
       x_data, output_data, x_dims.production(), approximate, ctx.threads());
 }
 
@@ -171,7 +171,7 @@ void ErfCompute<T>::Run() {
   auto x_data = param.X->template data<T>();
   auto output_data = param.Out->template mutable_data<T>();
   float alpha = param.Elu_alpha;
-  lite::arm::math::erf<T>(
+  lite_metal::arm::math::erf<T>(
       x_data, output_data, x_dims.production(), ctx.threads());
 }
 template class ErfCompute<float>;
@@ -184,7 +184,7 @@ void SignCompute<T>::Run() {
   auto x_data = param.X->template data<T>();
   auto output_data = param.Out->template mutable_data<T>();
   float alpha = param.Elu_alpha;
-  lite::arm::math::sign<T>(
+  lite_metal::arm::math::sign<T>(
       x_data, output_data, x_dims.production(), ctx.threads());
 }
 template class SignCompute<float>;
@@ -197,7 +197,7 @@ void SoftPlusCompute<T>::Run() {
   auto x_data = param.X->template data<T>();
   auto output_data = param.Out->template mutable_data<T>();
   float alpha = param.Elu_alpha;
-  lite::arm::math::softplus<T>(
+  lite_metal::arm::math::softplus<T>(
       x_data, output_data, x_dims.production(), ctx.threads());
 }
 template class SoftPlusCompute<float>;
@@ -211,7 +211,7 @@ REGISTER_LITE_KERNEL(relu_clipped,
                      kARM,
                      kFloat,
                      kNCHW,
-                     paddle::lite::kernels::arm::ReluClippedCompute,
+                     paddle::lite_metal::kernels::arm::ReluClippedCompute,
                      def)
     .BindInput("X", {LiteType::GetTensorTy(TARGET(kARM))})
     .BindInput("Relu_clipped_coef", {LiteType::GetTensorTy(TARGET(kARM))})
@@ -219,23 +219,23 @@ REGISTER_LITE_KERNEL(relu_clipped,
     .Finalize();
 
 REGISTER_LITE_KERNEL(
-    swish, kARM, kFloat, kNCHW, paddle::lite::kernels::arm::SwishCompute, def)
+    swish, kARM, kFloat, kNCHW, paddle::lite_metal::kernels::arm::SwishCompute, def)
     .BindInput("X", {LiteType::GetTensorTy(TARGET(kARM))})
     .BindInput("beta", {LiteType::GetTensorTy(TARGET(kARM))})
     .BindOutput("Out", {LiteType::GetTensorTy(TARGET(kARM))})
     .Finalize();
 REGISTER_LITE_KERNEL(
-    log, kARM, kFloat, kNCHW, paddle::lite::kernels::arm::LogCompute, def)
+    log, kARM, kFloat, kNCHW, paddle::lite_metal::kernels::arm::LogCompute, def)
     .BindInput("X", {LiteType::GetTensorTy(TARGET(kARM))})
     .BindOutput("Out", {LiteType::GetTensorTy(TARGET(kARM))})
     .Finalize();
 REGISTER_LITE_KERNEL(
-    exp, kARM, kFloat, kNCHW, paddle::lite::kernels::arm::ExpCompute, def)
+    exp, kARM, kFloat, kNCHW, paddle::lite_metal::kernels::arm::ExpCompute, def)
     .BindInput("X", {LiteType::GetTensorTy(TARGET(kARM))})
     .BindOutput("Out", {LiteType::GetTensorTy(TARGET(kARM))})
     .Finalize();
 REGISTER_LITE_KERNEL(
-    floor, kARM, kFloat, kNCHW, paddle::lite::kernels::arm::FloorCompute, def)
+    floor, kARM, kFloat, kNCHW, paddle::lite_metal::kernels::arm::FloorCompute, def)
     .BindInput("X", {LiteType::GetTensorTy(TARGET(kARM))})
     .BindOutput("Out", {LiteType::GetTensorTy(TARGET(kARM))})
     .Finalize();
@@ -243,23 +243,23 @@ REGISTER_LITE_KERNEL(hard_sigmoid,
                      kARM,
                      kFloat,
                      kNCHW,
-                     paddle::lite::kernels::arm::HardSigmoidCompute,
+                     paddle::lite_metal::kernels::arm::HardSigmoidCompute,
                      def)
     .BindInput("X", {LiteType::GetTensorTy(TARGET(kARM))})
     .BindOutput("Out", {LiteType::GetTensorTy(TARGET(kARM))})
     .Finalize();
 REGISTER_LITE_KERNEL(
-    sqrt, kARM, kFloat, kNCHW, paddle::lite::kernels::arm::SqrtCompute, def)
+    sqrt, kARM, kFloat, kNCHW, paddle::lite_metal::kernels::arm::SqrtCompute, def)
     .BindInput("X", {LiteType::GetTensorTy(TARGET(kARM))})
     .BindOutput("Out", {LiteType::GetTensorTy(TARGET(kARM))})
     .Finalize();
 REGISTER_LITE_KERNEL(
-    rsqrt, kARM, kFloat, kNCHW, paddle::lite::kernels::arm::RsqrtCompute, def)
+    rsqrt, kARM, kFloat, kNCHW, paddle::lite_metal::kernels::arm::RsqrtCompute, def)
     .BindInput("X", {LiteType::GetTensorTy(TARGET(kARM))})
     .BindOutput("Out", {LiteType::GetTensorTy(TARGET(kARM))})
     .Finalize();
 REGISTER_LITE_KERNEL(
-    square, kARM, kFloat, kNCHW, paddle::lite::kernels::arm::SquareCompute, def)
+    square, kARM, kFloat, kNCHW, paddle::lite_metal::kernels::arm::SquareCompute, def)
     .BindInput("X", {LiteType::GetTensorTy(TARGET(kARM))})
     .BindOutput("Out", {LiteType::GetTensorTy(TARGET(kARM))})
     .Finalize();
@@ -267,7 +267,7 @@ REGISTER_LITE_KERNEL(hard_swish,
                      kARM,
                      kFloat,
                      kNCHW,
-                     paddle::lite::kernels::arm::HardSwishCompute,
+                     paddle::lite_metal::kernels::arm::HardSwishCompute,
                      def)
     .BindInput("X", {LiteType::GetTensorTy(TARGET(kARM))})
     .BindOutput("Out", {LiteType::GetTensorTy(TARGET(kARM))})
@@ -276,36 +276,36 @@ REGISTER_LITE_KERNEL(reciprocal,
                      kARM,
                      kFloat,
                      kNCHW,
-                     paddle::lite::kernels::arm::ReciprocalCompute,
+                     paddle::lite_metal::kernels::arm::ReciprocalCompute,
                      def)
     .BindInput("X", {LiteType::GetTensorTy(TARGET(kARM))})
     .BindOutput("Out", {LiteType::GetTensorTy(TARGET(kARM))})
     .Finalize();
 REGISTER_LITE_KERNEL(
-    abs, kARM, kFloat, kNCHW, paddle::lite::kernels::arm::AbsCompute, def)
+    abs, kARM, kFloat, kNCHW, paddle::lite_metal::kernels::arm::AbsCompute, def)
     .BindInput("X", {LiteType::GetTensorTy(TARGET(kARM))})
     .BindOutput("Out", {LiteType::GetTensorTy(TARGET(kARM))})
     .Finalize();
 
 REGISTER_LITE_KERNEL(
-    gelu, kARM, kFloat, kNCHW, paddle::lite::kernels::arm::GeluCompute, def)
+    gelu, kARM, kFloat, kNCHW, paddle::lite_metal::kernels::arm::GeluCompute, def)
     .BindInput("X", {LiteType::GetTensorTy(TARGET(kARM))})
     .BindOutput("Out", {LiteType::GetTensorTy(TARGET(kARM))})
     .Finalize();
 
-using float_erf = paddle::lite::kernels::arm::ErfCompute<float>;
+using float_erf = paddle::lite_metal::kernels::arm::ErfCompute<float>;
 REGISTER_LITE_KERNEL(erf, kARM, kAny, kNCHW, float_erf, def)
     .BindInput("X", {LiteType::GetTensorTy(TARGET(kARM), PRECISION(kAny))})
     .BindOutput("Out", {LiteType::GetTensorTy(TARGET(kARM), PRECISION(kAny))})
     .Finalize();
 
-using float_sign = paddle::lite::kernels::arm::SignCompute<float>;
+using float_sign = paddle::lite_metal::kernels::arm::SignCompute<float>;
 REGISTER_LITE_KERNEL(sign, kARM, kAny, kNCHW, float_sign, def)
     .BindInput("X", {LiteType::GetTensorTy(TARGET(kARM), PRECISION(kAny))})
     .BindOutput("Out", {LiteType::GetTensorTy(TARGET(kARM), PRECISION(kAny))})
     .Finalize();
 
-using float_softplus = paddle::lite::kernels::arm::SoftPlusCompute<float>;
+using float_softplus = paddle::lite_metal::kernels::arm::SoftPlusCompute<float>;
 REGISTER_LITE_KERNEL(softplus, kARM, kAny, kNCHW, float_softplus, def)
     .BindInput("X", {LiteType::GetTensorTy(TARGET(kARM), PRECISION(kAny))})
     .BindOutput("Out", {LiteType::GetTensorTy(TARGET(kARM), PRECISION(kAny))})

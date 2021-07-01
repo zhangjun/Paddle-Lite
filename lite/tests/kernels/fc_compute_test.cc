@@ -23,7 +23,7 @@
 #endif
 
 namespace paddle {
-namespace lite {
+namespace lite_metal {
 
 void AddBias(float* out, const float* bias, int num, int channel) {
   int remain = channel;
@@ -232,7 +232,7 @@ void TestFC2D(Place place,
 #ifdef LITE_WITH_ARM
           if (place == TARGET(kARM)) {
             auto& ctx = tester->context()->As<ARMContext>();
-            ctx.SetRunMode(lite_api::LITE_POWER_HIGH, 1);
+            ctx.SetRunMode(lite_metal_api::LITE_POWER_HIGH, 1);
           }
 #endif
           arena::Arena arena(std::move(tester), place, abs_error);

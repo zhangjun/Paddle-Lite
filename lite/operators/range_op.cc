@@ -18,7 +18,7 @@
 #include "lite/core/op_registry.h"
 
 namespace paddle {
-namespace lite {
+namespace lite_metal {
 namespace operators {
 
 bool RangeOpLite::CheckShape() const {
@@ -67,7 +67,7 @@ bool RangeOpLite::InferShapeImpl() const {
       break;
     default:
       LOG(FATAL) << "not supported precision type of range: "
-                 << lite_api::PrecisionToStr(param_.Start->precision());
+                 << lite_metal_api::PrecisionToStr(param_.Start->precision());
       break;
   }
   param_.Out->Resize(std::vector<int64_t>({size}));
@@ -77,7 +77,7 @@ bool RangeOpLite::InferShapeImpl() const {
 #pragma optimize("", on)
 #endif
 
-bool RangeOpLite::AttachImpl(const cpp::OpDesc& opdesc, lite::Scope* scope) {
+bool RangeOpLite::AttachImpl(const cpp::OpDesc& opdesc, lite_metal::Scope* scope) {
   auto start = opdesc.Input("Start").front();
   auto end = opdesc.Input("End").front();
   auto step = opdesc.Input("Step").front();
@@ -95,4 +95,4 @@ bool RangeOpLite::AttachImpl(const cpp::OpDesc& opdesc, lite::Scope* scope) {
 }  // namespace lite
 }  // namespace paddle
 
-REGISTER_LITE_OP(range, paddle::lite::operators::RangeOpLite);
+REGISTER_LITE_OP(range, paddle::lite_metal::operators::RangeOpLite);

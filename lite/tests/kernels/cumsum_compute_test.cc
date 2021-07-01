@@ -18,7 +18,7 @@
 #include "lite/core/arena/framework.h"
 
 namespace paddle {
-namespace lite {
+namespace lite_metal {
 
 template <class T>
 class CumsumComputeTester : public arena::TestCase {
@@ -112,21 +112,21 @@ void TestCumsumHelper(Place place,
                       const bool flatten = false,
                       const bool exclusive = false,
                       const bool reverse = false) {
-  auto precision = lite_api::PrecisionTypeTrait<T>::Type();
+  auto precision = lite_metal_api::PrecisionTypeTrait<T>::Type();
   std::string alias("def");
   switch (precision) {
-    case lite_api::PrecisionType::kFloat:
+    case lite_metal_api::PrecisionType::kFloat:
       alias = std::string("float32");
       break;
-    case lite_api::PrecisionType::kInt32:
+    case lite_metal_api::PrecisionType::kInt32:
       alias = std::string("int32");
       break;
-    case lite_api::PrecisionType::kInt64:
+    case lite_metal_api::PrecisionType::kInt64:
       alias = std::string("int64");
       break;
     default:
       LOG(FATAL) << "unsupported precision: "
-                 << lite_api::PrecisionToStr(precision);
+                 << lite_metal_api::PrecisionToStr(precision);
   }
 
   std::unique_ptr<arena::TestCase> tester(new CumsumComputeTester<T>(

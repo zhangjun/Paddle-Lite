@@ -20,7 +20,7 @@
 #include "lite/utils/macros.h"
 
 namespace paddle {
-namespace lite {
+namespace lite_metal {
 
 using TargetWrapperMlu = TargetWrapper<TARGET(kMLU)>;
 
@@ -47,7 +47,7 @@ class TargetWrapper<TARGET(kMLU)> {
                          size_t size,
                          IoDirection dir);
   static void SetMLURunMode(
-      lite_api::MLUCoreVersion core_version,
+      lite_metal_api::MLUCoreVersion core_version,
       int core_number,
       DataLayoutType input_layout,
       std::pair<std::vector<float>, std::vector<float>> firstconv_param);

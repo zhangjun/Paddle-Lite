@@ -18,7 +18,7 @@
 #include "lite/tests/utils/naive_math_impl.h"
 
 namespace paddle {
-namespace lite {
+namespace lite_metal {
 
 static float sigmoid(float a) { return 1.f / (1.f + exp(-a)); }
 
@@ -278,9 +278,9 @@ class GRUUnitTester : public arena::TestCase {
     CHECK(hidden);
     CHECK(reset_hidden_prev);
     CHECK(gate);
-    hidden->Resize(lite::DDim({batch_size, frame_size}));
-    reset_hidden_prev->Resize(lite::DDim({batch_size, frame_size}));
-    gate->Resize(lite::DDim({batch_size, 3 * frame_size}));
+    hidden->Resize(lite_metal::DDim({batch_size, frame_size}));
+    reset_hidden_prev->Resize(lite_metal::DDim({batch_size, frame_size}));
+    gate->Resize(lite_metal::DDim({batch_size, 3 * frame_size}));
 
     gru_unit_basic(input,
                    hidden_prev,
@@ -344,7 +344,7 @@ void test_gru_unit(Place place) {
       place, "def", 1 /* sigomoid */, 2 /* tanh */, false, dims));
 #ifdef LITE_WITH_ARM
   auto& ctx = tester->context()->template As<ARMContext>();
-  ctx.SetRunMode(lite_api::LITE_POWER_HIGH, 1);
+  ctx.SetRunMode(lite_metal_api::LITE_POWER_HIGH, 1);
 #endif
   arena::Arena arena(std::move(tester), place, 1e-4);
   arena.TestPrecision();

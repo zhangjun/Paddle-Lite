@@ -16,7 +16,7 @@
 #include <vector>
 
 namespace paddle {
-namespace lite {
+namespace lite_metal {
 namespace kernels {
 namespace host {
 
@@ -59,7 +59,7 @@ void LinspaceCompute<T, PType>::Run() {
       break;
     default:
       LOG(FATAL) << "Linspace op unsupport output data type: "
-                 << lite_api::PrecisionToStr(param.Out->precision());
+                 << lite_metal_api::PrecisionToStr(param.Out->precision());
   }
   return;
 }
@@ -69,7 +69,7 @@ void LinspaceCompute<T, PType>::Run() {
 }  // namespace paddle
 
 using linspace_float =
-    paddle::lite::kernels::host::LinspaceCompute<float, PRECISION(kFloat)>;
+    paddle::lite_metal::kernels::host::LinspaceCompute<float, PRECISION(kFloat)>;
 REGISTER_LITE_KERNEL(linspace, kHost, kFloat, kAny, linspace_float, float32)
     .BindInput("Start",
                {LiteType::GetTensorTy(TARGET(kHost),
@@ -87,7 +87,7 @@ REGISTER_LITE_KERNEL(linspace, kHost, kFloat, kAny, linspace_float, float32)
     .Finalize();
 
 using linspace_int32 =
-    paddle::lite::kernels::host::LinspaceCompute<int, PRECISION(kInt32)>;
+    paddle::lite_metal::kernels::host::LinspaceCompute<int, PRECISION(kInt32)>;
 REGISTER_LITE_KERNEL(linspace, kHost, kInt32, kAny, linspace_int32, int32)
     .BindInput("Start",
                {LiteType::GetTensorTy(TARGET(kHost),

@@ -19,7 +19,7 @@
 #include "lite/core/mir/pattern_matcher_high_api.h"
 
 namespace paddle {
-namespace lite {
+namespace lite_metal {
 namespace mir {
 namespace fusion {
 /* fuse xpu_conv2d and avg pool2d as resnet50-like block */
@@ -478,7 +478,7 @@ class XPUResBlockReductionFuser : public FuseBase {
     new_filter_node->arg()->type = LiteType::GetTensorTy(
         TARGET(kHost), PRECISION(kFloat), DATALAYOUT(kNCHW));
     auto* new_filter_t = scope->NewTensor(new_filter_name);
-    new_filter_t->set_precision(paddle::lite_api::PrecisionType::kFloat);
+    new_filter_t->set_precision(paddle::lite_metal_api::PrecisionType::kFloat);
     new_filter_t->set_persistable(true);
     new_filter_t->Resize({encode_filter_size.back()});
     float* new_filter_ptr = new_filter_t->mutable_data<float>();
@@ -501,7 +501,7 @@ class XPUResBlockReductionFuser : public FuseBase {
     new_bias_node->arg()->type = LiteType::GetTensorTy(
         TARGET(kHost), PRECISION(kFloat), DATALAYOUT(kNCHW));
     auto* new_bias_t = scope->NewTensor(new_bias_name);
-    new_bias_t->set_precision(paddle::lite_api::PrecisionType::kFloat);
+    new_bias_t->set_precision(paddle::lite_metal_api::PrecisionType::kFloat);
     new_bias_t->set_persistable(true);
     new_bias_t->Resize({encode_bias_size.back()});
     float* new_bias_ptr = new_bias_t->mutable_data<float>();
@@ -548,6 +548,6 @@ class XPUResBlockReductionFusePass : public ProgramPass {
 }  // namespace paddle
 
 REGISTER_MIR_PASS(__xpu__resblock_reduction_fuse_pass,
-                  paddle::lite::mir::XPUResBlockReductionFusePass)
+                  paddle::lite_metal::mir::XPUResBlockReductionFusePass)
     .BindTargets({TARGET(kXPU)})
     .BindKernel("__xpu__block_fuse_op");

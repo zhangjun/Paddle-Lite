@@ -36,7 +36,7 @@
 #include "supported_kernel_op_info.h"  // NOLINT
 
 namespace paddle {
-namespace lite_api {
+namespace lite_metal_api {
 
 /// The PaddlePredictor defines the basic interfaces for different kinds of
 /// predictors.
@@ -70,7 +70,7 @@ class LITE_API OptBase {
   // 1. help info
   // 1.1 Print help info for opt python api
   void PrintHelpInfo();
-  std::string OptVersion() { return lite::version(); }
+  std::string OptVersion() { return lite_metal::version(); }
   // 1.2 Print help info for executable opt bin
   void PrintExecutableBinHelpInfo();
   // 2. PrintOpsInfo

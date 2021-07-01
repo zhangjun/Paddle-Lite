@@ -17,7 +17,7 @@
 #include "lite/core/op_registry.h"
 
 namespace paddle {
-namespace lite {
+namespace lite_metal {
 namespace kernels {
 namespace xpu {
 
@@ -41,7 +41,7 @@ class IoCopyHostToXPUCompute
       y->ShareDataWith(*x);
     } else {
       LOG(FATAL) << "IoCopyHostToXPU can not handle with the input target: "
-                 << lite_api::TargetToStr(x->target());
+                 << lite_metal_api::TargetToStr(x->target());
     }
   }
 
@@ -100,7 +100,7 @@ class IoCopyXPUToHostCompute
       y->CopyDataFrom(*x);
     } else {
       LOG(FATAL) << "IoCopyXPUToHost can not handle with the input target: "
-                 << lite_api::TargetToStr(x->target());
+                 << lite_metal_api::TargetToStr(x->target());
     }
   }
 
@@ -128,7 +128,7 @@ REGISTER_LITE_KERNEL(io_copy,
                      kXPU,
                      kAny,
                      kAny,
-                     paddle::lite::kernels::xpu::IoCopyHostToXPUCompute,
+                     paddle::lite_metal::kernels::xpu::IoCopyHostToXPUCompute,
                      host_to_device)
     .BindInput("Input",
                {LiteType::GetTensorTy(TARGET(kHost),
@@ -152,7 +152,7 @@ REGISTER_LITE_KERNEL(io_copy,
                      kXPU,
                      kAny,
                      kAny,
-                     paddle::lite::kernels::xpu::IoCopyXPUToHostCompute,
+                     paddle::lite_metal::kernels::xpu::IoCopyXPUToHostCompute,
                      device_to_host)
     .BindInput("Input",
                {LiteType::GetTensorTy(TARGET(kXPU),
@@ -176,7 +176,7 @@ REGISTER_LITE_KERNEL(io_copy_once,
                      kXPU,
                      kAny,
                      kAny,
-                     paddle::lite::kernels::xpu::IoCopyHostToXPUCompute,
+                     paddle::lite_metal::kernels::xpu::IoCopyHostToXPUCompute,
                      host_to_device)
     .BindInput("Input",
                {LiteType::GetTensorTy(TARGET(kHost),
@@ -200,7 +200,7 @@ REGISTER_LITE_KERNEL(io_copy_once,
                      kXPU,
                      kAny,
                      kAny,
-                     paddle::lite::kernels::xpu::IoCopyXPUToHostCompute,
+                     paddle::lite_metal::kernels::xpu::IoCopyXPUToHostCompute,
                      device_to_host)
     .BindInput("Input",
                {LiteType::GetTensorTy(TARGET(kXPU),

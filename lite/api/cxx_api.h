@@ -27,7 +27,7 @@
 #include "lite/model_parser/model_parser.h"
 
 namespace paddle {
-namespace lite {
+namespace lite_metal {
 
 static const char TAILORD_OPS_SOURCE_LIST_FILENAME[] =
     ".tailored_ops_source_list";
@@ -54,7 +54,7 @@ class LITE_API Predictor {
   // Usage: Constructor of Predictor. Create a predictor with the
   // weight variable scope set given.
   ///////////////////////////////////////////////////////////////////
-  explicit Predictor(const std::shared_ptr<lite::Scope>& root_scope)
+  explicit Predictor(const std::shared_ptr<lite_metal::Scope>& root_scope)
       : scope_(root_scope) {}
   ///////////////////////////////////////////////////////////////////
   // Function: Predictor
@@ -80,10 +80,10 @@ class LITE_API Predictor {
 
   // Build from a model, with places set for hardware config.
   void Build(
-      const lite_api::CxxConfig& config,
+      const lite_metal_api::CxxConfig& config,
       const std::vector<Place>& valid_places,
       const std::vector<std::string>& passes = {},
-      lite_api::LiteModelType model_type = lite_api::LiteModelType::kProtobuf);
+      lite_metal_api::LiteModelType model_type = lite_metal_api::LiteModelType::kProtobuf);
 
   void Build(
       const std::string& model_path,
@@ -91,9 +91,9 @@ class LITE_API Predictor {
       const std::string& param_file_path,
       const std::vector<Place>& valid_places,
       const std::vector<std::string>& passes = {},
-      lite_api::LiteModelType model_type = lite_api::LiteModelType::kProtobuf,
-      const lite_api::CxxModelBuffer& model_buffer =
-          lite_api::CxxModelBuffer());
+      lite_metal_api::LiteModelType model_type = lite_metal_api::LiteModelType::kProtobuf,
+      const lite_metal_api::CxxModelBuffer& model_buffer =
+          lite_metal_api::CxxModelBuffer());
 
   void Build(const std::shared_ptr<cpp::ProgramDesc>& program_desc,
              const std::vector<Place>& valid_places,
@@ -145,7 +145,7 @@ class LITE_API Predictor {
     for (auto var_name : var_names) {
       predictor->exec_scope_->LocalVar(var_name);
       auto* tensor =
-          predictor->scope_->Var(var_name)->GetMutable<lite::Tensor>();
+          predictor->scope_->Var(var_name)->GetMutable<lite_metal::Tensor>();
       auto* sub_tensor =
           predictor->exec_scope_->Var(var_name)->GetMutable<Tensor>();
       sub_tensor->CopyDataFrom(*tensor);
@@ -164,13 +164,13 @@ class LITE_API Predictor {
     CheckInputValid();
 
 #ifdef LITE_WITH_XPU
-    lite::TargetWrapperXPU::MallocL3Cache();
+    lite_metal::TargetWrapperXPU::MallocL3Cache();
 #endif
 
     program_->Run();
 
 #ifdef LITE_WITH_XPU
-    lite::TargetWrapperXPU::FreeL3Cache();
+    lite_metal::TargetWrapperXPU::FreeL3Cache();
 #endif
   }
 
@@ -182,9 +182,9 @@ class LITE_API Predictor {
   bool TryShrinkMemory();
 
   // Get offset-th col of feed inputs.
-  lite::Tensor* GetInput(size_t offset);
+  lite_metal::Tensor* GetInput(size_t offset);
   // get input by name.
-  lite::Tensor* GetInputByName(const std::string& name);
+  lite_metal::Tensor* GetInputByName(const std::string& name);
   // get inputnames and get outputnames.
   std::vector<std::string> GetInputNames();
   std::vector<std::string> GetOutputNames();
@@ -196,21 +196,21 @@ class LITE_API Predictor {
   void PrepareFeedFetch();
 
   // Get offset-th col of fetch results.
-  const lite::Tensor* GetOutput(size_t offset) const;
-  std::vector<const lite::Tensor*> GetOutputs() const;
+  const lite_metal::Tensor* GetOutput(size_t offset) const;
+  std::vector<const lite_metal::Tensor*> GetOutputs() const;
 
   const cpp::ProgramDesc& program_desc() const;
   // get a mutable tensor according to its name
-  lite::Tensor* GetMutableTensor(const std::string& name);
+  lite_metal::Tensor* GetMutableTensor(const std::string& name);
   // get a const tensor according to its name
-  const lite::Tensor* GetTensor(const std::string& name) const;
+  const lite_metal::Tensor* GetTensor(const std::string& name) const;
   const RuntimeProgram& runtime_program() const;
   Scope* scope() { return scope_.get(); }
 
   // This method is disabled in mobile, for unnecessary dependencies required.
   void SaveModel(
       const std::string& dir,
-      lite_api::LiteModelType model_type = lite_api::LiteModelType::kProtobuf,
+      lite_metal_api::LiteModelType model_type = lite_metal_api::LiteModelType::kProtobuf,
       bool record_info = false);
   void SaveOpKernelInfo(const std::string& model_dir);
 
@@ -247,7 +247,7 @@ class LITE_API Predictor {
   std::vector<PrecisionType> input_precisions_;
 };
 
-class CxxPaddleApiImpl : public lite_api::PaddlePredictor {
+class CxxPaddleApiImpl : public lite_metal_api::PaddlePredictor {
  public:
   CxxPaddleApiImpl() {
     raw_predictor_ = std::make_shared<Predictor>();
@@ -259,11 +259,11 @@ class CxxPaddleApiImpl : public lite_api::PaddlePredictor {
   }
 
   /// Create a new predictor from a config.
-  void Init(const lite_api::CxxConfig& config);
+  void Init(const lite_metal_api::CxxConfig& config);
 
-  std::unique_ptr<lite_api::Tensor> GetInput(int i) override;
+  std::unique_ptr<lite_metal_api::Tensor> GetInput(int i) override;
 
-  std::unique_ptr<const lite_api::Tensor> GetOutput(int i) const override;
+  std::unique_ptr<const lite_metal_api::Tensor> GetOutput(int i) const override;
 
   void Run() override;
 
@@ -274,9 +274,9 @@ class CxxPaddleApiImpl : public lite_api::PaddlePredictor {
   /// \return a boolean variable.
   bool TryShrinkMemory() override;
 
-  std::shared_ptr<lite_api::PaddlePredictor> Clone() override;
+  std::shared_ptr<lite_metal_api::PaddlePredictor> Clone() override;
 
-  std::shared_ptr<lite_api::PaddlePredictor> Clone(
+  std::shared_ptr<lite_metal_api::PaddlePredictor> Clone(
       const std::vector<std::string>& var_names) override;
 
   std::string GetVersion() const override;
@@ -288,24 +288,24 @@ class CxxPaddleApiImpl : public lite_api::PaddlePredictor {
   std::vector<std::string> GetParamNames() override;
 
   // get tensor according to tensor's name
-  std::unique_ptr<const lite_api::Tensor> GetTensor(
+  std::unique_ptr<const lite_metal_api::Tensor> GetTensor(
       const std::string& name) const override;
   // get a mutable tensor according to tensor's name
-  std::unique_ptr<lite_api::Tensor> GetMutableTensor(
+  std::unique_ptr<lite_metal_api::Tensor> GetMutableTensor(
       const std::string& name) override;
 
   // Get InputTebsor by name
-  std::unique_ptr<lite_api::Tensor> GetInputByName(
+  std::unique_ptr<lite_metal_api::Tensor> GetInputByName(
       const std::string& name) override;
 
   void SaveOptimizedModel(
       const std::string& model_dir,
-      lite_api::LiteModelType model_type = lite_api::LiteModelType::kProtobuf,
+      lite_metal_api::LiteModelType model_type = lite_metal_api::LiteModelType::kProtobuf,
       bool record_info = false) override;
 
  private:
   std::shared_ptr<Predictor> raw_predictor_;
-  lite_api::CxxConfig config_;
+  lite_metal_api::CxxConfig config_;
   std::mutex mutex_;
   bool status_is_cloned_;
 };
@@ -327,7 +327,7 @@ class CxxPaddleApiImpl : public lite_api::PaddlePredictor {
 #ifdef LITE_WITH_X86
 class LITE_API CXXTrainer {
  public:
-  CXXTrainer(const std::shared_ptr<lite::Scope>& root_scope,
+  CXXTrainer(const std::shared_ptr<lite_metal::Scope>& root_scope,
              const std::vector<Place>& valid_places)
       : scope_(root_scope),
         valid_places_(valid_places),
@@ -361,7 +361,7 @@ class LITE_API CXXTrainer {
   }
 
  private:
-  std::shared_ptr<lite::Scope> scope_;
+  std::shared_ptr<lite_metal::Scope> scope_;
   std::vector<Place> valid_places_;
 
   // The training program.

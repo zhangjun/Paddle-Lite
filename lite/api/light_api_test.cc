@@ -19,7 +19,7 @@
 DEFINE_string(optimized_model, "", "");
 
 namespace paddle {
-namespace lite {
+namespace lite_metal {
 
 TEST(LightAPI, load) {
   if (FLAGS_optimized_model.empty()) {
@@ -66,21 +66,21 @@ TEST(LightAPI, loadNaiveBuffer) {
 
   auto model_path = std::string(FLAGS_optimized_model) + "/__model__.nb";
   auto params_path = std::string(FLAGS_optimized_model) + "/param.nb";
-  std::string model_buffer = lite::ReadFile(model_path);
+  std::string model_buffer = lite_metal::ReadFile(model_path);
   size_t size_model = model_buffer.length();
-  std::string params_buffer = lite::ReadFile(params_path);
+  std::string params_buffer = lite_metal::ReadFile(params_path);
   size_t size_params = params_buffer.length();
   LOG(INFO) << "sizeModel: " << size_model;
   LOG(INFO) << "sizeParams: " << size_params;
 
-  lite_api::MobileConfig config;
+  lite_metal_api::MobileConfig config;
   config.set_model_buffer(
       model_buffer.c_str(), size_model, params_buffer.c_str(), size_params);
   LightPredictor predictor(config.model_dir(),
                            config.model_buffer(),
                            config.param_buffer(),
                            config.is_model_from_memory(),
-                           lite_api::LiteModelType::kNaiveBuffer);
+                           lite_metal_api::LiteModelType::kNaiveBuffer);
 
   auto* input_tensor = predictor.GetInput(0);
   input_tensor->Resize(DDim(std::vector<int64_t>({100, 100})));

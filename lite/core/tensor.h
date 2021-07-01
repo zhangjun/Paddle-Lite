@@ -35,11 +35,11 @@
 #include "lite/utils/replace_stl/stream.h"
 
 namespace paddle {
-namespace lite {
+namespace lite_metal {
 
 class TensorLite;
 
-using Tensor = lite::TensorLite;
+using Tensor = lite_metal::TensorLite;
 
 using LoD = std::vector<std::vector<uint64_t>>;
 
@@ -89,7 +89,7 @@ class TensorLite {
   // For other devices, T and R may be the same type.
   template <typename T, typename R = T>
   R *mutable_data() {
-    precision_ = lite_api::PrecisionTypeTrait<T>::Type();
+    precision_ = lite_metal_api::PrecisionTypeTrait<T>::Type();
     memory_size_ = dims_.production() * sizeof(T);
     buffer_->ResetLazy(target_, memory_size_);
     return reinterpret_cast<R *>(static_cast<char *>(buffer_->data()) +
@@ -153,7 +153,7 @@ class TensorLite {
 
   template <typename T, typename R = T>
   R *mutable_data(TargetType target, size_t memory_size) {
-    precision_ = lite_api::PrecisionTypeTrait<T>::Type();
+    precision_ = lite_metal_api::PrecisionTypeTrait<T>::Type();
     memory_size_ = memory_size;
     buffer_->ResetLazy(target, memory_size_);
     target_ = target;

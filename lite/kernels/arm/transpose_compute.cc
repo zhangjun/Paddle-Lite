@@ -21,7 +21,7 @@
 #include "lite/core/type_system.h"
 
 namespace paddle {
-namespace lite {
+namespace lite_metal {
 namespace kernels {
 namespace arm {
 
@@ -141,8 +141,8 @@ void transpose_mat(const float* din,
 }
 
 #ifdef ENABLE_ARM_FP16
-void transpose_mat(const lite_api::float16_t* din,
-                   lite_api::float16_t* dout,
+void transpose_mat(const lite_metal_api::float16_t* din,
+                   lite_metal_api::float16_t* dout,
                    const int num,
                    const int width,
                    const int height) {
@@ -156,16 +156,16 @@ void transpose_mat(const lite_api::float16_t* din,
   int remain_ww_rem = remain_w & 3;
   int size_wh = nw * size_h;
   for (int i = 0; i < num; ++i) {
-    lite_api::float16_t* ptr_out = dout + i * size_in;
-    const lite_api::float16_t* ptr_in = din + i * size_in;
+    lite_metal_api::float16_t* ptr_out = dout + i * size_in;
+    const lite_metal_api::float16_t* ptr_in = din + i * size_in;
 #pragma omp parallel for
     for (int h = 0; h < nh; h++) {
-      const lite_api::float16_t* ptr_din_row = ptr_in + h * size_w;
+      const lite_metal_api::float16_t* ptr_din_row = ptr_in + h * size_w;
       int tmp_h = h << 3;
       for (int w = 0; w < nw; w++) {
-        INIT_PTR_4(lite_api::float16_t, ptr_out, size_h)
-        INIT_PTR_A4(lite_api::float16_t)
-        INIT_PTR_B4(lite_api::float16_t)
+        INIT_PTR_4(lite_metal_api::float16_t, ptr_out, size_h)
+        INIT_PTR_A4(lite_metal_api::float16_t)
+        INIT_PTR_B4(lite_metal_api::float16_t)
 #ifdef __aarch64__
         asm volatile(
             "ldr q0, [%[din0]], #16\n"
@@ -314,10 +314,10 @@ void transpose_mat(const lite_api::float16_t* din,
 #endif
         ptr_din_row += 8;
       }
-      lite_api::float16_t* data_out_ptr0 = ptr_out + size_wh;
+      lite_metal_api::float16_t* data_out_ptr0 = ptr_out + size_wh;
       for (int w = 0; w < remain_ww; w++) {
-        INIT_PTR_4(lite_api::float16_t, data_out_ptr0, (4 * height))
-        INIT_PTR_A4(lite_api::float16_t)
+        INIT_PTR_4(lite_metal_api::float16_t, data_out_ptr0, (4 * height))
+        INIT_PTR_A4(lite_metal_api::float16_t)
 #ifdef __aarch64__
         asm volatile(
             "ldr d0, [%[din0]], #8\n"
@@ -443,7 +443,7 @@ void transpose_mat(const lite_api::float16_t* din,
 #endif
         ptr_din_row += 4;
       }
-      lite_api::float16_t* data_out_ptr1 =
+      lite_metal_api::float16_t* data_out_ptr1 =
           data_out_ptr0 + remain_ww * 4 * height + tmp_h;
       for (int w = 0; w < remain_ww_rem; w++) {
         *data_out_ptr1 = *ptr_din_row++;
@@ -462,7 +462,7 @@ void transpose_mat(const lite_api::float16_t* din,
 }
 #endif
 
-std::vector<int> get_stride(const paddle::lite::DDimLite& dims) {
+std::vector<int> get_stride(const paddle::lite_metal::DDimLite& dims) {
   std::vector<int> data_stride{0};
 
   for (int i = 0; i < dims.size(); ++i) {
@@ -529,8 +529,8 @@ void TransposeCompute::PrepareForRun() { ReInitWhenNeeded(); }
 
 template <typename Dtype>
 void TransposeCompute_(const std::vector<int>& axis,
-                       const lite::Tensor* input,
-                       lite::Tensor* output) {
+                       const lite_metal::Tensor* input,
+                       lite_metal::Tensor* output) {
   const Dtype* input_ptr = input->data<Dtype>();
   Dtype* output_ptr = output->mutable_data<Dtype>();
 
@@ -600,8 +600,8 @@ void TransposeCompute::Run() {
   }
 #ifdef ENABLE_ARM_FP16
   if (input->precision() == PRECISION(kFP16) && trans_mat) {
-    const lite_api::float16_t* din = input->data<lite_api::float16_t>();
-    lite_api::float16_t* dout = output->mutable_data<lite_api::float16_t>();
+    const lite_metal_api::float16_t* din = input->data<lite_metal_api::float16_t>();
+    lite_metal_api::float16_t* dout = output->mutable_data<lite_metal_api::float16_t>();
     transpose_mat(din, dout, _trans_num, _trans_w, _trans_h);
     return;
   }
@@ -619,7 +619,7 @@ void TransposeCompute::Run() {
       break;
 #ifdef ENABLE_ARM_FP16
     case PRECISION(kFP16):
-      TransposeCompute_<lite_api::float16_t>(axis, input, output);
+      TransposeCompute_<lite_metal_api::float16_t>(axis, input, output);
       break;
 #endif
     case PRECISION(kFloat):
@@ -644,7 +644,7 @@ REGISTER_LITE_KERNEL(transpose,
                      kARM,
                      kAny,
                      kNCHW,
-                     paddle::lite::kernels::arm::TransposeCompute,
+                     paddle::lite_metal::kernels::arm::TransposeCompute,
                      def)
     .BindInput("X", {LiteType::GetTensorTy(TARGET(kARM), PRECISION(kAny))})
     .BindOutput("Out", {LiteType::GetTensorTy(TARGET(kARM), PRECISION(kAny))})
@@ -655,7 +655,7 @@ REGISTER_LITE_KERNEL(transpose2,
                      kARM,
                      kAny,
                      kNCHW,
-                     paddle::lite::kernels::arm::Transpose2Compute,
+                     paddle::lite_metal::kernels::arm::Transpose2Compute,
                      def)
     .BindInput("X", {LiteType::GetTensorTy(TARGET(kARM), PRECISION(kAny))})
     .BindOutput("Out", {LiteType::GetTensorTy(TARGET(kARM), PRECISION(kAny))})

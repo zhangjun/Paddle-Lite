@@ -75,11 +75,11 @@ void neon_mean_scale(
 }
 void pre_process(const cv::Mat& img, int width, int height, Tensor dstTensor) {
 #ifdef LITE_WITH_CV
-  typedef paddle::lite::utils::cv::ImageFormat ImageFormat;
-  typedef paddle::lite::utils::cv::FlipParam FlipParam;
-  typedef paddle::lite::utils::cv::TransParam TransParam;
-  typedef paddle::lite::utils::cv::ImagePreprocess ImagePreprocess;
-  typedef paddle::lite_api::DataLayoutType LayoutType;
+  typedef paddle::lite_metal::utils::cv::ImageFormat ImageFormat;
+  typedef paddle::lite_metal::utils::cv::FlipParam FlipParam;
+  typedef paddle::lite_metal::utils::cv::TransParam TransParam;
+  typedef paddle::lite_metal::utils::cv::ImagePreprocess ImagePreprocess;
+  typedef paddle::lite_metal_api::DataLayoutType LayoutType;
   // init TransParam
   TransParam tp;
   tp.iw = img.cols;

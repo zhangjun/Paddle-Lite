@@ -18,7 +18,7 @@
 #include "lite/core/op_registry.h"
 
 namespace paddle {
-namespace lite {
+namespace lite_metal {
 namespace kernels {
 namespace xpu {
 
@@ -144,7 +144,7 @@ void Pool2DCompute::Run() {
 }  // namespace paddle
 
 REGISTER_LITE_KERNEL(
-    pool2d, kXPU, kFloat, kNCHW, paddle::lite::kernels::xpu::Pool2DCompute, def)
+    pool2d, kXPU, kFloat, kNCHW, paddle::lite_metal::kernels::xpu::Pool2DCompute, def)
     .BindInput("X", {LiteType::GetTensorTy(TARGET(kXPU))})
     .BindOutput("Out", {LiteType::GetTensorTy(TARGET(kXPU))})
     .Finalize();
@@ -153,7 +153,7 @@ REGISTER_LITE_KERNEL(max_pool2d_with_index,
                      kXPU,
                      kFloat,
                      kNCHW,
-                     paddle::lite::kernels::xpu::Pool2DCompute,
+                     paddle::lite_metal::kernels::xpu::Pool2DCompute,
                      def)
     .BindInput("X", {LiteType::GetTensorTy(TARGET(kXPU))})
     .BindOutput("Out", {LiteType::GetTensorTy(TARGET(kXPU))})

@@ -25,13 +25,13 @@
 #include "lite/core/memory.h"
 
 namespace paddle {
-namespace lite {
+namespace lite_metal {
 
 class DDimLite;
 class TensorLite;
 
-using DDim = lite::DDimLite;
-using Tensor = lite::TensorLite;
+using DDim = lite_metal::DDimLite;
+using Tensor = lite_metal::TensorLite;
 
 class DDimLite {
  public:
@@ -257,7 +257,7 @@ R *TensorLite::mutable_data() {
   zynqmp::LayoutType layout_type = get_layout_type(dims_);
   zynqmp::Shape input_shape(layout_type, v);
   zynqmp::DataType data_type = get_data_type<T>();
-  precision_ = lite_api::PrecisionTypeTrait<T>::Type();
+  precision_ = lite_metal_api::PrecisionTypeTrait<T>::Type();
 
   if (zynq_tensor_.get() == nullptr) {
     zynq_tensor_.reset(new zynqmp::Tensor());

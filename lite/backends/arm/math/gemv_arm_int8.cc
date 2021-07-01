@@ -17,7 +17,7 @@
 #include "lite/backends/arm/math/saturate.h"
 
 namespace paddle {
-namespace lite {
+namespace lite_metal {
 namespace arm {
 namespace math {
 template <typename dtype>
@@ -27,7 +27,7 @@ inline void write_gemv_out(const int* in,
                            const float* bias,
                            int size,
                            bool flag_act,
-                           lite_api::ActivationType act,
+                           lite_metal_api::ActivationType act,
                            float six,
                            float alpha);
 template <>
@@ -37,7 +37,7 @@ inline void write_gemv_out(const int* in,
                            const float* bias_ptr,
                            int size,
                            bool flag_act,
-                           lite_api::ActivationType act,
+                           lite_metal_api::ActivationType act,
                            float six,
                            float alpha) {
   int cnt = size >> 3;
@@ -49,7 +49,7 @@ inline void write_gemv_out(const int* in,
     float32x4_t valpha = vdupq_n_f32(alpha);
     float32x4_t vsix = vdupq_n_f32(six);
     switch (act) {
-      case lite_api::ActivationType::kRelu:
+      case lite_metal_api::ActivationType::kRelu:
 #ifdef __aarch64__
         asm volatile(
             "cmp %w[cnt], #1\n"
@@ -164,7 +164,7 @@ inline void write_gemv_out(const int* in,
           out++;
         }
         break;
-      case lite_api::ActivationType::kRelu6:
+      case lite_metal_api::ActivationType::kRelu6:
 #ifdef __aarch64__
         asm volatile(
             "cmp %w[cnt], #1\n"
@@ -289,7 +289,7 @@ inline void write_gemv_out(const int* in,
           out++;
         }
         break;
-      case lite_api::ActivationType::kLeakyRelu:
+      case lite_metal_api::ActivationType::kLeakyRelu:
 #ifdef __aarch64__
         asm volatile(
             "cmp %w[cnt], #1\n"
@@ -530,7 +530,7 @@ inline void write_gemv_out(const int* in,
                            const float* bias_ptr,
                            int size,
                            bool flag_act,
-                           lite_api::ActivationType act,
+                           lite_metal_api::ActivationType act,
                            float six,
                            float alpha) {
   int cnt = size >> 3;
@@ -547,7 +547,7 @@ inline void write_gemv_out(const int* in,
     float32x4_t valpha = vdupq_n_f32(alpha);
     float32x4_t vsix = vdupq_n_f32(six);
     switch (act) {
-      case lite_api::ActivationType::kRelu:
+      case lite_metal_api::ActivationType::kRelu:
 #ifdef __aarch64__
         asm volatile(
             "cmp %w[cnt], #1\n"
@@ -706,7 +706,7 @@ inline void write_gemv_out(const int* in,
           out++;
         }
         break;
-      case lite_api::ActivationType::kRelu6:
+      case lite_metal_api::ActivationType::kRelu6:
 #ifdef __aarch64__
         asm volatile(
             "cmp %w[cnt], #1\n"
@@ -872,7 +872,7 @@ inline void write_gemv_out(const int* in,
           out++;
         }
         break;
-      case lite_api::ActivationType::kLeakyRelu:
+      case lite_metal_api::ActivationType::kLeakyRelu:
 #ifdef __aarch64__
         asm volatile(
             "cmp %w[cnt], #1\n"
@@ -1256,7 +1256,7 @@ bool gemv_int8_trans_oth(const int8_t* A,
                          bool is_bias,
                          const float* bias,
                          bool flag_act,
-                         lite_api::ActivationType act,
+                         lite_metal_api::ActivationType act,
                          float alpha,
                          ARMContext* ctx) {
   dtype* data_out = y;
@@ -2140,7 +2140,7 @@ void gemv_int8_oth(const int8_t* A,
                    bool is_bias,
                    const float* bias,
                    bool fact,
-                   lite_api::ActivationType act,
+                   lite_metal_api::ActivationType act,
                    float alpha,
                    ARMContext* ctx) {
   int cnt = N >> 4;
@@ -2150,9 +2150,9 @@ void gemv_int8_oth(const int8_t* A,
   int8_t* ptr_zero = ctx->workspace_data<int8_t>();
   memset(ptr_zero, 0, Nup * 3);
   int8_t* data_in = ptr_zero + Nup;
-  lite::TargetWrapperHost::MemcpySync(data_in, x, N);
+  lite_metal::TargetWrapperHost::MemcpySync(data_in, x, N);
   int8_t* ptr_w = data_in + Nup;
-  lite::TargetWrapperHost::MemcpySync(ptr_w, A + (M - 1) * N, N);
+  lite_metal::TargetWrapperHost::MemcpySync(ptr_w, A + (M - 1) * N, N);
 
 #ifdef __aarch64__
   int out_cnt = M >> 3;
@@ -2320,7 +2320,7 @@ void gemv_int8_sdot(const int8_t* A,
                     bool is_bias,
                     const float* bias,
                     bool fact,
-                    lite_api::ActivationType act,
+                    lite_metal_api::ActivationType act,
                     float alpha,
                     ARMContext* ctx) {
   int Nup = (N + 15) / 16 * 16;
@@ -2332,9 +2332,9 @@ void gemv_int8_sdot(const int8_t* A,
   int8_t* ptr_zero = ctx->workspace_data<int8_t>();
   memset(ptr_zero, 0, Nup * 3);
   int8_t* data_in = ptr_zero + Nup;
-  lite::TargetWrapperHost::MemcpySync(data_in, x, N);
+  lite_metal::TargetWrapperHost::MemcpySync(data_in, x, N);
   int8_t* ptr_w = data_in + Nup;
-  lite::TargetWrapperHost::MemcpySync(ptr_w, A + (M - 1) * N, N);
+  lite_metal::TargetWrapperHost::MemcpySync(ptr_w, A + (M - 1) * N, N);
 
 #pragma omp parallel for
   for (int j = 0; j < out_cnt; j++) {
@@ -2445,9 +2445,9 @@ void gemv_int8(const int8_t* A,
 
   float alpha = 1.f;
   if (act_param.has_active) {
-    if (act_param.active_type == lite_api::ActivationType::kRelu6) {
+    if (act_param.active_type == lite_metal_api::ActivationType::kRelu6) {
       alpha = act_param.threshold;
-    } else if (act_param.active_type == lite_api::ActivationType::kLeakyRelu) {
+    } else if (act_param.active_type == lite_metal_api::ActivationType::kLeakyRelu) {
       alpha = act_param.Leaky_relu_alpha;
     }
   }

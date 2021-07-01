@@ -68,15 +68,15 @@ DEFINE_int32(flag_act,
 DEFINE_double(leakey_relu_alpha, 1.0, "leakey relu alpha");
 DEFINE_bool(flag_bias, true, "with bias");
 
-typedef paddle::lite::DDim DDim;
-typedef paddle::lite::Tensor Tensor;
-typedef paddle::lite::operators::ConvParam ConvParam;
-typedef paddle::lite::operators::ActivationParam ActivationParam;
+typedef paddle::lite_metal::DDim DDim;
+typedef paddle::lite_metal::Tensor Tensor;
+typedef paddle::lite_metal::operators::ConvParam ConvParam;
+typedef paddle::lite_metal::operators::ActivationParam ActivationParam;
 
-using paddle::lite::profile::Timer;
+using paddle::lite_metal::profile::Timer;
 
 DDim compute_out_dim(const DDim& dim_in,
-                     const paddle::lite::operators::ConvParam& param) {
+                     const paddle::lite_metal::operators::ConvParam& param) {
   DDim dim_out = dim_in;
   auto paddings = *param.paddings;
   auto dilations = *param.dilations;
@@ -117,7 +117,7 @@ void act_init(ConvParam& param,  // NOLINT
   if (flag_act > 0) {
     ActivationParam act_param;
     act_param.has_active = true;
-    act_param.active_type = (paddle::lite_api::ActivationType)
+    act_param.active_type = (paddle::lite_metal_api::ActivationType)
         flag_act;  // 1-relu, 2-relu6, 4-leakyrelu
     if (flag_act == 1) {
       param.fuse_relu = true;

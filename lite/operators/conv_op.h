@@ -27,7 +27,7 @@
 #endif
 
 namespace paddle {
-namespace lite {
+namespace lite_metal {
 namespace operators {
 
 class ConvOpLite : public OpLite {
@@ -40,7 +40,7 @@ class ConvOpLite : public OpLite {
   bool InferShapeImpl() const override;
 
 #ifdef LITE_WITH_PROFILE
-  void GetOpRuntimeInfo(paddle::lite::profile::OpCharacter* ch) {
+  void GetOpRuntimeInfo(paddle::lite_metal::profile::OpCharacter* ch) {
     auto filter_dims = param_.filter->dims();
     auto input_dims = param_.x->dims();
     auto output_dims = param_.output->dims();
@@ -68,15 +68,15 @@ class ConvOpLite : public OpLite {
 #endif
 
   // TODO(Superjomn) replace framework::OpDesc with a lite one.
-  bool AttachImpl(const cpp::OpDesc& op_desc, lite::Scope* scope) override {
+  bool AttachImpl(const cpp::OpDesc& op_desc, lite_metal::Scope* scope) override {
     AttachParam(&param_);
     auto X = op_desc.Input("Input").front();
     auto Filter = op_desc.Input("Filter").front();
     auto Out = op_desc.Output("Output").front();
 
-    param_.x = scope->FindVar(X)->GetMutable<lite::Tensor>();
-    param_.filter = scope->FindVar(Filter)->GetMutable<lite::Tensor>();
-    param_.output = scope->FindVar(Out)->GetMutable<lite::Tensor>();
+    param_.x = scope->FindVar(X)->GetMutable<lite_metal::Tensor>();
+    param_.filter = scope->FindVar(Filter)->GetMutable<lite_metal::Tensor>();
+    param_.output = scope->FindVar(Out)->GetMutable<lite_metal::Tensor>();
 
     param_.strides = op_desc.GetAttr<std::vector<int>>("strides");
     std::vector<int> paddings = op_desc.GetAttr<std::vector<int>>("paddings");
@@ -93,7 +93,7 @@ class ConvOpLite : public OpLite {
         auto bias_var = scope->FindVar(bias_arguments.front());
         if (bias_var != nullptr) {
           param_.bias =
-              const_cast<lite::Tensor*>(&(bias_var->Get<lite::Tensor>()));
+              const_cast<lite_metal::Tensor*>(&(bias_var->Get<lite_metal::Tensor>()));
         }
       }
     }
@@ -104,8 +104,8 @@ class ConvOpLite : public OpLite {
       if (res_data_arguments.size() > 0) {
         auto residual_data_var = scope->FindVar(res_data_arguments.front());
         if (residual_data_var != nullptr) {
-          param_.residualData = const_cast<lite::Tensor*>(
-              &(residual_data_var->Get<lite::Tensor>()));
+          param_.residualData = const_cast<lite_metal::Tensor*>(
+              &(residual_data_var->Get<lite_metal::Tensor>()));
         }
       }
     }
@@ -114,20 +114,20 @@ class ConvOpLite : public OpLite {
       param_.activation_param.has_active = true;
       auto act_type = op_desc.GetAttr<std::string>("act_type");
       if (act_type == "relu") {
-        param_.activation_param.active_type = lite_api::ActivationType::kRelu;
+        param_.activation_param.active_type = lite_metal_api::ActivationType::kRelu;
         param_.fuse_relu = true;
       } else if (act_type == "relu6") {
-        param_.activation_param.active_type = lite_api::ActivationType::kRelu6;
+        param_.activation_param.active_type = lite_metal_api::ActivationType::kRelu6;
         param_.activation_param.Relu_clipped_coef =
             op_desc.GetAttr<float>("fuse_brelu_threshold");  // 6.f
       } else if (act_type == "leaky_relu") {
         param_.activation_param.active_type =
-            lite_api::ActivationType::kLeakyRelu;
+            lite_metal_api::ActivationType::kLeakyRelu;
         param_.activation_param.Leaky_relu_alpha =
             op_desc.GetAttr<float>("leaky_relu_alpha");
       } else if (act_type == "hard_swish") {
         param_.activation_param.active_type =
-            lite_api::ActivationType::kHardSwish;
+            lite_metal_api::ActivationType::kHardSwish;
         param_.activation_param.hard_swish_threshold =
             op_desc.GetAttr<float>("hard_swish_threshold");
         param_.activation_param.hard_swish_scale =
@@ -136,19 +136,19 @@ class ConvOpLite : public OpLite {
             op_desc.GetAttr<float>("hard_swish_offset");
       } else if (act_type == "hard_sigmoid") {
         param_.activation_param.active_type =
-            lite_api::ActivationType::kHardSigmoid;
+            lite_metal_api::ActivationType::kHardSigmoid;
         param_.activation_param.hard_sigmoid_slope =
             op_desc.GetAttr<float>("slope");
         param_.activation_param.hard_sigmoid_offset =
             op_desc.GetAttr<float>("offset");
       } else if (act_type == "prelu") {
-        param_.activation_param.active_type = lite_api::ActivationType::kPRelu;
+        param_.activation_param.active_type = lite_metal_api::ActivationType::kPRelu;
         param_.activation_param.Prelu_mode =
             op_desc.GetAttr<std::string>("prelu_mode");
         auto prelu_alpha_name = op_desc.Input("Prelu_alpha").front();
         auto prelu_alpha_var = scope->FindVar(prelu_alpha_name);
         param_.activation_param.Prelu_alpha =
-            const_cast<lite::Tensor*>(&(prelu_alpha_var->Get<lite::Tensor>()));
+            const_cast<lite_metal::Tensor*>(&(prelu_alpha_var->Get<lite_metal::Tensor>()));
       } else {
         LOG(FATAL) << "The fused conv only supports fuse with relu, leaky "
                       "relu, hard_swish, while the given activation type is "
@@ -165,7 +165,7 @@ class ConvOpLite : public OpLite {
           op_desc.GetAttr<std::string>("fuse_elementwise_op_type");
       auto X = op_desc.Input("SecondInput").front();
       param_.second_x =
-          const_cast<lite::Tensor*>(&(scope->FindVar(X)->Get<lite::Tensor>()));
+          const_cast<lite_metal::Tensor*>(&(scope->FindVar(X)->Get<lite_metal::Tensor>()));
     }
 
     if (op_desc.HasAttr("padding_algorithm")) {
@@ -206,7 +206,7 @@ class ConvOpLite : public OpLite {
         auto scale_var = scope->FindVar(scale_arguments.front());
         if (scale_var != nullptr) {
           param_.scale =
-              const_cast<lite::Tensor*>(&(scale_var->Get<lite::Tensor>()));
+              const_cast<lite_metal::Tensor*>(&(scale_var->Get<lite_metal::Tensor>()));
         }
       }
     }
@@ -241,8 +241,8 @@ void UpdatePaddingAndDilation(std::vector<int>* paddings,
                               std::vector<int>* dilations,
                               const std::vector<int>& strides,
                               const std::string padding_algorithm,
-                              const lite::DDim data_dims,
-                              const lite::DDim& ksize);
+                              const lite_metal::DDim data_dims,
+                              const lite_metal::DDim& ksize);
 }  // namespace operators
 }  // namespace lite
 }  // namespace paddle

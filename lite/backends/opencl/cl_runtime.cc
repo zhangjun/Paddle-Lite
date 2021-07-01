@@ -21,7 +21,7 @@ limitations under the License. */
 #include "lite/utils/string.h"
 
 namespace paddle {
-namespace lite {
+namespace lite_metal {
 
 CLRuntime* CLRuntime::Global() {
   static CLRuntime cl_runtime_;
@@ -67,7 +67,7 @@ bool CLRuntime::Init() {
     return true;
   }
 
-  bool opencl_lib_found = paddle::lite::CLWrapper::Global()->OpenclLibFound();
+  bool opencl_lib_found = paddle::lite_metal::CLWrapper::Global()->OpenclLibFound();
 #ifdef LITE_WITH_LOG
   LOG(INFO) << "opencl_lib_found:" << opencl_lib_found;
 #endif
@@ -75,7 +75,7 @@ bool CLRuntime::Init() {
     return false;
   }
 
-  bool dlsym_success = paddle::lite::CLWrapper::Global()->DlsymSuccess();
+  bool dlsym_success = paddle::lite_metal::CLWrapper::Global()->DlsymSuccess();
 #ifdef LITE_WITH_LOG
   LOG(INFO) << "dlsym_success:" << dlsym_success;
 #endif
@@ -149,7 +149,7 @@ cl::Program& CLRuntime::GetProgram(const std::string& file_name,
   /* -I +CLRuntime::Global()->cl_path() + "/cl_kernel"*/
   std::string build_option = options + " -cl-fast-relaxed-math -cl-mad-enable";
   if (build_option.find("CL_DTYPE_") == std::string::npos) {
-    if (lite_api::CL_PRECISION_FP16 == get_precision()) {
+    if (lite_metal_api::CL_PRECISION_FP16 == get_precision()) {
       build_option += " -DCL_DTYPE_half ";
     } else {
       build_option += " -DCL_DTYPE_float -DCL_DTYPE_FLOAT_FORCE ";
@@ -403,7 +403,7 @@ void CLRuntime::SaveProgram() {
 }
 
 void CLRuntime::SaveTuned() {
-  if (tuned_path_name_.empty() || auto_tune() == lite_api::CL_TUNE_NONE) return;
+  if (tuned_path_name_.empty() || auto_tune() == lite_metal_api::CL_TUNE_NONE) return;
   std::string tuned_file =
       tuned_path_name_.at(0) + "/" + tuned_path_name_.at(1);
   if (tuned_file == "/") {
@@ -505,7 +505,7 @@ std::string CLRuntime::GetSN(const std::string options) {
 #endif
 
   const std::string aarch_info = aarch + "; ";
-  const std::string lite_version = lite::version() + "; ";
+  const std::string lite_version = lite_metal::version() + "; ";
   const std::string platform_info =
       platform_->getInfo<CL_PLATFORM_NAME>() + ", " +
       platform_->getInfo<CL_PLATFORM_PROFILE>() + "; ";
@@ -845,14 +845,14 @@ uint64_t CLRuntime::GetMaxWorkGroupSize(const cl::Kernel& kernel) {
   return max_workgroup_size;
 }
 
-void CLRuntime::set_auto_tune(lite_api::CLTuneMode tune_mode,
+void CLRuntime::set_auto_tune(lite_metal_api::CLTuneMode tune_mode,
                               const std::string& path,
                               const std::string& name,
                               size_t lws_repeats) {
   auto_tune_ = tune_mode;
   auto device_name = CLRuntime::Global()->device().getInfo<CL_DEVICE_NAME>();
   if (device_name.find("Mali-T860") != std::string::npos) {
-    auto_tune_ = lite_api::CL_TUNE_NONE;
+    auto_tune_ = lite_metal_api::CL_TUNE_NONE;
   }
   lws_repeats_ = lws_repeats;
   if (tuned_path_name_.empty()) {
@@ -863,7 +863,7 @@ void CLRuntime::set_auto_tune(lite_api::CLTuneMode tune_mode,
   LOG(INFO) << "tuned_file.size():" << tuned_file.size()
             << ", tuned_file:" << tuned_file;
   if (tuned_file.size() > 2 && IsFileExists(tuned_file) &&
-      auto_tune() != lite_api::CL_TUNE_NONE) {
+      auto_tune() != lite_metal_api::CL_TUNE_NONE) {
     LOG(INFO) << "Load tuned file: " << tuned_file;
     bool status = Deserialize(tuned_file, &tuned_lwss_map_);
     if (!status) {

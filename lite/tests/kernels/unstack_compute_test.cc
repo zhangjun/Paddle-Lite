@@ -19,7 +19,7 @@
 #include "lite/tests/utils/fill_data.h"
 
 namespace paddle {
-namespace lite {
+namespace lite_metal {
 
 template <typename dtype>
 void SplitComputeRef(const Tensor* x,
@@ -118,7 +118,7 @@ template <class T = float>
 void TestUnstack(Place place,
                  float abs_error,
                  const std::vector<int64_t>& x_shape) {
-  place.precision = lite_api::PrecisionTypeTrait<T>::Type();
+  place.precision = lite_metal_api::PrecisionTypeTrait<T>::Type();
   std::vector<int> axes;
   int shape_size = x_shape.size();
   for (int i = -shape_size; i < shape_size; i++) {

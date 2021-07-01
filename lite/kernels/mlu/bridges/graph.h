@@ -33,7 +33,7 @@
 #endif
 
 namespace paddle {
-namespace lite {
+namespace lite_metal {
 namespace subgraph {
 namespace mlu {
 
@@ -236,7 +236,7 @@ class Graph {
       CNML_CALL(cnmlBindConstData_V2(
           nodes_[tensor_name]->mlu_tensor(), alloc_data, false));
     } else if (fp_type_ == CNML_DATA_FLOAT16) {
-      void* data_fp16 = RegisterConstData<paddle::lite::fluid::float16>(len);
+      void* data_fp16 = RegisterConstData<paddle::lite_metal::fluid::float16>(len);
       CNRT_CALL(
           cnrtCastDataType(const_cast<void*>(static_cast<const void*>(data)),
                            CNRT_FLOAT32,
@@ -251,7 +251,7 @@ class Graph {
     }
   }
 
-  void BindConstData(std::string tensor_name, paddle::lite::Tensor* tensor) {
+  void BindConstData(std::string tensor_name, paddle::lite_metal::Tensor* tensor) {
     const float* data = tensor->data<float>();
     size_t len = tensor->data_size();
     if (fp_type_ == CNML_DATA_FLOAT32) {
@@ -260,7 +260,7 @@ class Graph {
           const_cast<void*>(static_cast<const void*>(data)),
           false));
     } else if (fp_type_ == CNML_DATA_FLOAT16) {
-      void* data_fp16 = RegisterConstData<paddle::lite::fluid::float16>(len);
+      void* data_fp16 = RegisterConstData<paddle::lite_metal::fluid::float16>(len);
       CNRT_CALL(
           cnrtCastDataType(const_cast<void*>(static_cast<const void*>(data)),
                            CNRT_FLOAT32,
@@ -291,13 +291,13 @@ class Graph {
     CNML_CALL(cnmlDestroyQuantizedParam(&quant_param));
   }
 
-  void SetFPType(paddle::lite_api::PrecisionType type) {
+  void SetFPType(paddle::lite_metal_api::PrecisionType type) {
     origin_fp_type_ = type;
     switch (type) {
-      case paddle::lite_api::PrecisionType::kFP16:
+      case paddle::lite_metal_api::PrecisionType::kFP16:
         fp_type_ = CNML_DATA_FLOAT16;
         break;
-      case paddle::lite_api::PrecisionType::kFloat:
+      case paddle::lite_metal_api::PrecisionType::kFloat:
         fp_type_ = CNML_DATA_FLOAT32;
         break;
       default:
@@ -309,7 +309,7 @@ class Graph {
 
  private:
   cnmlDataType_t fp_type_{CNML_DATA_FLOAT32};
-  paddle::lite_api::PrecisionType origin_fp_type_{PRECISION(kFloat)};
+  paddle::lite_metal_api::PrecisionType origin_fp_type_{PRECISION(kFloat)};
   std::unordered_map<std::string, std::shared_ptr<MLUTensor>> nodes_;
   std::vector<cnmlTensor_t> inputs_;
   std::vector<cnmlTensor_t> outputs_;

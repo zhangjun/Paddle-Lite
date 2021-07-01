@@ -27,7 +27,7 @@
 #include "lite/fluid/float16.h"
 
 namespace paddle {
-namespace lite {
+namespace lite_metal {
 namespace subgraph {
 namespace mlu {
 
@@ -104,15 +104,15 @@ bool HasInputArg(const OpInfo* op_info,
 
 cnmlActiveFunction_t OpTypeToCNMLActType(std::string op_type);
 
-inline const ::paddle::lite::DDimLite DimNHWC2NCHW(
-    const ::paddle::lite::DDimLite& dim) {
-  return ::paddle::lite::DDimLite(
+inline const ::paddle::lite_metal::DDimLite DimNHWC2NCHW(
+    const ::paddle::lite_metal::DDimLite& dim) {
+  return ::paddle::lite_metal::DDimLite(
       std::vector<int64_t>({dim[0], dim[3], dim[1], dim[2]}));
 }
 
-inline const ::paddle::lite::DDimLite DimNCHW2NHWC(
-    const ::paddle::lite::DDimLite& dim) {
-  return ::paddle::lite::DDimLite(
+inline const ::paddle::lite_metal::DDimLite DimNCHW2NHWC(
+    const ::paddle::lite_metal::DDimLite& dim) {
+  return ::paddle::lite_metal::DDimLite(
       std::vector<int64_t>({dim[0], dim[2], dim[3], dim[1]}));
 }
 
@@ -176,32 +176,32 @@ inline std::vector<data_type> GetAxisNCHW2NHWC(size_t n_dims) {
   return nchw2nhwc_axis;
 }
 
-template <paddle::lite_api::PrecisionType>
+template <paddle::lite_metal_api::PrecisionType>
 struct MLUTypeTraits {
   /* using type = void; */
   /* static constexpr cnmlDataType_t cnml_type = CNML_DATA_INVALID; */
 };
 
 template <>
-struct MLUTypeTraits<paddle::lite_api::PrecisionType::kFloat> {
+struct MLUTypeTraits<paddle::lite_metal_api::PrecisionType::kFloat> {
   using type = float;
   static constexpr cnmlDataType_t cnml_type = CNML_DATA_FLOAT32;
 };
 
 template <>
-struct MLUTypeTraits<paddle::lite_api::PrecisionType::kFP16> {
-  using type = paddle::lite::fluid::float16;
+struct MLUTypeTraits<paddle::lite_metal_api::PrecisionType::kFP16> {
+  using type = paddle::lite_metal::fluid::float16;
   static constexpr cnmlDataType_t cnml_type = CNML_DATA_FLOAT16;
 };
 
 template <>
-struct MLUTypeTraits<paddle::lite_api::PrecisionType::kInt8> {
+struct MLUTypeTraits<paddle::lite_metal_api::PrecisionType::kInt8> {
   using type = int8_t;
   static constexpr cnmlDataType_t cnml_type = CNML_DATA_INT8;
 };
 
 template <>
-struct MLUTypeTraits<paddle::lite_api::PrecisionType::kInt32> {
+struct MLUTypeTraits<paddle::lite_metal_api::PrecisionType::kInt32> {
   using type = int32_t;
   static constexpr cnmlDataType_t cnml_type = CNML_DATA_INT32;
 };

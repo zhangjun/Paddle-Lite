@@ -22,7 +22,7 @@
 #include "lite/core/target_wrapper.h"
 
 namespace paddle {
-namespace lite {
+namespace lite_metal {
 namespace mir {
 /*
  * Use post_quant_dynamic method to quantize the model.
@@ -43,12 +43,12 @@ class PostQuantDynamicPass : public ProgramPass {
  public:
   void Apply(const std::unique_ptr<SSAGraph>& graph) override;
 
-  void SetQuantType(lite_api::QuantType quant_type) {
+  void SetQuantType(lite_metal_api::QuantType quant_type) {
     quant_type_ = quant_type;
   }
 
  private:
-  lite_api::QuantType quant_type_{lite_api::QuantType::QUANT_INT16};
+  lite_metal_api::QuantType quant_type_{lite_metal_api::QuantType::QUANT_INT16};
 };
 
 }  // namespace mir

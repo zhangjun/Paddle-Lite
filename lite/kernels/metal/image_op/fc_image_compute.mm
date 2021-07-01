@@ -21,7 +21,7 @@
 using namespace std;
 
 namespace paddle {
-namespace lite {
+namespace lite_metal {
 namespace kernels {
 namespace metal {
 
@@ -64,7 +64,7 @@ void FCImageCompute::setup_without_mps() {
     const auto& param = this->Param<param_t>();
     uint16_t activate_type_ = 0;
     if (param.activation_type == "relu") {
-        activate_type_ = (uint16_t)lite_api::ActivationType::kRelu;
+        activate_type_ = (uint16_t)lite_metal_api::ActivationType::kRelu;
     }
     ActivationMetalParam activation_params{(unsigned short)activate_type_, 0.0, 0.0, 0.0, 0.0};
     params_buffer_ = std::make_shared<MetalBuffer>(
@@ -100,7 +100,7 @@ REGISTER_LITE_KERNEL(fc,
     kMetal,
     kFloat,
     kMetalTexture2DArray,
-    paddle::lite::kernels::metal::FCImageCompute,
+    paddle::lite_metal::kernels::metal::FCImageCompute,
     def)
     .BindInput("Input",
         {LiteType::GetTensorTy(TARGET(kMetal),
@@ -124,7 +124,7 @@ REGISTER_LITE_KERNEL(fc,
     kMetal,
     kFP16,
     kMetalTexture2DArray,
-    paddle::lite::kernels::metal::FCImageCompute,
+    paddle::lite_metal::kernels::metal::FCImageCompute,
     def)
     .BindInput("Input",
         {LiteType::GetTensorTy(TARGET(kMetal), PRECISION(kFP16), DATALAYOUT(kMetalTexture2DArray))})

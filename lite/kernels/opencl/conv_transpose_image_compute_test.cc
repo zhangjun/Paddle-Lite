@@ -22,7 +22,7 @@
 #include "lite/tests/utils/naive_math_impl.h"
 
 namespace paddle {
-namespace lite {
+namespace lite_metal {
 
 #define FP16_RELATIVE_DIFF (5e-2)
 #define FP16_ABS_DIFF (5e-2)
@@ -30,7 +30,7 @@ namespace lite {
 #define FP32_ABS_DIFF (5e-4)
 
 DDim ConvTransposeOutputSize(const DDim& dim_in,
-                             const paddle::lite::operators::ConvParam& param) {
+                             const paddle::lite_metal::operators::ConvParam& param) {
   auto filter_dims = param.filter->dims();
   DDim output_shape = dim_in;
   output_shape[1] = filter_dims[1] * param.groups;
@@ -46,9 +46,9 @@ DDim ConvTransposeOutputSize(const DDim& dim_in,
 }
 
 #define LOOP_TEST
-void test_precision(const lite_api::CLPrecisionType p) {
+void test_precision(const lite_metal_api::CLPrecisionType p) {
   CLRuntime::Global()->set_precision(p);
-  const bool fp16_flag = (p == lite_api::CLPrecisionType::CL_PRECISION_FP16);
+  const bool fp16_flag = (p == lite_metal_api::CLPrecisionType::CL_PRECISION_FP16);
   const int fc = 3;
   const int fw = 2;
   const int fh = fw;
@@ -84,7 +84,7 @@ void test_precision(const lite_api::CLPrecisionType p) {
         auto kernel = std::move(kernels.front());
 
         LOG(INFO) << "get kernel";
-        lite::Tensor input, filter, bias, output;
+        lite_metal::Tensor input, filter, bias, output;
         operators::ConvParam param;
         param.x = &input;
         param.filter = &filter;
@@ -100,7 +100,7 @@ void test_precision(const lite_api::CLPrecisionType p) {
         if (relu_flag) {
           param.fuse_relu = true;
           param.activation_param.has_active = true;
-          param.activation_param.active_type = lite_api::ActivationType::kRelu;
+          param.activation_param.active_type = lite_metal_api::ActivationType::kRelu;
         } else {
           param.fuse_relu = false;
           param.activation_param.has_active = false;
@@ -117,9 +117,9 @@ void test_precision(const lite_api::CLPrecisionType p) {
 
         LOG(INFO) << "kernel ready";
         const DDim& input_dim =
-            lite::DDim{std::vector<int64_t>({1, ic, ih, iw})};
+            lite_metal::DDim{std::vector<int64_t>({1, ic, ih, iw})};
         const DDim& filter_dim =
-            lite::DDim{std::vector<int64_t>({fb, fc, fh, fw})};
+            lite_metal::DDim{std::vector<int64_t>({fb, fc, fh, fw})};
 
         input.Resize(input_dim);
         filter.Resize(filter_dim);
@@ -165,13 +165,13 @@ void test_precision(const lite_api::CLPrecisionType p) {
                          input_image_data.data());
 
         LOG(INFO) << "prepare kernel";
-        filter.Assign<float, lite::DDim, TARGET(kARM)>(filter_v.data(),
+        filter.Assign<float, lite_metal::DDim, TARGET(kARM)>(filter_v.data(),
                                                        filter_dim);
         if (bias_flag) {
           bias.Resize(bias_dim);
           bias_v.resize(bias_dim.production());
           fill_data_rand(bias_v.data(), -1.f, 1.f, bias_dim.production());
-          bias.Assign<float, lite::DDim, TARGET(kARM)>(bias_v.data(), bias_dim);
+          bias.Assign<float, lite_metal::DDim, TARGET(kARM)>(bias_v.data(), bias_dim);
         }
 
         LOG(INFO) << "launch";
@@ -263,12 +263,12 @@ void test_precision(const lite_api::CLPrecisionType p) {
 #else
 // nothing to do.
 #endif
-  LOG(INFO) << "\n\t[  PASSED  ] " << lite_api::CLPrecisionTypeToStr(p);
+  LOG(INFO) << "\n\t[  PASSED  ] " << lite_metal_api::CLPrecisionTypeToStr(p);
 }
 
 TEST(conv2d_transpose, compute_basic) {
-  for (auto ins : {lite_api::CLPrecisionType::CL_PRECISION_FP32,
-                   lite_api::CLPrecisionType::CL_PRECISION_FP16}) {
+  for (auto ins : {lite_metal_api::CLPrecisionType::CL_PRECISION_FP32,
+                   lite_metal_api::CLPrecisionType::CL_PRECISION_FP16}) {
     test_precision(ins);
   }
 }

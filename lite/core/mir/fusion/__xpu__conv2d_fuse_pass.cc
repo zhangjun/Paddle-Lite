@@ -19,7 +19,7 @@
 #include "lite/core/mir/pattern_matcher_high_api.h"
 
 namespace paddle {
-namespace lite {
+namespace lite_metal {
 namespace mir {
 namespace fusion {
 /* fuse conv2d block in resnet50-like model to xpu_conv2d op    */
@@ -334,7 +334,7 @@ class XPUConv2dFuser : public FuseBase {
     fusion_bias_node->arg()->type = LiteType::GetTensorTy(
         TARGET(kHost), PRECISION(kFloat), DATALAYOUT(kNCHW));
     auto* fusion_bias_t = scope->NewTensor(fusion_bias_name);
-    fusion_bias_t->set_precision(paddle::lite_api::PrecisionType::kFloat);
+    fusion_bias_t->set_precision(paddle::lite_metal_api::PrecisionType::kFloat);
 
     op_desc.SetAttr<bool>("has_bias", (with_bn_ || with_conv_bias_));
     if (with_bn_ || with_conv_bias_) {
@@ -470,7 +470,7 @@ class XPUConv2dFuser : public FuseBase {
     max_output_node->arg()->type = LiteType::GetTensorTy(
         TARGET(kXPU), PRECISION(kFloat), DATALAYOUT(kNCHW));
     auto* max_output_tensor = scope->NewTensor(max_output_name);
-    max_output_tensor->set_precision(paddle::lite_api::PrecisionType::kFloat);
+    max_output_tensor->set_precision(paddle::lite_metal_api::PrecisionType::kFloat);
     max_output_tensor->set_persistable(true);
     op_desc.SetOutput("OutputMax", {max_output_name});
 
@@ -532,6 +532,6 @@ class XPUConv2dFusePass : public ProgramPass {
 }  // namespace lite
 }  // namespace paddle
 
-REGISTER_MIR_PASS(__xpu__conv2d_fuse_pass, paddle::lite::mir::XPUConv2dFusePass)
+REGISTER_MIR_PASS(__xpu__conv2d_fuse_pass, paddle::lite_metal::mir::XPUConv2dFusePass)
     .BindTargets({TARGET(kXPU)})
     .BindKernel("__xpu__conv2d");

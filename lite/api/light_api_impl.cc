@@ -28,9 +28,9 @@
 #endif
 
 namespace paddle {
-namespace lite {
+namespace lite_metal {
 
-void LightPredictorImpl::Init(const lite_api::MobileConfig& config) {
+void LightPredictorImpl::Init(const lite_metal_api::MobileConfig& config) {
   // LightPredictor Only support NaiveBuffer backend in publish lib
   if (config.lite_model_file().empty()) {
     raw_predictor_.reset(
@@ -38,7 +38,7 @@ void LightPredictorImpl::Init(const lite_api::MobileConfig& config) {
                            config.model_buffer(),
                            config.param_buffer(),
                            config.is_model_from_memory(),
-                           lite_api::LiteModelType::kNaiveBuffer));
+                           lite_metal_api::LiteModelType::kNaiveBuffer));
   } else {
     raw_predictor_.reset(new LightPredictor(config.lite_model_file(),
                                             config.is_model_from_memory()));
@@ -105,46 +105,46 @@ void LightPredictorImpl::Init(const lite_api::MobileConfig& config) {
 #endif
 }
 
-std::unique_ptr<lite_api::Tensor> LightPredictorImpl::GetInput(int i) {
-  return std::unique_ptr<lite_api::Tensor>(
-      new lite_api::Tensor(raw_predictor_->GetInput(i)));
+std::unique_ptr<lite_metal_api::Tensor> LightPredictorImpl::GetInput(int i) {
+  return std::unique_ptr<lite_metal_api::Tensor>(
+      new lite_metal_api::Tensor(raw_predictor_->GetInput(i)));
 }
 
-std::unique_ptr<const lite_api::Tensor> LightPredictorImpl::GetOutput(
+std::unique_ptr<const lite_metal_api::Tensor> LightPredictorImpl::GetOutput(
     int i) const {
-  return std::unique_ptr<lite_api::Tensor>(
-      new lite_api::Tensor(raw_predictor_->GetOutput(i)));
+  return std::unique_ptr<lite_metal_api::Tensor>(
+      new lite_metal_api::Tensor(raw_predictor_->GetOutput(i)));
 }
 
 void LightPredictorImpl::Run() {
 #ifdef LITE_WITH_ARM
-  lite::DeviceInfo::Global().SetRunMode(mode_, threads_);
+  lite_metal::DeviceInfo::Global().SetRunMode(mode_, threads_);
 #endif
   raw_predictor_->Run();
 }
 
-std::shared_ptr<lite_api::PaddlePredictor> LightPredictorImpl::Clone() {
+std::shared_ptr<lite_metal_api::PaddlePredictor> LightPredictorImpl::Clone() {
   LOG(FATAL) << "The Clone API is not supported in LigthPredictor";
   return nullptr;
 }
 
-std::shared_ptr<lite_api::PaddlePredictor> LightPredictorImpl::Clone(
+std::shared_ptr<lite_metal_api::PaddlePredictor> LightPredictorImpl::Clone(
     const std::vector<std::string>& var_names) {
   LOG(FATAL) << "The Clone API is not supported in LigthPredictor";
   return nullptr;
 }
 
-std::string LightPredictorImpl::GetVersion() const { return lite::version(); }
+std::string LightPredictorImpl::GetVersion() const { return lite_metal::version(); }
 
-std::unique_ptr<const lite_api::Tensor> LightPredictorImpl::GetTensor(
+std::unique_ptr<const lite_metal_api::Tensor> LightPredictorImpl::GetTensor(
     const std::string& name) const {
-  return std::unique_ptr<const lite_api::Tensor>(
-      new lite_api::Tensor(raw_predictor_->GetTensor(name)));
+  return std::unique_ptr<const lite_metal_api::Tensor>(
+      new lite_metal_api::Tensor(raw_predictor_->GetTensor(name)));
 }
-std::unique_ptr<lite_api::Tensor> LightPredictorImpl::GetInputByName(
+std::unique_ptr<lite_metal_api::Tensor> LightPredictorImpl::GetInputByName(
     const std::string& name) {
-  return std::unique_ptr<lite_api::Tensor>(
-      new lite_api::Tensor(raw_predictor_->GetInputByName(name)));
+  return std::unique_ptr<lite_metal_api::Tensor>(
+      new lite_metal_api::Tensor(raw_predictor_->GetInputByName(name)));
 }
 
 std::vector<std::string> LightPredictorImpl::GetInputNames() {
@@ -161,12 +161,12 @@ bool LightPredictorImpl::TryShrinkMemory() {
 
 }  // namespace lite
 
-namespace lite_api {
+namespace lite_metal_api {
 
 template <>
 std::shared_ptr<PaddlePredictor> CreatePaddlePredictor(
     const MobileConfig& config) {
-  auto x = std::make_shared<lite::LightPredictorImpl>();
+  auto x = std::make_shared<lite_metal::LightPredictorImpl>();
   x->Init(config);
   return x;
 }

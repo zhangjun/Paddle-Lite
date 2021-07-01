@@ -20,7 +20,7 @@
 #include "lite/operators/op_params.h"
 
 namespace paddle {
-namespace lite {
+namespace lite_metal {
 namespace arm {
 namespace math {
 
@@ -34,7 +34,7 @@ bool sgemv(const float *A,
            bool is_bias,
            const float *bias,
            bool flag_act,
-           lite_api::ActivationType act,
+           lite_metal_api::ActivationType act,
            const ARMContext *ctx,
            float six = 6.f,
            float alpha = 1.f);

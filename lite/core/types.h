@@ -21,7 +21,7 @@
 #include "lite/utils/all.h"
 
 namespace paddle {
-namespace lite {
+namespace lite_metal {
 namespace core {
 
 /*
@@ -129,7 +129,7 @@ class KernelPickFactor {
 
  private:
   unsigned char data_{};
-  lite_api::TargetType target_{TARGET(kUnk)};
+  lite_metal_api::TargetType target_{TARGET(kUnk)};
 };
 
 struct dim2 {

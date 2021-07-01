@@ -22,7 +22,7 @@
 USE_LITE_KERNEL(leaky_relu, kCUDA, kFloat, kNCHW, def);
 
 namespace paddle {
-namespace lite {
+namespace lite_metal {
 
 static constexpr int64_t version = 1005000;
 
@@ -34,7 +34,7 @@ TEST(CompatibleChecker, CppProgramDesc) {
   op->SetType("leaky_relu");
 
   CompatibleChecker<cpp::ProgramDesc> checker(program);
-  lite_api::Place place{TARGET(kCUDA), PRECISION(kFloat), DATALAYOUT(kNCHW)};
+  lite_metal_api::Place place{TARGET(kCUDA), PRECISION(kFloat), DATALAYOUT(kNCHW)};
   CHECK(checker(place));
 }
 

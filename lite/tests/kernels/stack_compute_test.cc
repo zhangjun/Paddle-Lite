@@ -18,10 +18,10 @@
 #include "lite/core/arena/framework.h"
 
 namespace paddle {
-namespace lite {
+namespace lite_metal {
 
 template <class T>
-void stack(std::vector<const lite::Tensor*> x, lite::Tensor* y, int axis) {
+void stack(std::vector<const lite_metal::Tensor*> x, lite_metal::Tensor* y, int axis) {
   if (axis < 0) axis += (x[0]->dims().size() + 1);
   int n = x.size();
   auto* y_data = y->mutable_data<T>();
@@ -64,7 +64,7 @@ class StackComputeTester : public arena::TestCase {
   void RunBaseline(Scope* scope) override {
     auto* out = scope->NewTensor(output_);
     CHECK(out);
-    std::vector<const lite::Tensor*> x;
+    std::vector<const lite_metal::Tensor*> x;
     x.emplace_back(scope->FindTensor(input1_));
     x.emplace_back(scope->FindTensor(input2_));
     auto input_dims = x[0]->dims();
@@ -97,7 +97,7 @@ class StackComputeTester : public arena::TestCase {
 
 template <class T = float>
 void test_stack(Place place) {
-  place.precision = lite_api::PrecisionTypeTrait<T>::Type();
+  place.precision = lite_metal_api::PrecisionTypeTrait<T>::Type();
   for (float axis : {0, 1, 3}) {
     std::unique_ptr<arena::TestCase> tester(
         new StackComputeTester<T>(place, "def", axis));

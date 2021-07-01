@@ -20,12 +20,12 @@
 #include "lite/backends/fpga/KD/debugger.hpp"
 
 namespace paddle {
-namespace lite {
+namespace lite_metal {
 namespace kernels {
 namespace fpga {
 
 using float16 = zynqmp::float16;
-using lite_api::ActivationType;
+using lite_metal_api::ActivationType;
 
 void ConvCompute::PrepareForRun() {
   auto& param = this->Param<param_t>();
@@ -145,7 +145,7 @@ void ConvCompute::Run() {
 }  // namespace paddle
 
 REGISTER_LITE_KERNEL(
-    conv2d, kFPGA, kFP16, kNHWC, paddle::lite::kernels::fpga::ConvCompute, def)
+    conv2d, kFPGA, kFP16, kNHWC, paddle::lite_metal::kernels::fpga::ConvCompute, def)
     .BindInput("Input",
                {LiteType::GetTensorTy(TARGET(kFPGA),
                                       PRECISION(kFP16),
@@ -163,7 +163,7 @@ REGISTER_LITE_KERNEL(depthwise_conv2d,
                      kFPGA,
                      kFP16,
                      kNHWC,
-                     paddle::lite::kernels::fpga::ConvCompute,
+                     paddle::lite_metal::kernels::fpga::ConvCompute,
                      def)
     .BindInput("Input",
                {LiteType::GetTensorTy(TARGET(kFPGA),

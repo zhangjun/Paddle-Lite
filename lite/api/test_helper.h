@@ -49,7 +49,7 @@ DEFINE_int32(im_height, 224, "image height");
 DEFINE_bool(int8, false, "is run int8");
 
 namespace paddle {
-namespace lite {
+namespace lite_metal {
 
 inline double GetCurrentUS() {
   struct timeval time;
@@ -107,7 +107,7 @@ T ShapeProduction(const std::vector<T>& shape) {
 
 template <class T>
 void FillTensor(
-    const std::shared_ptr<paddle::lite_api::PaddlePredictor>& predictor,
+    const std::shared_ptr<paddle::lite_metal_api::PaddlePredictor>& predictor,
     int tensor_id,
     const std::vector<int64_t>& tensor_shape,
     const std::vector<T>& tensor_value,

@@ -19,44 +19,44 @@
 #include "lite/core/tensor.h"
 
 namespace paddle {
-namespace lite {
+namespace lite_metal {
 namespace x86 {
 namespace math {
 
 // for input and filter pack
-void pack8_m256(lite::Tensor* input,
-                lite::Tensor* output,
+void pack8_m256(lite_metal::Tensor* input,
+                lite_metal::Tensor* output,
                 const int channel_num,
                 const bool is_filter);
-void pack4_m128(lite::Tensor* input,
-                lite::Tensor* output,
+void pack4_m128(lite_metal::Tensor* input,
+                lite_metal::Tensor* output,
                 const int channel_num,
                 const bool is_filter);
 
 // for output unpack
-void unpack8_m256(lite::Tensor* input, lite::Tensor* output);
-void unpack4_m128(lite::Tensor* input, lite::Tensor* output);
+void unpack8_m256(lite_metal::Tensor* input, lite_metal::Tensor* output);
+void unpack4_m128(lite_metal::Tensor* input, lite_metal::Tensor* output);
 
 // for input padding
-void padding8_m256(lite::Tensor* input,
-                   lite::Tensor* output,
+void padding8_m256(lite_metal::Tensor* input,
+                   lite_metal::Tensor* output,
                    const std::vector<int>& paddings);
-void padding4_m128(lite::Tensor* input,
-                   lite::Tensor* output,
+void padding4_m128(lite_metal::Tensor* input,
+                   lite_metal::Tensor* output,
                    const std::vector<int>& paddings);
-void padding1_float(lite::Tensor* input,
-                    lite::Tensor* output,
+void padding1_float(lite_metal::Tensor* input,
+                    lite_metal::Tensor* output,
                     const std::vector<int>& paddings);
 
-void pack_padding8_m256(lite::Tensor* input,
-                        lite::Tensor* output,
+void pack_padding8_m256(lite_metal::Tensor* input,
+                        lite_metal::Tensor* output,
                         const int channel_num,
                         const std::vector<int>& paddings);
 
 // for activation - only support relu, relu6
-__m256 activation8_m256(__m256 input, const lite_api::ActivationType act_type);
-__m128 activation4_m128(__m128 input, const lite_api::ActivationType act_type);
-float activation1_float(float input, const lite_api::ActivationType act_type);
+__m256 activation8_m256(__m256 input, const lite_metal_api::ActivationType act_type);
+__m128 activation4_m128(__m128 input, const lite_metal_api::ActivationType act_type);
+float activation1_float(float input, const lite_metal_api::ActivationType act_type);
 
 }  // namespace math
 }  // namespace x86

@@ -27,11 +27,11 @@
 #endif
 
 namespace paddle {
-namespace lite {
+namespace lite_metal {
 namespace kernels {
 namespace arm {
 
-namespace arm_math = paddle::lite::arm::math;
+namespace arm_math = paddle::lite_metal::arm::math;
 
 inline DDim trim_trailing_singular_dims(const DDim& dims) {
   // Remove trailing dimensions of size 1 for y
@@ -98,7 +98,7 @@ template <class T>
 using ElementWiseFn = void(const T* dinx, const T* diny, T* dout, int num);
 
 template <class T>
-using BinaryOpFn = lite::kernels::host::BinaryOpFn<T>;
+using BinaryOpFn = lite_metal::kernels::host::BinaryOpFn<T>;
 
 enum class OprandSwapable { NO, YES };
 
@@ -106,17 +106,17 @@ template <class Elem_t, class DimValue_t, class NeonConfig>
 struct CommonElementWiseOpArm {
   static void Run(
       // todo: if necessary, generate
-      //  lite::kernels::host::StaticBatchElementWiseArg by
+      //  lite_metal::kernels::host::StaticBatchElementWiseArg by
       //  batch_arg->ToStaticArg() before kernel launch, it will help to reduce
       //  runtime overhead.
-      const lite::kernels::host::BatchElementWiseArg<Elem_t, DimValue_t>&
+      const lite_metal::kernels::host::BatchElementWiseArg<Elem_t, DimValue_t>&
           batch_arg,
       BinaryOpFn<Elem_t> op) {
     int batch_num = batch_arg.BatchNum();
     auto bcast_type = batch_arg.BcastType();
     int range_length = batch_arg.ElemNumPerBatch();
     switch (bcast_type) {
-      case (lite::kernels::host::BroadcastType::X_AS_CONTINUOUS): {
+      case (lite_metal::kernels::host::BroadcastType::X_AS_CONTINUOUS): {
         for (int batch_id = 0; batch_id < batch_num; ++batch_id) {
           arm_math::neon_elementwise_range_to_one<NeonConfig>(
               batch_arg.XAtBatch(batch_id),
@@ -126,7 +126,7 @@ struct CommonElementWiseOpArm {
         }
         break;
       }
-      case (lite::kernels::host::BroadcastType::Y_AS_CONTINUOUS): {
+      case (lite_metal::kernels::host::BroadcastType::Y_AS_CONTINUOUS): {
         for (int batch_id = 0; batch_id < batch_num; ++batch_id) {
           arm_math::neon_elementwise_one_to_range<NeonConfig>(
               batch_arg.XAtBatch(batch_id),
@@ -136,7 +136,7 @@ struct CommonElementWiseOpArm {
         }
         break;
       }
-      case (lite::kernels::host::BroadcastType::BOTH_CONTINUOUS): {
+      case (lite_metal::kernels::host::BroadcastType::BOTH_CONTINUOUS): {
         for (int batch_id = 0; batch_id < batch_num; ++batch_id) {
           arm_math::neon_elementwise_range_to_range<NeonConfig>(
               batch_arg.XAtBatch(batch_id),
@@ -158,19 +158,19 @@ template <class Elem_t, class DimValue_t>
 struct CommonElementWiseOpArm<Elem_t, DimValue_t, arm_math::NullNeonConfig> {
   static void Run(
       // todo: if necessary, generate
-      //  lite::kernels::host::StaticBatchElementWiseArg by
+      //  lite_metal::kernels::host::StaticBatchElementWiseArg by
       //  batch_arg->ToStaticArg() before kernel launch, it will help to reduce
       //  runtime overhead.
-      const lite::kernels::host::BatchElementWiseArg<Elem_t, DimValue_t>&
+      const lite_metal::kernels::host::BatchElementWiseArg<Elem_t, DimValue_t>&
           batch_arg,
       BinaryOpFn<Elem_t> op) {
     int batch_num = batch_arg.BatchNum();
     auto bcast_type = batch_arg.BcastType();
     int range_length = batch_arg.ElemNumPerBatch();
     switch (bcast_type) {
-      case (lite::kernels::host::BroadcastType::X_AS_CONTINUOUS): {
+      case (lite_metal::kernels::host::BroadcastType::X_AS_CONTINUOUS): {
         for (int batch_id = 0; batch_id < batch_num; ++batch_id) {
-          lite::kernels::host::element_wise_range_to_one<Elem_t>(
+          lite_metal::kernels::host::element_wise_range_to_one<Elem_t>(
               batch_arg.XAtBatch(batch_id),
               batch_arg.YAtBatch(batch_id),
               batch_arg.ZAtBatch(batch_id),
@@ -179,9 +179,9 @@ struct CommonElementWiseOpArm<Elem_t, DimValue_t, arm_math::NullNeonConfig> {
         }
         break;
       }
-      case (lite::kernels::host::BroadcastType::Y_AS_CONTINUOUS): {
+      case (lite_metal::kernels::host::BroadcastType::Y_AS_CONTINUOUS): {
         for (int batch_id = 0; batch_id < batch_num; ++batch_id) {
-          lite::kernels::host::element_wise_one_to_range<Elem_t>(
+          lite_metal::kernels::host::element_wise_one_to_range<Elem_t>(
               batch_arg.XAtBatch(batch_id),
               batch_arg.YAtBatch(batch_id),
               batch_arg.ZAtBatch(batch_id),
@@ -190,9 +190,9 @@ struct CommonElementWiseOpArm<Elem_t, DimValue_t, arm_math::NullNeonConfig> {
         }
         break;
       }
-      case (lite::kernels::host::BroadcastType::BOTH_CONTINUOUS): {
+      case (lite_metal::kernels::host::BroadcastType::BOTH_CONTINUOUS): {
         for (int batch_id = 0; batch_id < batch_num; ++batch_id) {
-          lite::kernels::host::element_wise_range_to_range<Elem_t>(
+          lite_metal::kernels::host::element_wise_range_to_range<Elem_t>(
               batch_arg.XAtBatch(batch_id),
               batch_arg.YAtBatch(batch_id),
               batch_arg.ZAtBatch(batch_id),
@@ -218,7 +218,7 @@ template <class OpParamType,
           class T,
           OprandSwapable opd_swap_able,
           class NeonConfig>
-void elementwise_compute_template(paddle::lite::KernelBase* kernel,
+void elementwise_compute_template(paddle::lite_metal::KernelBase* kernel,
                                   FastBCastFn<T> fast_bcast_fn,
                                   ElementWiseFn<T> elementwise_fn,
                                   BinaryOpFn<T> op) {
@@ -251,7 +251,7 @@ void elementwise_compute_template(paddle::lite::KernelBase* kernel,
     //   kinds of "elementwise op", not only "broadcast". You could refactor the
     //   code to use only common_elmentwise_op_arm if necessary
     auto batch_arg =
-        lite::kernels::host::GenBatchElementWiseArg<T>(x, y, param.Out, axis);
+        lite_metal::kernels::host::GenBatchElementWiseArg<T>(x, y, param.Out, axis);
     // if NeonConfig is NullNeonConfig, a specialization that uses naive cpu
     // code will be called
     CommonElementWiseOpArm<T, int64_t, NeonConfig>::Run(batch_arg, op);
@@ -272,9 +272,9 @@ void ElementwiseAddCompute<T, PType>::Run() {
                                OprandSwapable::YES,
                                NeonConfig>(
       this,
-      lite::arm::math::elementwise_add_broadcast<T>,
-      lite::arm::math::elementwise_add<T>,
-      paddle::lite::kernels::host::naive_add<T>);
+      lite_metal::arm::math::elementwise_add_broadcast<T>,
+      lite_metal::arm::math::elementwise_add<T>,
+      paddle::lite_metal::kernels::host::naive_add<T>);
 }
 
 template <typename T, PrecisionType PType>
@@ -290,12 +290,12 @@ void ElementwiseAddActivationCompute<T, PType>::Run() {
                                  OprandSwapable::YES,
                                  arm_math::NullNeonConfig>(
         this,
-        lite::arm::math::elementwise_add_relu_broadcast<T>,
-        lite::arm::math::elementwise_add_relu<T>,
-        paddle::lite::kernels::host::naive_fused_op<
+        lite_metal::arm::math::elementwise_add_relu_broadcast<T>,
+        lite_metal::arm::math::elementwise_add_relu<T>,
+        paddle::lite_metal::kernels::host::naive_fused_op<
             T,
-            paddle::lite::kernels::host::naive_add<T>,
-            paddle::lite::kernels::host::naive_relu<T>>);
+            paddle::lite_metal::kernels::host::naive_add<T>,
+            paddle::lite_metal::kernels::host::naive_relu<T>>);
   }
 
   if (param.act_type == "tanh") {
@@ -306,11 +306,11 @@ void ElementwiseAddActivationCompute<T, PType>::Run() {
                                  arm_math::NullNeonConfig>(
         this,
         nullptr,
-        lite::arm::math::elementwise_add_tanh<T>,
-        paddle::lite::kernels::host::naive_fused_op<
+        lite_metal::arm::math::elementwise_add_tanh<T>,
+        paddle::lite_metal::kernels::host::naive_fused_op<
             T,
-            paddle::lite::kernels::host::naive_add<T>,
-            paddle::lite::kernels::host::naive_tanh<T>>);
+            paddle::lite_metal::kernels::host::naive_add<T>,
+            paddle::lite_metal::kernels::host::naive_tanh<T>>);
   }
   if (!act_supported) {
     LOG(FATAL) << "unsupported Activation type: " << param.act_type;
@@ -330,9 +330,9 @@ void ElementwiseAddCompute<float16_t, PRECISION(kFP16)>::Run() {
                                NeonConfig>(
       this,
 
-      lite::arm::math::fp16::elementwise_add_broadcast<float16_t>,
-      lite::arm::math::fp16::elementwise_add<float16_t>,
-      paddle::lite::kernels::host::naive_add<float16_t>);
+      lite_metal::arm::math::fp16::elementwise_add_broadcast<float16_t>,
+      lite_metal::arm::math::fp16::elementwise_add<float16_t>,
+      paddle::lite_metal::kernels::host::naive_add<float16_t>);
 }
 
 template <>
@@ -348,12 +348,12 @@ void ElementwiseAddActivationCompute<float16_t, PRECISION(kFP16)>::Run() {
                                  OprandSwapable::YES,
                                  arm_math::NullNeonConfig>(
         this,
-        lite::arm::math::fp16::elementwise_add_relu_broadcast<float16_t>,
-        lite::arm::math::fp16::elementwise_add_relu<float16_t>,
-        paddle::lite::kernels::host::naive_fused_op<
+        lite_metal::arm::math::fp16::elementwise_add_relu_broadcast<float16_t>,
+        lite_metal::arm::math::fp16::elementwise_add_relu<float16_t>,
+        paddle::lite_metal::kernels::host::naive_fused_op<
             float16_t,
-            paddle::lite::kernels::host::naive_add<float16_t>,
-            paddle::lite::kernels::host::naive_relu<float16_t>>);
+            paddle::lite_metal::kernels::host::naive_add<float16_t>,
+            paddle::lite_metal::kernels::host::naive_relu<float16_t>>);
   }
   if (!act_supported) {
     LOG(FATAL) << "fp16 unsupported Activation type: " << param.act_type;
@@ -368,9 +368,9 @@ void ElementwiseSubCompute<T, PType>::Run() {
                                OprandSwapable::NO,
                                arm_math::NullNeonConfig>(
       this,
-      lite::arm::math::elementwise_sub_broadcast<T>,
-      lite::arm::math::elementwise_sub<T>,
-      paddle::lite::kernels::host::naive_sub<T>);
+      lite_metal::arm::math::elementwise_sub_broadcast<T>,
+      lite_metal::arm::math::elementwise_sub<T>,
+      paddle::lite_metal::kernels::host::naive_sub<T>);
 }
 
 void ElementwiseSubActivationCompute::Run() {
@@ -383,12 +383,12 @@ void ElementwiseSubActivationCompute::Run() {
                                  OprandSwapable::NO,
                                  arm_math::NullNeonConfig>(
         this,
-        lite::arm::math::elementwise_sub_relu_broadcast<float>,
-        lite::arm::math::elementwise_sub_relu<float>,
-        paddle::lite::kernels::host::naive_fused_op<
+        lite_metal::arm::math::elementwise_sub_relu_broadcast<float>,
+        lite_metal::arm::math::elementwise_sub_relu<float>,
+        paddle::lite_metal::kernels::host::naive_fused_op<
             float,
-            paddle::lite::kernels::host::naive_sub<float>,
-            paddle::lite::kernels::host::naive_relu<float>>);
+            paddle::lite_metal::kernels::host::naive_sub<float>,
+            paddle::lite_metal::kernels::host::naive_relu<float>>);
   }
   if (!act_supported) {
     LOG(FATAL) << "unsupported Activation type: " << param.act_type;
@@ -402,9 +402,9 @@ void ElementwiseMulCompute<T, PType>::Run() {
                                OprandSwapable::YES,
                                arm_math::NullNeonConfig>(
       this,
-      lite::arm::math::elementwise_mul_broadcast<T>,
-      lite::arm::math::elementwise_mul<T>,
-      paddle::lite::kernels::host::naive_mul<T>);
+      lite_metal::arm::math::elementwise_mul_broadcast<T>,
+      lite_metal::arm::math::elementwise_mul<T>,
+      paddle::lite_metal::kernels::host::naive_mul<T>);
 }
 
 template <typename T, PrecisionType PType>
@@ -419,12 +419,12 @@ void ElementwiseMulActivationCompute<T, PType>::Run() {
                                  OprandSwapable::YES,
                                  arm_math::NullNeonConfig>(
         this,
-        lite::arm::math::elementwise_mul_relu_broadcast<T>,
-        lite::arm::math::elementwise_mul_relu<T>,
-        paddle::lite::kernels::host::naive_fused_op<
+        lite_metal::arm::math::elementwise_mul_relu_broadcast<T>,
+        lite_metal::arm::math::elementwise_mul_relu<T>,
+        paddle::lite_metal::kernels::host::naive_fused_op<
             T,
-            paddle::lite::kernels::host::naive_mul<T>,
-            paddle::lite::kernels::host::naive_relu<T>>);
+            paddle::lite_metal::kernels::host::naive_mul<T>,
+            paddle::lite_metal::kernels::host::naive_relu<T>>);
   }
   if (!act_supported) {
     LOG(FATAL) << "unsupported Activation type: " << param.act_type;
@@ -437,9 +437,9 @@ void ElementwiseMaxCompute::Run() {
                                OprandSwapable::YES,
                                arm_math::NullNeonConfig>(
       this,
-      lite::arm::math::elementwise_max_broadcast<float>,
-      lite::arm::math::elementwise_max<float>,
-      paddle::lite::kernels::host::naive_max<float>);
+      lite_metal::arm::math::elementwise_max_broadcast<float>,
+      lite_metal::arm::math::elementwise_max<float>,
+      paddle::lite_metal::kernels::host::naive_max<float>);
 }
 
 void ElementwiseMaxActivationCompute::Run() {
@@ -452,12 +452,12 @@ void ElementwiseMaxActivationCompute::Run() {
                                  OprandSwapable::YES,
                                  arm_math::NullNeonConfig>(
         this,
-        lite::arm::math::elementwise_max_relu_broadcast<float>,
-        lite::arm::math::elementwise_max_relu<float>,
-        paddle::lite::kernels::host::naive_fused_op<
+        lite_metal::arm::math::elementwise_max_relu_broadcast<float>,
+        lite_metal::arm::math::elementwise_max_relu<float>,
+        paddle::lite_metal::kernels::host::naive_fused_op<
             float,
-            paddle::lite::kernels::host::naive_max<float>,
-            paddle::lite::kernels::host::naive_relu<float>>);
+            paddle::lite_metal::kernels::host::naive_max<float>,
+            paddle::lite_metal::kernels::host::naive_relu<float>>);
   }
   if (!act_supported) {
     LOG(FATAL) << "unsupported Activation type: " << param.act_type;
@@ -470,9 +470,9 @@ void ElementwiseMinCompute::Run() {
                                OprandSwapable::YES,
                                arm_math::NullNeonConfig>(
       this,
-      lite::arm::math::elementwise_min_broadcast<float>,
-      lite::arm::math::elementwise_min<float>,
-      paddle::lite::kernels::host::naive_min<float>);
+      lite_metal::arm::math::elementwise_min_broadcast<float>,
+      lite_metal::arm::math::elementwise_min<float>,
+      paddle::lite_metal::kernels::host::naive_min<float>);
 }
 
 void ElementwiseMinActivationCompute::Run() {
@@ -485,12 +485,12 @@ void ElementwiseMinActivationCompute::Run() {
                                  OprandSwapable::YES,
                                  arm_math::NullNeonConfig>(
         this,
-        lite::arm::math::elementwise_min_relu_broadcast<float>,
-        lite::arm::math::elementwise_min_relu<float>,
-        paddle::lite::kernels::host::naive_fused_op<
+        lite_metal::arm::math::elementwise_min_relu_broadcast<float>,
+        lite_metal::arm::math::elementwise_min_relu<float>,
+        paddle::lite_metal::kernels::host::naive_fused_op<
             float,
-            paddle::lite::kernels::host::naive_min<float>,
-            paddle::lite::kernels::host::naive_relu<float>>);
+            paddle::lite_metal::kernels::host::naive_min<float>,
+            paddle::lite_metal::kernels::host::naive_relu<float>>);
   }
   if (!act_supported) {
     LOG(FATAL) << "unsupported Activation type: " << param.act_type;
@@ -504,9 +504,9 @@ void ElementwiseDivCompute<T, PType>::Run() {
                                OprandSwapable::NO,
                                arm_math::NullNeonConfig>(
       this,
-      lite::arm::math::elementwise_div_broadcast<T>,
-      lite::arm::math::elementwise_div<T>,
-      paddle::lite::kernels::host::naive_div<T>);
+      lite_metal::arm::math::elementwise_div_broadcast<T>,
+      lite_metal::arm::math::elementwise_div<T>,
+      paddle::lite_metal::kernels::host::naive_div<T>);
 }
 
 template <typename T, PrecisionType PType>
@@ -516,9 +516,9 @@ void ElementwiseFloorDivCompute<T, PType>::Run() {
                                OprandSwapable::NO,
                                arm_math::NullNeonConfig>(
       this,
-      lite::arm::math::elementwise_floor_div_broadcast<T>,
-      lite::arm::math::elementwise_floor_div<T>,
-      paddle::lite::kernels::host::naive_floor_div<T>);
+      lite_metal::arm::math::elementwise_floor_div_broadcast<T>,
+      lite_metal::arm::math::elementwise_floor_div<T>,
+      paddle::lite_metal::kernels::host::naive_floor_div<T>);
 }
 
 void ElementwiseDivActivationCompute::Run() {
@@ -531,12 +531,12 @@ void ElementwiseDivActivationCompute::Run() {
                                  OprandSwapable::NO,
                                  arm_math::NullNeonConfig>(
         this,
-        lite::arm::math::elementwise_div_relu_broadcast<float>,
-        lite::arm::math::elementwise_div_relu<float>,
-        paddle::lite::kernels::host::naive_fused_op<
+        lite_metal::arm::math::elementwise_div_relu_broadcast<float>,
+        lite_metal::arm::math::elementwise_div_relu<float>,
+        paddle::lite_metal::kernels::host::naive_fused_op<
             float,
-            paddle::lite::kernels::host::naive_div<float>,
-            paddle::lite::kernels::host::naive_relu<float>>);
+            paddle::lite_metal::kernels::host::naive_div<float>,
+            paddle::lite_metal::kernels::host::naive_relu<float>>);
   }
   if (!act_supported) {
     LOG(FATAL) << "unsupported Activation type: " << param.act_type;
@@ -550,9 +550,9 @@ void ElementwiseModCompute<T, PType>::Run() {
                                OprandSwapable::NO,
                                arm_math::NullNeonConfig>(
       this,
-      lite::arm::math::elementwise_mod_broadcast<T>,
-      lite::arm::math::elementwise_mod<T>,
-      paddle::lite::kernels::host::naive_mod<T>);
+      lite_metal::arm::math::elementwise_mod_broadcast<T>,
+      lite_metal::arm::math::elementwise_mod<T>,
+      paddle::lite_metal::kernels::host::naive_mod<T>);
 }
 
 template <typename T, PrecisionType PType>
@@ -562,9 +562,9 @@ void ElementwisePowCompute<T, PType>::Run() {
                                OprandSwapable::YES,
                                arm_math::NullNeonConfig>(
       this,
-      lite::arm::math::elementwise_pow_broadcast<T>,
-      lite::arm::math::elementwise_pow<T>,
-      paddle::lite::kernels::host::naive_pow<T>);
+      lite_metal::arm::math::elementwise_pow_broadcast<T>,
+      lite_metal::arm::math::elementwise_pow<T>,
+      paddle::lite_metal::kernels::host::naive_pow<T>);
 }
 
 }  // namespace arm
@@ -574,7 +574,7 @@ void ElementwisePowCompute<T, PType>::Run() {
 
 #ifdef ENABLE_ARM_FP16
 using elementwise_add_fp16_t =
-    paddle::lite::kernels::arm::ElementwiseAddCompute<float16_t,
+    paddle::lite_metal::kernels::arm::ElementwiseAddCompute<float16_t,
                                                       PRECISION(kFP16)>;
 REGISTER_LITE_KERNEL(
     elementwise_add, kARM, kFP16, kNCHW, elementwise_add_fp16_t, def)
@@ -583,7 +583,7 @@ REGISTER_LITE_KERNEL(
     .BindOutput("Out", {LiteType::GetTensorTy(TARGET(kARM), PRECISION(kFP16))})
     .Finalize();
 
-using elementwise_add_fp16_t_act = paddle::lite::kernels::arm::
+using elementwise_add_fp16_t_act = paddle::lite_metal::kernels::arm::
     ElementwiseAddActivationCompute<float16_t, PRECISION(kFP16)>;
 REGISTER_LITE_KERNEL(fusion_elementwise_add_activation,
                      kARM,
@@ -598,7 +598,7 @@ REGISTER_LITE_KERNEL(fusion_elementwise_add_activation,
 #endif  // ENABLE_ARM_FP16
 
 using elementwise_add_float_t =
-    paddle::lite::kernels::arm::ElementwiseAddCompute<float, PRECISION(kFloat)>;
+    paddle::lite_metal::kernels::arm::ElementwiseAddCompute<float, PRECISION(kFloat)>;
 REGISTER_LITE_KERNEL(
     elementwise_add, kARM, kFloat, kNCHW, elementwise_add_float_t, def)
     .BindInput("X", {LiteType::GetTensorTy(TARGET(kARM))})
@@ -607,7 +607,7 @@ REGISTER_LITE_KERNEL(
     .Finalize();
 
 using elementwise_add_int32_t =
-    paddle::lite::kernels::arm::ElementwiseAddCompute<int32_t,
+    paddle::lite_metal::kernels::arm::ElementwiseAddCompute<int32_t,
                                                       PRECISION(kInt32)>;
 REGISTER_LITE_KERNEL(
     elementwise_add, kARM, kInt32, kNCHW, elementwise_add_int32_t, def)
@@ -617,7 +617,7 @@ REGISTER_LITE_KERNEL(
     .Finalize();
 
 using elementwise_add_int64_t =
-    paddle::lite::kernels::arm::ElementwiseAddCompute<int64_t,
+    paddle::lite_metal::kernels::arm::ElementwiseAddCompute<int64_t,
                                                       PRECISION(kInt64)>;
 REGISTER_LITE_KERNEL(
     elementwise_add, kARM, kInt64, kNCHW, elementwise_add_int64_t, def)
@@ -629,7 +629,7 @@ REGISTER_LITE_KERNEL(
 #ifdef LITE_BUILD_EXTRA
 // float kernel has higher priority
 using elementwise_add_int32_f =
-    paddle::lite::kernels::arm::ElementwiseAddCompute<int32_t,
+    paddle::lite_metal::kernels::arm::ElementwiseAddCompute<int32_t,
                                                       PRECISION(kFloat)>;
 REGISTER_LITE_KERNEL(
     elementwise_add, kARM, kFloat, kNCHW, elementwise_add_int32_f, int32)
@@ -639,7 +639,7 @@ REGISTER_LITE_KERNEL(
     .Finalize();
 
 using elementwise_add_int64_f =
-    paddle::lite::kernels::arm::ElementwiseAddCompute<int64_t,
+    paddle::lite_metal::kernels::arm::ElementwiseAddCompute<int64_t,
                                                       PRECISION(kFloat)>;
 REGISTER_LITE_KERNEL(
     elementwise_add, kARM, kFloat, kNCHW, elementwise_add_int64_f, int64)
@@ -649,7 +649,7 @@ REGISTER_LITE_KERNEL(
     .Finalize();
 #endif  // LITE_BUILD_EXTRA
 
-using elementwise_add_float_t_act = paddle::lite::kernels::arm::
+using elementwise_add_float_t_act = paddle::lite_metal::kernels::arm::
     ElementwiseAddActivationCompute<float, PRECISION(kFloat)>;
 REGISTER_LITE_KERNEL(fusion_elementwise_add_activation,
                      kARM,
@@ -663,7 +663,7 @@ REGISTER_LITE_KERNEL(fusion_elementwise_add_activation,
     .Finalize();
 
 using elementwise_sub_float_t =
-    paddle::lite::kernels::arm::ElementwiseSubCompute<float, PRECISION(kFloat)>;
+    paddle::lite_metal::kernels::arm::ElementwiseSubCompute<float, PRECISION(kFloat)>;
 REGISTER_LITE_KERNEL(
     elementwise_sub, kARM, kFloat, kNCHW, elementwise_sub_float_t, def)
     .BindInput("X", {LiteType::GetTensorTy(TARGET(kARM))})
@@ -672,7 +672,7 @@ REGISTER_LITE_KERNEL(
     .Finalize();
 
 using elementwise_sub_int32_t =
-    paddle::lite::kernels::arm::ElementwiseSubCompute<int32_t,
+    paddle::lite_metal::kernels::arm::ElementwiseSubCompute<int32_t,
                                                       PRECISION(kInt32)>;
 REGISTER_LITE_KERNEL(
     elementwise_sub, kARM, kInt32, kNCHW, elementwise_sub_int32_t, def)
@@ -684,7 +684,7 @@ REGISTER_LITE_KERNEL(
 #ifdef LITE_BUILD_EXTRA
 // float kernel has higher priority
 using elementwise_sub_int32_f =
-    paddle::lite::kernels::arm::ElementwiseSubCompute<int32_t,
+    paddle::lite_metal::kernels::arm::ElementwiseSubCompute<int32_t,
                                                       PRECISION(kFloat)>;
 REGISTER_LITE_KERNEL(
     elementwise_sub, kARM, kFloat, kNCHW, elementwise_sub_int32_f, int32)
@@ -694,7 +694,7 @@ REGISTER_LITE_KERNEL(
     .Finalize();
 
 using elementwise_sub_int64_f =
-    paddle::lite::kernels::arm::ElementwiseSubCompute<int64_t,
+    paddle::lite_metal::kernels::arm::ElementwiseSubCompute<int64_t,
                                                       PRECISION(kFloat)>;
 REGISTER_LITE_KERNEL(
     elementwise_sub, kARM, kFloat, kNCHW, elementwise_sub_int64_f, int64)
@@ -709,7 +709,7 @@ REGISTER_LITE_KERNEL(
     kARM,
     kFloat,
     kNCHW,
-    paddle::lite::kernels::arm::ElementwiseSubActivationCompute,
+    paddle::lite_metal::kernels::arm::ElementwiseSubActivationCompute,
     def)
     .BindInput("X", {LiteType::GetTensorTy(TARGET(kARM))})
     .BindInput("Y", {LiteType::GetTensorTy(TARGET(kARM))})
@@ -717,7 +717,7 @@ REGISTER_LITE_KERNEL(
     .Finalize();
 
 using elementwise_mul_float_t =
-    paddle::lite::kernels::arm::ElementwiseMulCompute<float, PRECISION(kFloat)>;
+    paddle::lite_metal::kernels::arm::ElementwiseMulCompute<float, PRECISION(kFloat)>;
 REGISTER_LITE_KERNEL(
     elementwise_mul, kARM, kFloat, kNCHW, elementwise_mul_float_t, def)
     .BindInput("X", {LiteType::GetTensorTy(TARGET(kARM))})
@@ -726,7 +726,7 @@ REGISTER_LITE_KERNEL(
     .Finalize();
 
 using elementwise_mul_int32_t =
-    paddle::lite::kernels::arm::ElementwiseMulCompute<int32_t,
+    paddle::lite_metal::kernels::arm::ElementwiseMulCompute<int32_t,
                                                       PRECISION(kInt32)>;
 REGISTER_LITE_KERNEL(
     elementwise_mul, kARM, kInt32, kNCHW, elementwise_mul_int32_t, def)
@@ -736,7 +736,7 @@ REGISTER_LITE_KERNEL(
     .Finalize();
 
 using elementwise_mul_int64_t =
-    paddle::lite::kernels::arm::ElementwiseMulCompute<int64_t,
+    paddle::lite_metal::kernels::arm::ElementwiseMulCompute<int64_t,
                                                       PRECISION(kInt64)>;
 REGISTER_LITE_KERNEL(
     elementwise_mul, kARM, kInt64, kNCHW, elementwise_mul_int64_t, def)
@@ -748,7 +748,7 @@ REGISTER_LITE_KERNEL(
 #ifdef LITE_BUILD_EXTRA
 // float kernel has higher priority
 using elementwise_mul_int32_f =
-    paddle::lite::kernels::arm::ElementwiseMulCompute<int32_t,
+    paddle::lite_metal::kernels::arm::ElementwiseMulCompute<int32_t,
                                                       PRECISION(kFloat)>;
 REGISTER_LITE_KERNEL(
     elementwise_mul, kARM, kFloat, kNCHW, elementwise_mul_int32_f, int32)
@@ -758,7 +758,7 @@ REGISTER_LITE_KERNEL(
     .Finalize();
 
 using elementwise_mul_int64_f =
-    paddle::lite::kernels::arm::ElementwiseMulCompute<int64_t,
+    paddle::lite_metal::kernels::arm::ElementwiseMulCompute<int64_t,
                                                       PRECISION(kFloat)>;
 REGISTER_LITE_KERNEL(
     elementwise_mul, kARM, kFloat, kNCHW, elementwise_mul_int64_f, int64)
@@ -768,7 +768,7 @@ REGISTER_LITE_KERNEL(
     .Finalize();
 #endif  // LITE_BUILD_EXTRA
 
-using fusion_elementwise_mul_activation_float_t = paddle::lite::kernels::arm::
+using fusion_elementwise_mul_activation_float_t = paddle::lite_metal::kernels::arm::
     ElementwiseMulActivationCompute<float, PRECISION(kFloat)>;
 REGISTER_LITE_KERNEL(fusion_elementwise_mul_activation,
                      kARM,
@@ -781,7 +781,7 @@ REGISTER_LITE_KERNEL(fusion_elementwise_mul_activation,
     .BindOutput("Out", {LiteType::GetTensorTy(TARGET(kARM))})
     .Finalize();
 
-using fusion_elementwise_mul_activation_int64_t = paddle::lite::kernels::arm::
+using fusion_elementwise_mul_activation_int64_t = paddle::lite_metal::kernels::arm::
     ElementwiseMulActivationCompute<int64_t, PRECISION(kInt64)>;
 REGISTER_LITE_KERNEL(fusion_elementwise_mul_activation,
                      kARM,
@@ -798,7 +798,7 @@ REGISTER_LITE_KERNEL(elementwise_max,
                      kARM,
                      kFloat,
                      kNCHW,
-                     paddle::lite::kernels::arm::ElementwiseMaxCompute,
+                     paddle::lite_metal::kernels::arm::ElementwiseMaxCompute,
                      def)
     .BindInput("X", {LiteType::GetTensorTy(TARGET(kARM))})
     .BindInput("Y", {LiteType::GetTensorTy(TARGET(kARM))})
@@ -810,7 +810,7 @@ REGISTER_LITE_KERNEL(
     kARM,
     kFloat,
     kNCHW,
-    paddle::lite::kernels::arm::ElementwiseMaxActivationCompute,
+    paddle::lite_metal::kernels::arm::ElementwiseMaxActivationCompute,
     def)
     .BindInput("X", {LiteType::GetTensorTy(TARGET(kARM))})
     .BindInput("Y", {LiteType::GetTensorTy(TARGET(kARM))})
@@ -821,7 +821,7 @@ REGISTER_LITE_KERNEL(elementwise_min,
                      kARM,
                      kFloat,
                      kNCHW,
-                     paddle::lite::kernels::arm::ElementwiseMinCompute,
+                     paddle::lite_metal::kernels::arm::ElementwiseMinCompute,
                      def)
     .BindInput("X", {LiteType::GetTensorTy(TARGET(kARM))})
     .BindInput("Y", {LiteType::GetTensorTy(TARGET(kARM))})
@@ -833,7 +833,7 @@ REGISTER_LITE_KERNEL(
     kARM,
     kFloat,
     kNCHW,
-    paddle::lite::kernels::arm::ElementwiseMinActivationCompute,
+    paddle::lite_metal::kernels::arm::ElementwiseMinActivationCompute,
     def)
     .BindInput("X", {LiteType::GetTensorTy(TARGET(kARM))})
     .BindInput("Y", {LiteType::GetTensorTy(TARGET(kARM))})
@@ -841,7 +841,7 @@ REGISTER_LITE_KERNEL(
     .Finalize();
 
 using elementwise_div_fp32_t =
-    paddle::lite::kernels::arm::ElementwiseDivCompute<float, PRECISION(kFloat)>;
+    paddle::lite_metal::kernels::arm::ElementwiseDivCompute<float, PRECISION(kFloat)>;
 
 REGISTER_LITE_KERNEL(
     elementwise_div, kARM, kFloat, kNCHW, elementwise_div_fp32_t, def)
@@ -851,7 +851,7 @@ REGISTER_LITE_KERNEL(
     .Finalize();
 
 using elementwise_div_int32_t =
-    paddle::lite::kernels::arm::ElementwiseDivCompute<int32_t,
+    paddle::lite_metal::kernels::arm::ElementwiseDivCompute<int32_t,
                                                       PRECISION(kInt32)>;
 REGISTER_LITE_KERNEL(
     elementwise_div, kARM, kInt32, kNCHW, elementwise_div_int32_t, def)
@@ -861,7 +861,7 @@ REGISTER_LITE_KERNEL(
     .Finalize();
 
 using elementwise_div_int64_t =
-    paddle::lite::kernels::arm::ElementwiseDivCompute<int64_t,
+    paddle::lite_metal::kernels::arm::ElementwiseDivCompute<int64_t,
                                                       PRECISION(kInt64)>;
 
 REGISTER_LITE_KERNEL(
@@ -876,7 +876,7 @@ REGISTER_LITE_KERNEL(
     kARM,
     kFloat,
     kNCHW,
-    paddle::lite::kernels::arm::ElementwiseDivActivationCompute,
+    paddle::lite_metal::kernels::arm::ElementwiseDivActivationCompute,
     def)
     .BindInput("X", {LiteType::GetTensorTy(TARGET(kARM))})
     .BindInput("Y", {LiteType::GetTensorTy(TARGET(kARM))})
@@ -884,7 +884,7 @@ REGISTER_LITE_KERNEL(
     .Finalize();
 
 using elementwise_mod_int64_t =
-    paddle::lite::kernels::arm::ElementwiseModCompute<int64_t,
+    paddle::lite_metal::kernels::arm::ElementwiseModCompute<int64_t,
                                                       PRECISION(kInt64)>;
 REGISTER_LITE_KERNEL(
     elementwise_mod, kARM, kInt64, kNCHW, elementwise_mod_int64_t, def)
@@ -896,7 +896,7 @@ REGISTER_LITE_KERNEL(
 #ifdef LITE_BUILD_EXTRA
 // float kernel has higher priority
 using elementwise_mod_int64_f =
-    paddle::lite::kernels::arm::ElementwiseModCompute<int64_t,
+    paddle::lite_metal::kernels::arm::ElementwiseModCompute<int64_t,
                                                       PRECISION(kFloat)>;
 REGISTER_LITE_KERNEL(
     elementwise_mod, kARM, kFloat, kNCHW, elementwise_mod_int64_f, int64)
@@ -906,7 +906,7 @@ REGISTER_LITE_KERNEL(
     .Finalize();
 
 using elementwise_mod_int32_f =
-    paddle::lite::kernels::arm::ElementwiseModCompute<int32_t,
+    paddle::lite_metal::kernels::arm::ElementwiseModCompute<int32_t,
                                                       PRECISION(kFloat)>;
 REGISTER_LITE_KERNEL(
     elementwise_mod, kARM, kFloat, kNCHW, elementwise_mod_int32_f, int32_mod)
@@ -917,7 +917,7 @@ REGISTER_LITE_KERNEL(
 #endif  // LITE_BUILD_EXTRA
 
 using elementwise_pow_fp32_t =
-    paddle::lite::kernels::arm::ElementwisePowCompute<float, PRECISION(kFloat)>;
+    paddle::lite_metal::kernels::arm::ElementwisePowCompute<float, PRECISION(kFloat)>;
 
 REGISTER_LITE_KERNEL(
     elementwise_pow, kARM, kFloat, kNCHW, elementwise_pow_fp32_t, def)
@@ -927,7 +927,7 @@ REGISTER_LITE_KERNEL(
     .Finalize();
 
 using elementwise_pow_int32_t =
-    paddle::lite::kernels::arm::ElementwisePowCompute<int32_t,
+    paddle::lite_metal::kernels::arm::ElementwisePowCompute<int32_t,
                                                       PRECISION(kInt32)>;
 
 REGISTER_LITE_KERNEL(
@@ -938,7 +938,7 @@ REGISTER_LITE_KERNEL(
     .Finalize();
 
 using elementwise_floor_div_int32_t =
-    paddle::lite::kernels::arm::ElementwiseFloorDivCompute<int32_t,
+    paddle::lite_metal::kernels::arm::ElementwiseFloorDivCompute<int32_t,
                                                            PRECISION(kInt32)>;
 REGISTER_LITE_KERNEL(elementwise_floordiv,
                      kARM,
@@ -952,7 +952,7 @@ REGISTER_LITE_KERNEL(elementwise_floordiv,
     .Finalize();
 
 using elementwise_floor_div_int64_t =
-    paddle::lite::kernels::arm::ElementwiseFloorDivCompute<int64_t,
+    paddle::lite_metal::kernels::arm::ElementwiseFloorDivCompute<int64_t,
                                                            PRECISION(kInt64)>;
 
 REGISTER_LITE_KERNEL(elementwise_floordiv,
@@ -969,7 +969,7 @@ REGISTER_LITE_KERNEL(elementwise_floordiv,
 #ifdef LITE_BUILD_EXTRA
 // float kernel has higher priority
 using elementwise_floor_div_int32_f =
-    paddle::lite::kernels::arm::ElementwiseFloorDivCompute<int32_t,
+    paddle::lite_metal::kernels::arm::ElementwiseFloorDivCompute<int32_t,
                                                            PRECISION(kFloat)>;
 REGISTER_LITE_KERNEL(elementwise_floordiv,
                      kARM,
@@ -983,7 +983,7 @@ REGISTER_LITE_KERNEL(elementwise_floordiv,
     .Finalize();
 
 using elementwise_floor_div_int64_f =
-    paddle::lite::kernels::arm::ElementwiseFloorDivCompute<int64_t,
+    paddle::lite_metal::kernels::arm::ElementwiseFloorDivCompute<int64_t,
                                                            PRECISION(kFloat)>;
 REGISTER_LITE_KERNEL(elementwise_floordiv,
                      kARM,

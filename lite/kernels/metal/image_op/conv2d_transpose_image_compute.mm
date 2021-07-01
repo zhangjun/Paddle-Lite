@@ -17,7 +17,7 @@
 #include "lite/kernels/metal/image_op/metal_params.h"
 
 namespace paddle {
-namespace lite {
+namespace lite_metal {
 namespace kernels {
 namespace metal {
 
@@ -34,9 +34,9 @@ void Conv2dTransposeImageCompute<P, PTYPE>::PrepareForRun() {
     if (param.bias) bias_buffer_ = param.bias->template data<P, MetalImage>();
 
     if (param.activation_param.has_active) {
-        if (lite_api::ActivationType::kRelu == param.activation_param.active_type)
+        if (lite_metal_api::ActivationType::kRelu == param.activation_param.active_type)
             activate_type_ = 1;
-        else if (lite_api::ActivationType::kRelu6 == param.activation_param.active_type) {
+        else if (lite_metal_api::ActivationType::kRelu6 == param.activation_param.active_type) {
             activate_type_ = 2;
             relu6_thredhold_ = static_cast<short>(param.activation_param.hard_swish_threshold);
         } else {
@@ -237,13 +237,13 @@ void Conv2dTransposeImageCompute<P, PTYPE>::SetupWithoutMPS() {
 }  // namespace lite
 }  // namespace paddle
 
-template class paddle::lite::kernels::metal::Conv2dTransposeImageCompute<float, PRECISION(kFloat)>;
-template class paddle::lite::kernels::metal::Conv2dTransposeImageCompute<MetalHalf,
+template class paddle::lite_metal::kernels::metal::Conv2dTransposeImageCompute<float, PRECISION(kFloat)>;
+template class paddle::lite_metal::kernels::metal::Conv2dTransposeImageCompute<MetalHalf,
     PRECISION(kFP16)>;
 
-typedef paddle::lite::kernels::metal::Conv2dTransposeImageCompute<float, PRECISION(kFloat)>
+typedef paddle::lite_metal::kernels::metal::Conv2dTransposeImageCompute<float, PRECISION(kFloat)>
     MetalConv2dTransposeFp32;
-typedef paddle::lite::kernels::metal::Conv2dTransposeImageCompute<MetalHalf, PRECISION(kFP16)>
+typedef paddle::lite_metal::kernels::metal::Conv2dTransposeImageCompute<MetalHalf, PRECISION(kFP16)>
     MetalConv2dTransposeFp16;
 
 // TODO:(lzy) need debug to open the kernel

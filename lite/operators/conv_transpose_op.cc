@@ -20,7 +20,7 @@
 #include "lite/operators/conv_op.h"
 
 namespace paddle {
-namespace lite {
+namespace lite_metal {
 namespace operators {
 
 bool ConvTransposeOpLite::CheckShape() const {
@@ -113,19 +113,19 @@ bool ConvTransposeOpLite::InferShapeImpl() const {
   }
 
   // Set output dims
-  param_.output->Resize(lite::DDim(output_shape));
+  param_.output->Resize(lite_metal::DDim(output_shape));
   return true;
 }
 
 // TODO(Superjomn) replace framework::OpDesc with a lite one.
 bool ConvTransposeOpLite::AttachImpl(const cpp::OpDesc& op_desc,
-                                     lite::Scope* scope) {
+                                     lite_metal::Scope* scope) {
   auto X = op_desc.Input("Input").front();
   auto Filter = op_desc.Input("Filter").front();
   auto Out = op_desc.Output("Output").front();
-  param_.x = scope->FindVar(X)->GetMutable<lite::Tensor>();
-  param_.filter = scope->FindVar(Filter)->GetMutable<lite::Tensor>();
-  param_.output = scope->FindVar(Out)->GetMutable<lite::Tensor>();
+  param_.x = scope->FindVar(X)->GetMutable<lite_metal::Tensor>();
+  param_.filter = scope->FindVar(Filter)->GetMutable<lite_metal::Tensor>();
+  param_.output = scope->FindVar(Out)->GetMutable<lite_metal::Tensor>();
 
   param_.strides = op_desc.GetAttr<std::vector<int>>("strides");
   std::vector<int> paddings = op_desc.GetAttr<std::vector<int>>("paddings");
@@ -174,7 +174,7 @@ bool ConvTransposeOpLite::AttachImpl(const cpp::OpDesc& op_desc,
       auto bias_var = scope->FindVar(bias_arguments.front());
       if (bias_var != nullptr) {
         param_.bias =
-            const_cast<lite::Tensor*>(&(bias_var->Get<lite::Tensor>()));
+            const_cast<lite_metal::Tensor*>(&(bias_var->Get<lite_metal::Tensor>()));
       }
     }
   }
@@ -182,15 +182,15 @@ bool ConvTransposeOpLite::AttachImpl(const cpp::OpDesc& op_desc,
     param_.activation_param.has_active = true;
     auto act_type = op_desc.GetAttr<std::string>("act_type");
     if (act_type == "relu") {
-      param_.activation_param.active_type = lite_api::ActivationType::kRelu;
+      param_.activation_param.active_type = lite_metal_api::ActivationType::kRelu;
       param_.fuse_relu = true;
     } else if (act_type == "relu6") {
-      param_.activation_param.active_type = lite_api::ActivationType::kRelu6;
+      param_.activation_param.active_type = lite_metal_api::ActivationType::kRelu6;
       param_.activation_param.Relu_clipped_coef =
           op_desc.GetAttr<float>("fuse_brelu_threshold");  // 6.f
     } else if (act_type == "leaky_relu") {
       param_.activation_param.active_type =
-          lite_api::ActivationType::kLeakyRelu;
+          lite_metal_api::ActivationType::kLeakyRelu;
       param_.activation_param.Leaky_relu_alpha =
           op_desc.GetAttr<float>("leaky_relu_alpha");
     } else {
@@ -212,6 +212,6 @@ bool ConvTransposeOpLite::AttachImpl(const cpp::OpDesc& op_desc,
 }  // namespace paddle
 
 REGISTER_LITE_OP(conv2d_transpose,
-                 paddle::lite::operators::ConvTransposeOpLite);
+                 paddle::lite_metal::operators::ConvTransposeOpLite);
 REGISTER_LITE_OP(depthwise_conv2d_transpose,
-                 paddle::lite::operators::ConvTransposeOpLite);
+                 paddle::lite_metal::operators::ConvTransposeOpLite);

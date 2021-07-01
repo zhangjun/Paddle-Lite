@@ -24,7 +24,7 @@
                 "unavailable in flatbuffers read-only mode."
 
 namespace paddle {
-namespace lite {
+namespace lite_metal {
 
 // The AttrType is used to make the proto::AttrType portable.
 enum class OpAttrType {
@@ -74,10 +74,10 @@ enum class VarDataType {
   TUPLE
 };
 
-inline VarDataType ConvertPrecisionType(lite_api::PrecisionType type) {
+inline VarDataType ConvertPrecisionType(lite_metal_api::PrecisionType type) {
 #define CASE(ptype, vtype)                \
-  case lite_api::PrecisionType::k##ptype: \
-    return lite::VarDataType::vtype;      \
+  case lite_metal_api::PrecisionType::k##ptype: \
+    return lite_metal::VarDataType::vtype;      \
     break
   switch (type) {
     CASE(Bool, BOOL);
@@ -90,15 +90,15 @@ inline VarDataType ConvertPrecisionType(lite_api::PrecisionType type) {
     CASE(Float, FP32);
     default:
       LOG(FATAL) << "Illegal flatbuffer VarType." << static_cast<int>(type);
-      return lite::VarDataType();
+      return lite_metal::VarDataType();
   }
 #undef CASE
 }
 
-inline lite_api::PrecisionType ConvertPrecisionType(VarDataType type) {
+inline lite_metal_api::PrecisionType ConvertPrecisionType(VarDataType type) {
 #define CASE(ptype, vtype)                    \
-  case lite::VarDataType::vtype:              \
-    return lite_api::PrecisionType::k##ptype; \
+  case lite_metal::VarDataType::vtype:              \
+    return lite_metal_api::PrecisionType::k##ptype; \
     break
   switch (type) {
     CASE(Bool, BOOL);
@@ -111,7 +111,7 @@ inline lite_api::PrecisionType ConvertPrecisionType(VarDataType type) {
     CASE(Float, FP32);
     default:
       LOG(FATAL) << "Illegal flatbuffer VarType: " << static_cast<int>(type);
-      return lite_api::PrecisionType();
+      return lite_metal_api::PrecisionType();
   }
 #undef CASE
 }

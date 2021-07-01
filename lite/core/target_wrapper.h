@@ -26,19 +26,19 @@
 #endif  // LITE_WITH_CUDA
 
 namespace paddle {
-namespace lite {
+namespace lite_metal {
 
-using lite_api::TargetType;
-using lite_api::PrecisionType;
-using lite_api::DataLayoutType;
-using lite_api::PrecisionTypeLength;
-using lite_api::TargetToStr;
-using lite_api::Place;
-using lite_api::PrecisionToStr;
-using lite_api::DataLayoutToStr;
-using lite_api::TargetRepr;
-using lite_api::PrecisionRepr;
-using lite_api::DataLayoutRepr;
+using lite_metal_api::TargetType;
+using lite_metal_api::PrecisionType;
+using lite_metal_api::DataLayoutType;
+using lite_metal_api::PrecisionTypeLength;
+using lite_metal_api::TargetToStr;
+using lite_metal_api::Place;
+using lite_metal_api::PrecisionToStr;
+using lite_metal_api::DataLayoutToStr;
+using lite_metal_api::TargetRepr;
+using lite_metal_api::PrecisionRepr;
+using lite_metal_api::DataLayoutRepr;
 
 namespace host {
 const int MALLOC_ALIGN = 64;
@@ -169,7 +169,7 @@ class TargetWrapper<TARGET(kHost)> {
   static void MemcpySync(void* dst,
                          const void* src,
                          size_t size,
-                         IoDirection dir = lite::IoDirection::HtoH);
+                         IoDirection dir = lite_metal::IoDirection::HtoH);
   static void MemcpyAsync(void* dst,
                           const void* src,
                           size_t size,

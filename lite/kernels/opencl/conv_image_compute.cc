@@ -23,7 +23,7 @@
 #undef LITE_WITH_LOG
 
 namespace paddle {
-namespace lite {
+namespace lite_metal {
 namespace kernels {
 namespace opencl {
 
@@ -45,7 +45,7 @@ void ConvImageCompute::PrepareForRun() {
     threshold_4 = 256.0f * 16.0f;
   }
   const bool fp16_support =
-      CLRuntime::Global()->get_precision() == lite_api::CL_PRECISION_FP16;
+      CLRuntime::Global()->get_precision() == lite_metal_api::CL_PRECISION_FP16;
   conv_param_ = param_.get_mutable<param_t>();
   auto output_dims = conv_param_->output->dims();
   output_tensor_n_ = output_dims[0];
@@ -565,19 +565,19 @@ void ConvImageCompute::PrepareForRun() {
   alpha_image_p_ = DATA_GPU(alpha_gpu_image_);
   if (conv_param_->activation_param.has_active) {
     if (conv_param_->activation_param.active_type ==
-        lite_api::ActivationType::kRelu) {
+        lite_metal_api::ActivationType::kRelu) {
       build_options_single += " -DRELU";
     } else if (conv_param_->activation_param.active_type ==
-               lite_api::ActivationType::kRelu6) {
+               lite_metal_api::ActivationType::kRelu6) {
       build_options_single += " -DRELU6";
     } else if (conv_param_->activation_param.active_type ==
-               lite_api::ActivationType::kLeakyRelu) {
+               lite_metal_api::ActivationType::kLeakyRelu) {
       std::string leaky_relu_alpha_str =
           std::to_string(conv_param_->activation_param.Leaky_relu_alpha);
       build_options_single +=
           " -DLEAKY_RELU -DLEAKY_RELU_ALPHA=" + leaky_relu_alpha_str + "f";
     } else if (conv_param_->activation_param.active_type ==
-               lite_api::ActivationType::kHardSwish) {
+               lite_metal_api::ActivationType::kHardSwish) {
       std::string threshold =
           std::to_string(conv_param_->activation_param.hard_swish_threshold);
       std::string scale =
@@ -588,7 +588,7 @@ void ConvImageCompute::PrepareForRun() {
                               "f" + " -DACT_SCALE=" + scale + "f" +
                               " -DACT_OFFSET=" + offset + "f";
     } else if (conv_param_->activation_param.active_type ==
-               lite_api::ActivationType::kHardSigmoid) {
+               lite_metal_api::ActivationType::kHardSigmoid) {
       std::string slope =
           std::to_string(conv_param_->activation_param.hard_sigmoid_slope);
       std::string offset =
@@ -596,7 +596,7 @@ void ConvImageCompute::PrepareForRun() {
       build_options_single += " -DHARD_SIGMOID -DHARD_SIGMOID_SLOPE=" + slope +
                               "f" + " -DHARD_SIGMOID_OFFSET=" + offset + "f";
     } else if (conv_param_->activation_param.active_type ==
-               lite_api::ActivationType::kPRelu) {
+               lite_metal_api::ActivationType::kPRelu) {
       std::string prelu_mode = conv_param_->activation_param.Prelu_mode;
       build_options_single += " -DPRELU";
       if (prelu_mode == "channel") {
@@ -1316,7 +1316,7 @@ void ConvImageCompute::SetGlobalWorkSize() {
 void ConvImageCompute::OIHW2OHWIO4I4(
     void* src, void* dst, size_t O, size_t I, size_t H, size_t W) {
   bool fp16_support =
-      CLRuntime::Global()->get_precision() == lite_api::CL_PRECISION_FP16;
+      CLRuntime::Global()->get_precision() == lite_metal_api::CL_PRECISION_FP16;
   size_t i_block = UP_DIV(I, 4);
 
   float* dst_fp32 = static_cast<float*>(dst);
@@ -1344,11 +1344,11 @@ void ConvImageCompute::OIHW2OHWIO4I4(
 void ConvImageCompute::AssignDataFromCPUToGPU(const Tensor* tensor_cpu_p,
                                               Tensor* tensor_gpu_p) {
   bool fp16_support =
-      lite::CLRuntime::Global()->get_precision() == lite_api::CL_PRECISION_FP16;
+      lite_metal::CLRuntime::Global()->get_precision() == lite_metal_api::CL_PRECISION_FP16;
   fp16_support
-      ? tensor_gpu_p->Assign<half_t, lite::DDim, TARGET(kOpenCL)>(
+      ? tensor_gpu_p->Assign<half_t, lite_metal::DDim, TARGET(kOpenCL)>(
             tensor_cpu_p->data<half_t>(), tensor_cpu_p->dims())
-      : tensor_gpu_p->Assign<float, lite::DDim, TARGET(kOpenCL)>(
+      : tensor_gpu_p->Assign<float, lite_metal::DDim, TARGET(kOpenCL)>(
             tensor_cpu_p->data<float>(), tensor_cpu_p->dims());
 }
 
@@ -2096,7 +2096,7 @@ REGISTER_LITE_KERNEL(conv2d,
                      kOpenCL,
                      kFP16,
                      kImageDefault,
-                     paddle::lite::kernels::opencl::ConvImageCompute,
+                     paddle::lite_metal::kernels::opencl::ConvImageCompute,
                      image2d)
     .BindInput("Input",
                {LiteType::GetTensorTy(TARGET(kOpenCL),
@@ -2120,7 +2120,7 @@ REGISTER_LITE_KERNEL(depthwise_conv2d,
                      kOpenCL,
                      kFP16,
                      kImageDefault,
-                     paddle::lite::kernels::opencl::ConvImageCompute,
+                     paddle::lite_metal::kernels::opencl::ConvImageCompute,
                      image2d)
     .BindInput("Input",
                {LiteType::GetTensorTy(TARGET(kOpenCL),
@@ -2141,7 +2141,7 @@ REGISTER_LITE_KERNEL(conv2d,
                      kOpenCL,
                      kFP16,
                      kImageDefault,
-                     paddle::lite::kernels::opencl::ConvImageCompute,
+                     paddle::lite_metal::kernels::opencl::ConvImageCompute,
                      image2d_pc)
     .BindInput("Input",
                {LiteType::GetTensorTy(TARGET(kOpenCL),
@@ -2165,7 +2165,7 @@ REGISTER_LITE_KERNEL(depthwise_conv2d,
                      kOpenCL,
                      kFP16,
                      kImageDefault,
-                     paddle::lite::kernels::opencl::ConvImageCompute,
+                     paddle::lite_metal::kernels::opencl::ConvImageCompute,
                      image2d_pc)
     .BindInput("Input",
                {LiteType::GetTensorTy(TARGET(kOpenCL),

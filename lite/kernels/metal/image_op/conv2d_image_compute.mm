@@ -23,7 +23,7 @@
 #include "lite/utils/cp_logging.h"
 
 namespace paddle {
-namespace lite {
+namespace lite_metal {
 namespace kernels {
 namespace metal {
 
@@ -44,9 +44,9 @@ void Conv2dImageCompute::PrepareForRun() {
     activate_type_ = 0;
     if (param.activation_param.has_active) {
         switch (param.activation_param.active_type) {
-            case lite_api::ActivationType::kRelu:
-            case lite_api::ActivationType::kRelu6:
-            case lite_api::ActivationType::kLeakyRelu: {
+            case lite_metal_api::ActivationType::kRelu:
+            case lite_metal_api::ActivationType::kRelu6:
+            case lite_metal_api::ActivationType::kLeakyRelu: {
                 activate_type_ = (uint16_t)param.activation_param.active_type;
             } break;
             default: { LOG(FATAL) << "Conv2d: cannot support the activate type"; } break;
@@ -102,11 +102,11 @@ void Conv2dImageCompute::PrepareForRun() {
 
     // MPS don't support relu6
     switch (param.activation_param.active_type) {
-        case lite_api::ActivationType::kIndentity:
-        case lite_api::ActivationType::kRelu:
+        case lite_metal_api::ActivationType::kIndentity:
+        case lite_metal_api::ActivationType::kRelu:
             break;
-        case lite_api::ActivationType::kRelu6:
-        case lite_api::ActivationType::kLeakyRelu:
+        case lite_metal_api::ActivationType::kRelu6:
+        case lite_metal_api::ActivationType::kLeakyRelu:
             should_use_mps = NO;
             break;
         default:
@@ -303,13 +303,13 @@ void Conv2dImageCompute::setup_without_mps() {
     // relu
     ActivationMetalParam activation_params{(unsigned short)activate_type_, 0.0, 0.0, 0.0, 0.0};
     switch (param.activation_param.active_type) {
-        case lite_api::ActivationType::kIndentity:
-        case lite_api::ActivationType::kRelu:
+        case lite_metal_api::ActivationType::kIndentity:
+        case lite_metal_api::ActivationType::kRelu:
             break;
-        case lite_api::ActivationType::kRelu6: {
+        case lite_metal_api::ActivationType::kRelu6: {
             activation_params.threshold = param.activation_param.threshold;
         } break;
-        case lite_api::ActivationType::kLeakyRelu: {
+        case lite_metal_api::ActivationType::kLeakyRelu: {
             activation_params.alpha = param.activation_param.Leaky_relu_alpha;
         } break;
         default:
@@ -428,7 +428,7 @@ void Conv2dImageCompute::setup_with_mps() {
         description.dilationRateY = (*param.dilations)[1];
         // active function
         switch (param.activation_param.active_type) {
-            case lite_api::ActivationType::kRelu: {
+            case lite_metal_api::ActivationType::kRelu: {
                 description.fusedNeuronDescriptor =
                     [MPSNNNeuronDescriptor cnnNeuronDescriptorWithType:MPSCNNNeuronTypeReLU a:0.0];
             } break;
@@ -460,7 +460,7 @@ void Conv2dImageCompute::setup_with_mps() {
         // bias
         if (param.bias && canMPSAddByChannel()) {
             if (bias_buffer_->src_tensor_) {
-                lite::Tensor* y = (lite::Tensor*)(bias_buffer_->src_tensor_);
+                lite_metal::Tensor* y = (lite_metal::Tensor*)(bias_buffer_->src_tensor_);
                 auto bias = y->data<float>();
                 scoure.biasTerms = const_cast<float*>(bias);
             }
@@ -507,7 +507,7 @@ bool Conv2dImageCompute::canMPSAddByChannel() {
     if (!bias_buffer_->src_tensor_) {
         return false;
     }
-    lite::Tensor* y = (lite::Tensor*)(bias_buffer_->src_tensor_);
+    lite_metal::Tensor* y = (lite_metal::Tensor*)(bias_buffer_->src_tensor_);
     if (y->dims().size() == 1) {
         return true;
     }
@@ -516,7 +516,7 @@ bool Conv2dImageCompute::canMPSAddByChannel() {
 
 bool Conv2dImageCompute::canMPSAddByElement() {
     const auto& param = this->Param<param_t>();
-    lite::Tensor* y = (lite::Tensor*)(bias_buffer_->src_tensor_);
+    lite_metal::Tensor* y = (lite_metal::Tensor*)(bias_buffer_->src_tensor_);
     if (y->dims() == param.output->dims()) {
         return true;
     }
@@ -551,7 +551,7 @@ REGISTER_LITE_KERNEL(conv2d,
     kMetal,
     kFloat,
     kMetalTexture2DArray,
-    paddle::lite::kernels::metal::Conv2dImageCompute,
+    paddle::lite_metal::kernels::metal::Conv2dImageCompute,
     def)
     .BindInput("Input",
         {LiteType::GetTensorTy(TARGET(kMetal),
@@ -573,7 +573,7 @@ REGISTER_LITE_KERNEL(conv2d,
     kMetal,
     kFP16,
     kMetalTexture2DArray,
-    paddle::lite::kernels::metal::Conv2dImageCompute,
+    paddle::lite_metal::kernels::metal::Conv2dImageCompute,
     def)
     .BindInput("Input",
         {LiteType::GetTensorTy(TARGET(kMetal), PRECISION(kFP16), DATALAYOUT(kMetalTexture2DArray))})

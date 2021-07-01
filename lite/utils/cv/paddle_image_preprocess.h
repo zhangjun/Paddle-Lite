@@ -21,11 +21,11 @@
 #include "lite/api/paddle_place.h"
 
 namespace paddle {
-namespace lite {
+namespace lite_metal {
 namespace utils {
 namespace cv {
-typedef paddle::lite_api::Tensor Tensor;
-typedef paddle::lite_api::DataLayoutType LayoutType;
+typedef paddle::lite_metal_api::Tensor Tensor;
+typedef paddle::lite_metal_api::DataLayoutType LayoutType;
 // color enum
 enum ImageFormat {
   RGBA = 0,

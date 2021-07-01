@@ -21,7 +21,7 @@ limitations under the License. */
 #include "lite/core/type_system.h"
 
 namespace paddle {
-namespace lite {
+namespace lite_metal {
 namespace kernels {
 namespace arm {
 
@@ -39,19 +39,19 @@ void SequencePoolCompute::Run() {
   int64_t width = param.X->numel() / param.X->dims()[0];
 
   if (pool_type == "SUM") {
-    lite::arm::math::seq_pool_sum(din, dout, lod, width);
+    lite_metal::arm::math::seq_pool_sum(din, dout, lod, width);
   } else if (pool_type == "AVERAGE") {
-    lite::arm::math::seq_pool_average(din, dout, lod, width);
+    lite_metal::arm::math::seq_pool_average(din, dout, lod, width);
   } else if (pool_type == "SQRT") {
-    lite::arm::math::seq_pool_sqrt(din, dout, lod, width);
+    lite_metal::arm::math::seq_pool_sqrt(din, dout, lod, width);
   } else if (pool_type == "MAX") {
-    lite::arm::math::seq_pool_max(din, dout, max_index, lod, width);
+    lite_metal::arm::math::seq_pool_max(din, dout, max_index, lod, width);
   } else if (pool_type == "MIN") {
-    lite::arm::math::seq_pool_min(din, dout, max_index, lod, width);
+    lite_metal::arm::math::seq_pool_min(din, dout, max_index, lod, width);
   } else if (pool_type == "FIRST") {
-    lite::arm::math::seq_pool_first(din, dout, lod, width);
+    lite_metal::arm::math::seq_pool_first(din, dout, lod, width);
   } else if (pool_type == "LAST") {
-    lite::arm::math::seq_pool_last(din, dout, lod, width);
+    lite_metal::arm::math::seq_pool_last(din, dout, lod, width);
   } else {
     LOG(ERROR) << " UNKNOWN sequence pool type";
   }
@@ -73,7 +73,7 @@ REGISTER_LITE_KERNEL(sequence_pool,
                      kARM,
                      kFloat,
                      kNCHW,
-                     paddle::lite::kernels::arm::SequencePoolCompute,
+                     paddle::lite_metal::kernels::arm::SequencePoolCompute,
                      def)
     .BindInput("X", {LiteType::GetTensorTy(TARGET(kARM))})
     .BindOutput("Out", {LiteType::GetTensorTy(TARGET(kARM))})

@@ -22,22 +22,22 @@
 #include "lite/core/type_system.h"
 
 namespace paddle {
-namespace lite {
+namespace lite_metal {
 namespace kernels {
 namespace arm {
 
-inline lite_api::ActivationType convert_gru_act_type(int act_type) {
+inline lite_metal_api::ActivationType convert_gru_act_type(int act_type) {
   switch (act_type) {
     case 0:
-      return lite_api::ActivationType::kIndentity;
+      return lite_metal_api::ActivationType::kIndentity;
     case 1:
-      return lite_api::ActivationType::kSigmoid;
+      return lite_metal_api::ActivationType::kSigmoid;
     case 2:
-      return lite_api::ActivationType::kTanh;
+      return lite_metal_api::ActivationType::kTanh;
     case 3:
-      return lite_api::ActivationType::kRelu;
+      return lite_metal_api::ActivationType::kRelu;
     default:
-      return lite_api::ActivationType::kIndentity;
+      return lite_metal_api::ActivationType::kIndentity;
   }
 }
 
@@ -65,7 +65,7 @@ void GRUUnitCompute::Run() {
 
   if (bias) {
     auto bias_data = bias->data<float>();
-    lite::arm::math::gru_add_with_bias<float>(
+    lite_metal::arm::math::gru_add_with_bias<float>(
         input_data, bias_data, gate_data, batch_size, frame_size * 3);
   } else {
     for (int i = 0; i < batch_size; ++i) {
@@ -76,7 +76,7 @@ void GRUUnitCompute::Run() {
     }
   }
 
-  lite::arm::math::GRUMetaValue<float> gru_value;
+  lite_metal::arm::math::GRUMetaValue<float> gru_value;
   gru_value.gate_weight = const_cast<float*>(weight_data);
   gru_value.state_weight =
       const_cast<float*>(weight_data + 2 * frame_size * frame_size);
@@ -85,7 +85,7 @@ void GRUUnitCompute::Run() {
   gru_value.gate_value = gate_data;
   gru_value.reset_output_value = reset_hidden_prev_data;
 
-  lite::arm::math::GRUUnitFunctor<float>::compute(
+  lite_metal::arm::math::GRUUnitFunctor<float>::compute(
       gru_value,
       frame_size,
       batch_size,
@@ -104,7 +104,7 @@ REGISTER_LITE_KERNEL(gru_unit,
                      kARM,
                      kFloat,
                      kNCHW,
-                     paddle::lite::kernels::arm::GRUUnitCompute,
+                     paddle::lite_metal::kernels::arm::GRUUnitCompute,
                      def)
     .BindInput("Input", {LiteType::GetTensorTy(TARGET(kARM))})
     .BindInput("HiddenPrev", {LiteType::GetTensorTy(TARGET(kARM))})

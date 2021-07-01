@@ -16,10 +16,10 @@
 
 #include "lite/utils/cv/paddle_image_preprocess.h"
 
-typedef paddle::lite::utils::cv::ImageFormat ImageFormat;
-typedef paddle::lite::utils::cv::FlipParam FlipParam;
-typedef paddle::lite::Tensor Tensor;
-typedef paddle::lite_api::DataLayoutType LayoutType;
+typedef paddle::lite_metal::utils::cv::ImageFormat ImageFormat;
+typedef paddle::lite_metal::utils::cv::FlipParam FlipParam;
+typedef paddle::lite_metal::Tensor Tensor;
+typedef paddle::lite_metal_api::DataLayoutType LayoutType;
 
 void nv2bgr(const uint8_t* in_data,
             uint8_t* out_data,

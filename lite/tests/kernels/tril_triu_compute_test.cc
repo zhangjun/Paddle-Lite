@@ -19,7 +19,7 @@
 #include "lite/tests/utils/fill_data.h"
 
 namespace paddle {
-namespace lite {
+namespace lite_metal {
 
 template <class T>
 class TrilTriuComputeTester : public arena::TestCase {
@@ -92,15 +92,15 @@ void TestTrilTriuHelper(Place place,
                         const std::vector<int64_t> x_dims,
                         const int diagonal = 0,
                         const bool lower = true) {
-  auto precision = lite_api::PrecisionTypeTrait<T>::Type();
+  auto precision = lite_metal_api::PrecisionTypeTrait<T>::Type();
   std::string alias("def");
   switch (precision) {
-    case lite_api::PrecisionType::kFloat:
+    case lite_metal_api::PrecisionType::kFloat:
       alias = std::string("float32");
       break;
     default:
       LOG(FATAL) << "unsupported precision: "
-                 << lite_api::PrecisionToStr(precision);
+                 << lite_metal_api::PrecisionToStr(precision);
   }
 
   std::unique_ptr<arena::TestCase> tester(new TrilTriuComputeTester<T>(

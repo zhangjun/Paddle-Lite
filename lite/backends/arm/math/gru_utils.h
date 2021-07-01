@@ -21,7 +21,7 @@
 #include "lite/backends/arm/math/sgemm.h"
 
 namespace paddle {
-namespace lite {
+namespace lite_metal {
 namespace arm {
 namespace math {
 
@@ -73,7 +73,7 @@ inline void gru_add_with_bias(
   }
 }
 
-template <lite_api::ActivationType Act>
+template <lite_metal_api::ActivationType Act>
 static void gru_unit_reset_act_impl(float* updata_gate,
                                     int stride_update,
                                     float* reset_gate,
@@ -96,16 +96,16 @@ static void gru_unit_reset_act_impl(float* updata_gate,
       float32x4_t vr0 = vld1q_f32(reset_gate + i);
       float32x4_t vr1 = vld1q_f32(reset_gate + i + 4);
 
-      float32x4_t vau0 = lite::arm::math::vactive_f32<Act>(vu0);
-      float32x4_t vau1 = lite::arm::math::vactive_f32<Act>(vu1);
+      float32x4_t vau0 = lite_metal::arm::math::vactive_f32<Act>(vu0);
+      float32x4_t vau1 = lite_metal::arm::math::vactive_f32<Act>(vu1);
 
       if (hidden_prev) {
         vpre0 = vld1q_f32(hidden_prev + i);
         vpre1 = vld1q_f32(hidden_prev + i + 4);
       }
 
-      float32x4_t var0 = lite::arm::math::vactive_f32<Act>(vr0);
-      float32x4_t var1 = lite::arm::math::vactive_f32<Act>(vr1);
+      float32x4_t var0 = lite_metal::arm::math::vactive_f32<Act>(vr0);
+      float32x4_t var1 = lite_metal::arm::math::vactive_f32<Act>(vr1);
 
       vst1q_f32(updata_gate + i, vau0);
       vst1q_f32(updata_gate + i + 4, vau1);
@@ -120,8 +120,8 @@ static void gru_unit_reset_act_impl(float* updata_gate,
     }
 
     for (; i < frame_size; ++i) {
-      updata_gate[i] = lite::arm::math::active_f32<Act>(updata_gate[i]);
-      reset_gate[i] = lite::arm::math::active_f32<Act>(reset_gate[i]);
+      updata_gate[i] = lite_metal::arm::math::active_f32<Act>(updata_gate[i]);
+      reset_gate[i] = lite_metal::arm::math::active_f32<Act>(reset_gate[i]);
       if (hidden_prev) {
         prev = hidden_prev[i];
       }
@@ -137,7 +137,7 @@ static void gru_unit_reset_act_impl(float* updata_gate,
   }
 }
 
-template <lite_api::ActivationType Act>
+template <lite_metal_api::ActivationType Act>
 static void gru_unit_out_act_impl(bool origin_mode,
                                   float* updata_gate,
                                   int stride_update,
@@ -162,8 +162,8 @@ static void gru_unit_out_act_impl(bool origin_mode,
         float32x4_t vu0 = vld1q_f32(updata_gate + i);
         float32x4_t vu1 = vld1q_f32(updata_gate + i + 4);
 
-        float32x4_t vac0 = lite::arm::math::vactive_f32<Act>(vc0);
-        float32x4_t vac1 = lite::arm::math::vactive_f32<Act>(vc1);
+        float32x4_t vac0 = lite_metal::arm::math::vactive_f32<Act>(vc0);
+        float32x4_t vac1 = lite_metal::arm::math::vactive_f32<Act>(vc1);
         if (hidden_prev) {
           vpre0 = vld1q_f32(hidden_prev + i);
           vpre1 = vld1q_f32(hidden_prev + i + 4);
@@ -186,7 +186,7 @@ static void gru_unit_out_act_impl(bool origin_mode,
         if (hidden_prev) {
           prev = hidden_prev[i];
         }
-        cell_state[i] = lite::arm::math::active_f32<Act>(cell_state[i]);
+        cell_state[i] = lite_metal::arm::math::active_f32<Act>(cell_state[i]);
         hidden[i] =
             cell_state[i] * (1.f - updata_gate[i]) + updata_gate[i] * prev;
       }
@@ -197,8 +197,8 @@ static void gru_unit_out_act_impl(bool origin_mode,
         float32x4_t vu0 = vld1q_f32(updata_gate + i);
         float32x4_t vu1 = vld1q_f32(updata_gate + i + 4);
 
-        float32x4_t vac0 = lite::arm::math::vactive_f32<Act>(vc0);
-        float32x4_t vac1 = lite::arm::math::vactive_f32<Act>(vc1);
+        float32x4_t vac0 = lite_metal::arm::math::vactive_f32<Act>(vc0);
+        float32x4_t vac1 = lite_metal::arm::math::vactive_f32<Act>(vc1);
 
         if (hidden_prev) {
           vpre0 = vld1q_f32(hidden_prev + i);
@@ -219,7 +219,7 @@ static void gru_unit_out_act_impl(bool origin_mode,
       }
 
       for (; i < frame_size; ++i) {
-        cell_state[i] = lite::arm::math::active_f32<Act>(cell_state[i]);
+        cell_state[i] = lite_metal::arm::math::active_f32<Act>(cell_state[i]);
         if (hidden_prev) {
           prev = hidden_prev[i];
         }
@@ -236,7 +236,7 @@ static void gru_unit_out_act_impl(bool origin_mode,
   }
 }
 
-inline void gru_unit_reset_act(lite_api::ActivationType act_type,
+inline void gru_unit_reset_act(lite_metal_api::ActivationType act_type,
                                GRUMetaValue<float> value,
                                int frame_size,
                                int batch_size) {
@@ -250,8 +250,8 @@ inline void gru_unit_reset_act(lite_api::ActivationType act_type,
   int stride_reset_hidden_prev = frame_size;
 
   switch (act_type) {
-    case lite_api::ActivationType::kIndentity:
-      gru_unit_reset_act_impl<lite_api::ActivationType::kIndentity>(
+    case lite_metal_api::ActivationType::kIndentity:
+      gru_unit_reset_act_impl<lite_metal_api::ActivationType::kIndentity>(
           updata_gate,
           stride_update,
           reset_gate,
@@ -263,8 +263,8 @@ inline void gru_unit_reset_act(lite_api::ActivationType act_type,
           frame_size,
           batch_size);
       break;
-    case lite_api::ActivationType::kTanh:
-      gru_unit_reset_act_impl<lite_api::ActivationType::kTanh>(
+    case lite_metal_api::ActivationType::kTanh:
+      gru_unit_reset_act_impl<lite_metal_api::ActivationType::kTanh>(
           updata_gate,
           stride_update,
           reset_gate,
@@ -276,8 +276,8 @@ inline void gru_unit_reset_act(lite_api::ActivationType act_type,
           frame_size,
           batch_size);
       break;
-    case lite_api::ActivationType::kSigmoid:
-      gru_unit_reset_act_impl<lite_api::ActivationType::kSigmoid>(
+    case lite_metal_api::ActivationType::kSigmoid:
+      gru_unit_reset_act_impl<lite_metal_api::ActivationType::kSigmoid>(
           updata_gate,
           stride_update,
           reset_gate,
@@ -289,8 +289,8 @@ inline void gru_unit_reset_act(lite_api::ActivationType act_type,
           frame_size,
           batch_size);
       break;
-    case lite_api::ActivationType::kRelu:
-      gru_unit_reset_act_impl<lite_api::ActivationType::kRelu>(
+    case lite_metal_api::ActivationType::kRelu:
+      gru_unit_reset_act_impl<lite_metal_api::ActivationType::kRelu>(
           updata_gate,
           stride_update,
           reset_gate,
@@ -307,7 +307,7 @@ inline void gru_unit_reset_act(lite_api::ActivationType act_type,
   }
 }
 
-inline void gru_unit_out_act(lite_api::ActivationType act_type,
+inline void gru_unit_out_act(lite_metal_api::ActivationType act_type,
                              bool origin_mode,
                              GRUMetaValue<float> value,
                              int frame_size,
@@ -323,8 +323,8 @@ inline void gru_unit_out_act(lite_api::ActivationType act_type,
   int stride_hidden = frame_size;
 
   switch (act_type) {
-    case lite_api::ActivationType::kIndentity:
-      gru_unit_out_act_impl<lite_api::ActivationType::kIndentity>(
+    case lite_metal_api::ActivationType::kIndentity:
+      gru_unit_out_act_impl<lite_metal_api::ActivationType::kIndentity>(
           origin_mode,
           updata_gate,
           stride_update,
@@ -337,8 +337,8 @@ inline void gru_unit_out_act(lite_api::ActivationType act_type,
           frame_size,
           batch_size);
       break;
-    case lite_api::ActivationType::kTanh:
-      gru_unit_out_act_impl<lite_api::ActivationType::kTanh>(origin_mode,
+    case lite_metal_api::ActivationType::kTanh:
+      gru_unit_out_act_impl<lite_metal_api::ActivationType::kTanh>(origin_mode,
                                                              updata_gate,
                                                              stride_update,
                                                              cell_state,
@@ -350,8 +350,8 @@ inline void gru_unit_out_act(lite_api::ActivationType act_type,
                                                              frame_size,
                                                              batch_size);
       break;
-    case lite_api::ActivationType::kSigmoid:
-      gru_unit_out_act_impl<lite_api::ActivationType::kSigmoid>(
+    case lite_metal_api::ActivationType::kSigmoid:
+      gru_unit_out_act_impl<lite_metal_api::ActivationType::kSigmoid>(
           origin_mode,
           updata_gate,
           stride_update,
@@ -364,8 +364,8 @@ inline void gru_unit_out_act(lite_api::ActivationType act_type,
           frame_size,
           batch_size);
       break;
-    case lite_api::ActivationType::kRelu:
-      gru_unit_out_act_impl<lite_api::ActivationType::kRelu>(origin_mode,
+    case lite_metal_api::ActivationType::kRelu:
+      gru_unit_out_act_impl<lite_metal_api::ActivationType::kRelu>(origin_mode,
                                                              updata_gate,
                                                              stride_update,
                                                              cell_state,
@@ -387,8 +387,8 @@ struct GRUUnitFunctor {
   static void compute(GRUMetaValue<T> value,
                       int frame_size,
                       int batch_size,
-                      const lite_api::ActivationType active_node,
-                      const lite_api::ActivationType active_gate,
+                      const lite_metal_api::ActivationType active_node,
+                      const lite_metal_api::ActivationType active_gate,
                       bool origin_mode,
                       ARMContext* ctx) {
     operators::ActivationParam act_param;
@@ -448,8 +448,8 @@ struct GRUUnitFunctor {
   static void quant_compute(GRUMetaValue<T> value,
                             int frame_size,
                             int batch_size,
-                            const lite_api::ActivationType active_node,
-                            const lite_api::ActivationType active_gate,
+                            const lite_metal_api::ActivationType active_node,
+                            const lite_metal_api::ActivationType active_gate,
                             bool origin_mode,
                             std::vector<float> weight_scale,
                             int bit_length,
@@ -463,11 +463,11 @@ struct GRUUnitFunctor {
       // quantize h_{t-1}
       int prev_out_size = batch_size * frame_size;
       float prev_out_threshold =
-          lite::arm::math::FindAbsMax(value.prev_out_value, prev_out_size);
+          lite_metal::arm::math::FindAbsMax(value.prev_out_value, prev_out_size);
       float prev_out_scale =
-          lite::arm::math::GetScale(prev_out_threshold, bit_length);
+          lite_metal::arm::math::GetScale(prev_out_threshold, bit_length);
       std::unique_ptr<int8_t[]> prev_out_value_int8(new int8_t[prev_out_size]);
-      lite::arm::math::QuantizeTensor(value.prev_out_value,
+      lite_metal::arm::math::QuantizeTensor(value.prev_out_value,
                                       prev_out_value_int8.get(),
                                       prev_out_size,
                                       prev_out_scale);
@@ -480,7 +480,7 @@ struct GRUUnitFunctor {
 
       // gemm_s8
       std::unique_ptr<float[]> out_data(new float[batch_size * frame_size * 2]);
-      lite::arm::math::gemm_s8(false,
+      lite_metal::arm::math::gemm_s8(false,
                                false,
                                batch_size,
                                frame_size * 2,
@@ -512,12 +512,12 @@ struct GRUUnitFunctor {
       // quantize r_{t}\odot h_{t-1}
       int reset_out_size = batch_size * frame_size;
       float reset_out_threshold =
-          lite::arm::math::FindAbsMax(value.reset_output_value, reset_out_size);
+          lite_metal::arm::math::FindAbsMax(value.reset_output_value, reset_out_size);
       float reset_out_scale =
-          lite::arm::math::GetScale(reset_out_threshold, bit_length);
+          lite_metal::arm::math::GetScale(reset_out_threshold, bit_length);
       std::unique_ptr<int8_t[]> reset_out_value_int8(
           new int8_t[reset_out_size]);
-      lite::arm::math::QuantizeTensor(value.reset_output_value,
+      lite_metal::arm::math::QuantizeTensor(value.reset_output_value,
                                       reset_out_value_int8.get(),
                                       reset_out_size,
                                       reset_out_scale);
@@ -528,7 +528,7 @@ struct GRUUnitFunctor {
       }
 
       std::unique_ptr<float[]> out_data(new float[batch_size * frame_size]);
-      lite::arm::math::gemm_s8(false,
+      lite_metal::arm::math::gemm_s8(false,
                                false,
                                batch_size,
                                frame_size,

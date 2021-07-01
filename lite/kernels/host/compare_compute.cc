@@ -20,7 +20,7 @@
 #include <vector>
 
 namespace paddle {
-namespace lite {
+namespace lite_metal {
 namespace kernels {
 namespace host {
 
@@ -103,7 +103,7 @@ void CommonForwardBroadcast(const T *x_data,
   }
 }
 
-inline lite::DDim trim_trailing_singular_dims(const lite::DDim &dims) {
+inline lite_metal::DDim trim_trailing_singular_dims(const lite_metal::DDim &dims) {
   // Remove trailing dimensions of size 1 for y
   auto actual_dims_size = dims.size();
   for (; actual_dims_size != 0; --actual_dims_size) {
@@ -116,9 +116,9 @@ inline lite::DDim trim_trailing_singular_dims(const lite::DDim &dims) {
     trim_dims[i] = dims[i];
   }
   if (trim_dims.size() == 0) {
-    return lite::DDim();
+    return lite_metal::DDim();
   }
-  lite::DDim actual_dims = lite::DDim(trim_dims);
+  lite_metal::DDim actual_dims = lite_metal::DDim(trim_dims);
   return actual_dims;
 }
 
@@ -156,8 +156,8 @@ void CommonElementwiseBroadcastForward(const T *x,
                                               func);
 }
 
-inline void get_mid_dims(const lite::DDim &x_dims,
-                         const lite::DDim &y_dims,
+inline void get_mid_dims(const lite_metal::DDim &x_dims,
+                         const lite_metal::DDim &y_dims,
                          const int axis,
                          int *pre,
                          int *n,
@@ -242,9 +242,9 @@ void CompareCompute<PType, CompareFunctor>::Run() {
 }  // namespace lite
 }  // namespace paddle
 
-using equal_float = paddle::lite::kernels::host::CompareCompute<
+using equal_float = paddle::lite_metal::kernels::host::CompareCompute<
     PRECISION(kFloat),
-    paddle::lite::kernels::host::_EqualFunctor<float>>;
+    paddle::lite_metal::kernels::host::_EqualFunctor<float>>;
 REGISTER_LITE_KERNEL(equal, kHost, kFloat, kAny, equal_float, def)
     .BindInput("X",
                {LiteType::GetTensorTy(
@@ -258,9 +258,9 @@ REGISTER_LITE_KERNEL(equal, kHost, kFloat, kAny, equal_float, def)
     .BindPaddleOpVersion("equal", 1)
     .Finalize();
 
-using equal_int64 = paddle::lite::kernels::host::CompareCompute<
+using equal_int64 = paddle::lite_metal::kernels::host::CompareCompute<
     PRECISION(kInt64),
-    paddle::lite::kernels::host::_EqualFunctor<int64_t>>;
+    paddle::lite_metal::kernels::host::_EqualFunctor<int64_t>>;
 REGISTER_LITE_KERNEL(equal, kHost, kInt64, kAny, equal_int64, def)
     .BindInput("X",
                {LiteType::GetTensorTy(
@@ -276,9 +276,9 @@ REGISTER_LITE_KERNEL(equal, kHost, kInt64, kAny, equal_int64, def)
 
 // float kernel has higher score when picking kernel.
 // TODO(zhupengyang): merge equal_int64 later
-using equal_int64_f = paddle::lite::kernels::host::CompareCompute<
+using equal_int64_f = paddle::lite_metal::kernels::host::CompareCompute<
     PRECISION(kFloat),
-    paddle::lite::kernels::host::_EqualFunctor<int64_t>>;
+    paddle::lite_metal::kernels::host::_EqualFunctor<int64_t>>;
 REGISTER_LITE_KERNEL(equal, kHost, kFloat, kAny, equal_int64_f, int64)
     .BindInput("X",
                {LiteType::GetTensorTy(
@@ -292,9 +292,9 @@ REGISTER_LITE_KERNEL(equal, kHost, kFloat, kAny, equal_int64_f, int64)
     .BindPaddleOpVersion("equal", 1)
     .Finalize();
 
-using equal_int32 = paddle::lite::kernels::host::CompareCompute<
+using equal_int32 = paddle::lite_metal::kernels::host::CompareCompute<
     PRECISION(kInt32),
-    paddle::lite::kernels::host::_EqualFunctor<int32_t>>;
+    paddle::lite_metal::kernels::host::_EqualFunctor<int32_t>>;
 REGISTER_LITE_KERNEL(equal, kHost, kInt32, kAny, equal_int32, def)
     .BindInput("X",
                {LiteType::GetTensorTy(
@@ -309,9 +309,9 @@ REGISTER_LITE_KERNEL(equal, kHost, kInt32, kAny, equal_int32, def)
     .Finalize();
 
 // float kernel has higher score when picking kernel.
-using equal_int32_f = paddle::lite::kernels::host::CompareCompute<
+using equal_int32_f = paddle::lite_metal::kernels::host::CompareCompute<
     PRECISION(kFloat),
-    paddle::lite::kernels::host::_EqualFunctor<int32_t>>;
+    paddle::lite_metal::kernels::host::_EqualFunctor<int32_t>>;
 REGISTER_LITE_KERNEL(equal, kHost, kFloat, kAny, equal_int32_f, int32)
     .BindInput("X",
                {LiteType::GetTensorTy(
@@ -325,9 +325,9 @@ REGISTER_LITE_KERNEL(equal, kHost, kFloat, kAny, equal_int32_f, int32)
     .BindPaddleOpVersion("equal", 1)
     .Finalize();
 
-using not_equal_float = paddle::lite::kernels::host::CompareCompute<
+using not_equal_float = paddle::lite_metal::kernels::host::CompareCompute<
     PRECISION(kFloat),
-    paddle::lite::kernels::host::_NotEqualFunctor<float>>;
+    paddle::lite_metal::kernels::host::_NotEqualFunctor<float>>;
 REGISTER_LITE_KERNEL(not_equal, kHost, kFloat, kAny, not_equal_float, def)
     .BindInput("X",
                {LiteType::GetTensorTy(
@@ -341,9 +341,9 @@ REGISTER_LITE_KERNEL(not_equal, kHost, kFloat, kAny, not_equal_float, def)
     .BindPaddleOpVersion("not_equal", 1)
     .Finalize();
 
-using not_equal_int32 = paddle::lite::kernels::host::CompareCompute<
+using not_equal_int32 = paddle::lite_metal::kernels::host::CompareCompute<
     PRECISION(kFloat),
-    paddle::lite::kernels::host::_NotEqualFunctor<int32_t>>;
+    paddle::lite_metal::kernels::host::_NotEqualFunctor<int32_t>>;
 REGISTER_LITE_KERNEL(not_equal, kHost, kFloat, kAny, not_equal_int32, int32)
     .BindInput("X",
                {LiteType::GetTensorTy(
@@ -357,9 +357,9 @@ REGISTER_LITE_KERNEL(not_equal, kHost, kFloat, kAny, not_equal_int32, int32)
     .BindPaddleOpVersion("not_equal", 1)
     .Finalize();
 
-using not_equal_int64 = paddle::lite::kernels::host::CompareCompute<
+using not_equal_int64 = paddle::lite_metal::kernels::host::CompareCompute<
     PRECISION(kFloat),
-    paddle::lite::kernels::host::_NotEqualFunctor<int64_t>>;
+    paddle::lite_metal::kernels::host::_NotEqualFunctor<int64_t>>;
 REGISTER_LITE_KERNEL(not_equal, kHost, kFloat, kAny, not_equal_int64, int64)
     .BindInput("X",
                {LiteType::GetTensorTy(
@@ -373,9 +373,9 @@ REGISTER_LITE_KERNEL(not_equal, kHost, kFloat, kAny, not_equal_int64, int64)
     .BindPaddleOpVersion("not_equal", 1)
     .Finalize();
 
-using less_than_float = paddle::lite::kernels::host::CompareCompute<
+using less_than_float = paddle::lite_metal::kernels::host::CompareCompute<
     PRECISION(kFloat),
-    paddle::lite::kernels::host::_LessThanFunctor<float>>;
+    paddle::lite_metal::kernels::host::_LessThanFunctor<float>>;
 REGISTER_LITE_KERNEL(less_than, kHost, kFloat, kAny, less_than_float, def)
     .BindInput("X",
                {LiteType::GetTensorTy(
@@ -389,9 +389,9 @@ REGISTER_LITE_KERNEL(less_than, kHost, kFloat, kAny, less_than_float, def)
     .BindPaddleOpVersion("less_than", 1)
     .Finalize();
 
-using less_than_int32 = paddle::lite::kernels::host::CompareCompute<
+using less_than_int32 = paddle::lite_metal::kernels::host::CompareCompute<
     PRECISION(kInt32),
-    paddle::lite::kernels::host::_LessThanFunctor<int32_t>>;
+    paddle::lite_metal::kernels::host::_LessThanFunctor<int32_t>>;
 REGISTER_LITE_KERNEL(less_than, kHost, kInt32, kAny, less_than_int32, def)
     .BindInput("X",
                {LiteType::GetTensorTy(
@@ -406,9 +406,9 @@ REGISTER_LITE_KERNEL(less_than, kHost, kInt32, kAny, less_than_int32, def)
     .Finalize();
 
 // float kernel has higher score when picking kernel.
-using less_than_int32_f = paddle::lite::kernels::host::CompareCompute<
+using less_than_int32_f = paddle::lite_metal::kernels::host::CompareCompute<
     PRECISION(kFloat),
-    paddle::lite::kernels::host::_LessThanFunctor<int32_t>>;
+    paddle::lite_metal::kernels::host::_LessThanFunctor<int32_t>>;
 REGISTER_LITE_KERNEL(less_than, kHost, kFloat, kAny, less_than_int32_f, int32)
     .BindInput("X",
                {LiteType::GetTensorTy(TARGET(kHost),
@@ -425,9 +425,9 @@ REGISTER_LITE_KERNEL(less_than, kHost, kFloat, kAny, less_than_int32_f, int32)
     .BindPaddleOpVersion("less_than", 1)
     .Finalize();
 
-using less_than_int64 = paddle::lite::kernels::host::CompareCompute<
+using less_than_int64 = paddle::lite_metal::kernels::host::CompareCompute<
     PRECISION(kInt64),
-    paddle::lite::kernels::host::_LessThanFunctor<int64_t>>;
+    paddle::lite_metal::kernels::host::_LessThanFunctor<int64_t>>;
 REGISTER_LITE_KERNEL(less_than, kHost, kInt64, kAny, less_than_int64, def)
     .BindInput("X",
                {LiteType::GetTensorTy(
@@ -442,9 +442,9 @@ REGISTER_LITE_KERNEL(less_than, kHost, kInt64, kAny, less_than_int64, def)
     .Finalize();
 
 // float kernel has higher score when picking kernel.
-using less_than_int64_f = paddle::lite::kernels::host::CompareCompute<
+using less_than_int64_f = paddle::lite_metal::kernels::host::CompareCompute<
     PRECISION(kFloat),
-    paddle::lite::kernels::host::_LessThanFunctor<int64_t>>;
+    paddle::lite_metal::kernels::host::_LessThanFunctor<int64_t>>;
 REGISTER_LITE_KERNEL(less_than, kHost, kFloat, kAny, less_than_int64_f, int64)
     .BindInput("X",
                {LiteType::GetTensorTy(TARGET(kHost),
@@ -461,9 +461,9 @@ REGISTER_LITE_KERNEL(less_than, kHost, kFloat, kAny, less_than_int64_f, int64)
     .BindPaddleOpVersion("less_than", 1)
     .Finalize();
 
-using less_equal_float = paddle::lite::kernels::host::CompareCompute<
+using less_equal_float = paddle::lite_metal::kernels::host::CompareCompute<
     PRECISION(kFloat),
-    paddle::lite::kernels::host::_LessEqualFunctor<float>>;
+    paddle::lite_metal::kernels::host::_LessEqualFunctor<float>>;
 REGISTER_LITE_KERNEL(less_equal, kHost, kFloat, kAny, less_equal_float, def)
     .BindInput("X",
                {LiteType::GetTensorTy(
@@ -477,9 +477,9 @@ REGISTER_LITE_KERNEL(less_equal, kHost, kFloat, kAny, less_equal_float, def)
     .BindPaddleOpVersion("less_equal", 1)
     .Finalize();
 
-using less_equal_int64 = paddle::lite::kernels::host::CompareCompute<
+using less_equal_int64 = paddle::lite_metal::kernels::host::CompareCompute<
     PRECISION(kInt64),
-    paddle::lite::kernels::host::_LessEqualFunctor<int64_t>>;
+    paddle::lite_metal::kernels::host::_LessEqualFunctor<int64_t>>;
 REGISTER_LITE_KERNEL(less_equal, kHost, kInt64, kAny, less_equal_int64, def)
     .BindInput("X",
                {LiteType::GetTensorTy(
@@ -494,9 +494,9 @@ REGISTER_LITE_KERNEL(less_equal, kHost, kInt64, kAny, less_equal_int64, def)
     .Finalize();
 
 // float kernel has higher priority
-using less_equal_int64_f = paddle::lite::kernels::host::CompareCompute<
+using less_equal_int64_f = paddle::lite_metal::kernels::host::CompareCompute<
     PRECISION(kFloat),
-    paddle::lite::kernels::host::_LessEqualFunctor<int64_t>>;
+    paddle::lite_metal::kernels::host::_LessEqualFunctor<int64_t>>;
 REGISTER_LITE_KERNEL(less_equal, kHost, kFloat, kAny, less_equal_int64_f, int64)
     .BindInput("X",
                {LiteType::GetTensorTy(TARGET(kHost),
@@ -513,9 +513,9 @@ REGISTER_LITE_KERNEL(less_equal, kHost, kFloat, kAny, less_equal_int64_f, int64)
     .BindPaddleOpVersion("less_equal", 1)
     .Finalize();
 
-using greater_than_float = paddle::lite::kernels::host::CompareCompute<
+using greater_than_float = paddle::lite_metal::kernels::host::CompareCompute<
     PRECISION(kFloat),
-    paddle::lite::kernels::host::_GreaterThanFunctor<float>>;
+    paddle::lite_metal::kernels::host::_GreaterThanFunctor<float>>;
 REGISTER_LITE_KERNEL(greater_than, kHost, kFloat, kAny, greater_than_float, def)
     .BindInput("X",
                {LiteType::GetTensorTy(
@@ -529,9 +529,9 @@ REGISTER_LITE_KERNEL(greater_than, kHost, kFloat, kAny, greater_than_float, def)
     .BindPaddleOpVersion("greater_than", 1)
     .Finalize();
 
-using greater_than_int32 = paddle::lite::kernels::host::CompareCompute<
+using greater_than_int32 = paddle::lite_metal::kernels::host::CompareCompute<
     PRECISION(kInt32),
-    paddle::lite::kernels::host::_GreaterThanFunctor<int32_t>>;
+    paddle::lite_metal::kernels::host::_GreaterThanFunctor<int32_t>>;
 REGISTER_LITE_KERNEL(greater_than, kHost, kInt32, kAny, greater_than_int32, def)
     .BindInput("X",
                {LiteType::GetTensorTy(
@@ -545,9 +545,9 @@ REGISTER_LITE_KERNEL(greater_than, kHost, kInt32, kAny, greater_than_int32, def)
     .BindPaddleOpVersion("greater_than", 1)
     .Finalize();
 
-using greater_than_int64 = paddle::lite::kernels::host::CompareCompute<
+using greater_than_int64 = paddle::lite_metal::kernels::host::CompareCompute<
     PRECISION(kInt64),
-    paddle::lite::kernels::host::_GreaterThanFunctor<int64_t>>;
+    paddle::lite_metal::kernels::host::_GreaterThanFunctor<int64_t>>;
 REGISTER_LITE_KERNEL(greater_than, kHost, kInt64, kAny, greater_than_int64, def)
     .BindInput("X",
                {LiteType::GetTensorTy(
@@ -562,9 +562,9 @@ REGISTER_LITE_KERNEL(greater_than, kHost, kInt64, kAny, greater_than_int64, def)
     .Finalize();
 
 // float kernel has higher priority
-using greater_than_int64_f = paddle::lite::kernels::host::CompareCompute<
+using greater_than_int64_f = paddle::lite_metal::kernels::host::CompareCompute<
     PRECISION(kFloat),
-    paddle::lite::kernels::host::_GreaterThanFunctor<int64_t>>;
+    paddle::lite_metal::kernels::host::_GreaterThanFunctor<int64_t>>;
 REGISTER_LITE_KERNEL(
     greater_than, kHost, kFloat, kAny, greater_than_int64_f, int64)
     .BindInput("X",
@@ -582,9 +582,9 @@ REGISTER_LITE_KERNEL(
     .BindPaddleOpVersion("greater_than", 1)
     .Finalize();
 
-using greater_equal_float = paddle::lite::kernels::host::CompareCompute<
+using greater_equal_float = paddle::lite_metal::kernels::host::CompareCompute<
     PRECISION(kFloat),
-    paddle::lite::kernels::host::_GreaterEqualFunctor<float>>;
+    paddle::lite_metal::kernels::host::_GreaterEqualFunctor<float>>;
 REGISTER_LITE_KERNEL(
     greater_equal, kHost, kFloat, kAny, greater_equal_float, def)
     .BindInput("X",
@@ -599,9 +599,9 @@ REGISTER_LITE_KERNEL(
     .BindPaddleOpVersion("greater_equal", 1)
     .Finalize();
 
-using greater_equal_int64 = paddle::lite::kernels::host::CompareCompute<
+using greater_equal_int64 = paddle::lite_metal::kernels::host::CompareCompute<
     PRECISION(kInt64),
-    paddle::lite::kernels::host::_GreaterEqualFunctor<int64_t>>;
+    paddle::lite_metal::kernels::host::_GreaterEqualFunctor<int64_t>>;
 REGISTER_LITE_KERNEL(
     greater_equal, kHost, kInt64, kAny, greater_equal_float, def)
     .BindInput("X",

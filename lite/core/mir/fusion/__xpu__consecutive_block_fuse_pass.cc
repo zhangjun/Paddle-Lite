@@ -19,7 +19,7 @@
 #include "lite/core/mir/pattern_matcher_high_api.h"
 
 namespace paddle {
-namespace lite {
+namespace lite_metal {
 namespace mir {
 namespace fusion {
 /* fuse xpu_conv2d and xpu_block as xpu_block*/
@@ -284,7 +284,7 @@ class XPUConsecutiveBlockFuser : public FuseBase {
     new_filter_node->arg()->type = LiteType::GetTensorTy(
         TARGET(kHost), PRECISION(kFloat), DATALAYOUT(kNCHW));
     auto* new_filter_t = scope->NewTensor(new_filter_name);
-    new_filter_t->set_precision(paddle::lite_api::PrecisionType::kFloat);
+    new_filter_t->set_precision(paddle::lite_metal_api::PrecisionType::kFloat);
     new_filter_t->set_persistable(true);
     new_filter_t->Resize({filter0_numel + filter1_numel});
     float* new_filter_ptr = new_filter_t->mutable_data<float>();
@@ -299,7 +299,7 @@ class XPUConsecutiveBlockFuser : public FuseBase {
     new_bias_node->arg()->type = LiteType::GetTensorTy(
         TARGET(kHost), PRECISION(kFloat), DATALAYOUT(kNCHW));
     auto* new_bias_t = scope->NewTensor(new_bias_name);
-    new_bias_t->set_precision(paddle::lite_api::PrecisionType::kFloat);
+    new_bias_t->set_precision(paddle::lite_metal_api::PrecisionType::kFloat);
     new_bias_t->set_persistable(true);
     if (block0_with_bias_ && block1_with_bias_) {
       auto* bias0_t = scope->FindMutableTensor(bias_name[0]);
@@ -416,6 +416,6 @@ class XPUConsecutiveBlockFusePass : public ProgramPass {
 }  // namespace paddle
 
 REGISTER_MIR_PASS(__xpu__consecutive_block_fuse_pass,
-                  paddle::lite::mir::XPUConsecutiveBlockFusePass)
+                  paddle::lite_metal::mir::XPUConsecutiveBlockFusePass)
     .BindTargets({TARGET(kXPU)})
     .BindKernel("__xpu__block_fuse_op");

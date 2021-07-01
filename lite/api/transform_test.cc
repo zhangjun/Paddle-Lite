@@ -29,7 +29,7 @@ DEFINE_string(input, "", "input_data");
 DEFINE_int32(batch, 1, "batch");
 
 namespace paddle {
-namespace lite {
+namespace lite_metal {
 
 namespace test_transformer {
 std::vector<std::string> inputed_lines;
@@ -180,9 +180,9 @@ void TestModel(const std::vector<Place>& valid_places,
                bool use_npu = false) {
 #ifdef LITE_WITH_ARM
   DeviceInfo::Init();
-  DeviceInfo::Global().SetRunMode(lite_api::LITE_POWER_HIGH, FLAGS_threads);
+  DeviceInfo::Global().SetRunMode(lite_metal_api::LITE_POWER_HIGH, FLAGS_threads);
 #endif
-  lite::Predictor predictor;
+  lite_metal::Predictor predictor;
   std::string test_data_path = FLAGS_input;
 
   predictor.Build("",

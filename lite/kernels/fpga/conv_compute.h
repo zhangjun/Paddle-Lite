@@ -22,7 +22,7 @@
 #include "lite/backends/fpga/KD/pes/depthwise_conv_pe.hpp"
 
 namespace paddle {
-namespace lite {
+namespace lite_metal {
 namespace kernels {
 namespace fpga {
 using float16 = zynqmp::float16;

@@ -19,7 +19,7 @@
 #include "lite/tests/utils/fill_data.h"
 
 namespace paddle {
-namespace lite {
+namespace lite_metal {
 
 class GridSamplerComputeTest : public arena::TestCase {
  protected:
@@ -53,7 +53,7 @@ class GridSamplerComputeTest : public arena::TestCase {
     CHECK(out);
     out->Resize(dims_);
 
-    lite::Tensor new_grid_x, new_grid_y;
+    lite_metal::Tensor new_grid_x, new_grid_y;
     new_grid_x.Resize(grid->dims());
     new_grid_y.Resize(grid->dims());
     float* new_grid_data_x = new_grid_x.mutable_data<float>();
@@ -257,7 +257,7 @@ void test_grid_sampler(Place place) {
                                                padding_mode));
 #ifdef LITE_WITH_ARM
                 auto& ctx = tester->context()->As<ARMContext>();
-                ctx.SetRunMode(lite_api::LITE_POWER_HIGH, 1);
+                ctx.SetRunMode(lite_metal_api::LITE_POWER_HIGH, 1);
 #endif
 #ifdef LITE_WITH_X86
                 if (padding_mode == "reflection" || mode == "nearest") continue;

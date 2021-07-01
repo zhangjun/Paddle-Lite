@@ -15,7 +15,7 @@
 #include "lite/kernels/host/gather_nd_compute.h"
 
 namespace paddle {
-namespace lite {
+namespace lite_metal {
 namespace kernels {
 namespace host {
 
@@ -83,7 +83,7 @@ void GatherNdCompute::Run() {
       break;                                                  \
     default:                                                  \
       LOG(FATAL) << "unsupported input(x) type: "             \
-                 << lite_api::PrecisionToStr(x->precision()); \
+                 << lite_metal_api::PrecisionToStr(x->precision()); \
       break;                                                  \
   }
 
@@ -98,7 +98,7 @@ void GatherNdCompute::Run() {
     }
     default: {
       LOG(FATAL) << "unsupported index type: "
-                 << lite_api::PrecisionToStr(index->precision());
+                 << lite_metal_api::PrecisionToStr(index->precision());
     }
   }
 #undef SELECT_GATHERND
@@ -109,7 +109,7 @@ void GatherNdCompute::Run() {
 }  // namespace lite
 }  // namespace paddle
 
-using GatherNdCompute_ = paddle::lite::kernels::host::GatherNdCompute;
+using GatherNdCompute_ = paddle::lite_metal::kernels::host::GatherNdCompute;
 REGISTER_LITE_KERNEL(gather_nd, kHost, kAny, kAny, GatherNdCompute_, def)
     .BindInput("X",
                {LiteType::GetTensorTy(TARGET(kHost),
