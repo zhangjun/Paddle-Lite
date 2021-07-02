@@ -13,3 +13,8 @@ sed -i  "s/namespace lite /namespace lite_metal /g" `grep "namespace lite " -rl 
 sed -i  "s/lite_api::/lite_metal_api::/g" `grep "lite_api::" -rl ./lite`
 sed -i  "s/namespace lite_api /namespace lite_metal_api /g" `grep "namespace lite_api " -rl ./lite`
 
+# lite/core/op_registry.h
+# lite/api/paddle_lite_factory_helper.h
+sed -i  "s/ op_type__##/ op_type_metal__##/g" `grep " op_type__##" -rl ./lite`
+sed -i  "s/ touch_##/ touch_metal_##/g" `grep " touch_##" -rl ./lite`
+sed -i  "s/ touch_op_##/ touch_op_metal_##/g" `grep " touch_op_##" -rl ./lite`
