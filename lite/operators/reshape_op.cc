@@ -183,5 +183,5 @@ std::vector<DDim::value_type> ValidateShape(const std::vector<int> &shape,
 }  // namespace lite
 }  // namespace paddle
 
-REGISTER_LITE_OP(reshape, paddle::lite_metal::operators::ReshapeOp);
+// REGISTER_LITE_OP(reshape, paddle::lite_metal::operators::ReshapeOp);
 REGISTER_LITE_OP(reshape2, paddle::lite_metal::operators::Reshape2Op);

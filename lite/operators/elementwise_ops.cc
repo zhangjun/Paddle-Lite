@@ -144,16 +144,16 @@ bool ElementwiseOp::AttachImpl(const cpp::OpDesc& opdesc, lite_metal::Scope* sco
 }  // namespace lite
 }  // namespace paddle
 
-REGISTER_LITE_OP(elementwise_sub, paddle::lite_metal::operators::ElementwiseOp);
+// REGISTER_LITE_OP(elementwise_sub, paddle::lite_metal::operators::ElementwiseOp);
 REGISTER_LITE_OP(elementwise_add, paddle::lite_metal::operators::ElementwiseOp);
 
-REGISTER_LITE_OP(elementwise_mul, paddle::lite_metal::operators::ElementwiseOp);
-REGISTER_LITE_OP(elementwise_max, paddle::lite_metal::operators::ElementwiseOp);
-REGISTER_LITE_OP(elementwise_min, paddle::lite_metal::operators::ElementwiseOp);
-REGISTER_LITE_OP(elementwise_div, paddle::lite_metal::operators::ElementwiseOp);
-REGISTER_LITE_OP(elementwise_floordiv, paddle::lite_metal::operators::ElementwiseOp);
-REGISTER_LITE_OP(elementwise_mod, paddle::lite_metal::operators::ElementwiseOp);
-REGISTER_LITE_OP(elementwise_pow, paddle::lite_metal::operators::ElementwiseOp);
+// REGISTER_LITE_OP(elementwise_mul, paddle::lite_metal::operators::ElementwiseOp);
+// REGISTER_LITE_OP(elementwise_max, paddle::lite_metal::operators::ElementwiseOp);
+// REGISTER_LITE_OP(elementwise_min, paddle::lite_metal::operators::ElementwiseOp);
+// REGISTER_LITE_OP(elementwise_div, paddle::lite_metal::operators::ElementwiseOp);
+// REGISTER_LITE_OP(elementwise_floordiv, paddle::lite_metal::operators::ElementwiseOp);
+// REGISTER_LITE_OP(elementwise_mod, paddle::lite_metal::operators::ElementwiseOp);
+// REGISTER_LITE_OP(elementwise_pow, paddle::lite_metal::operators::ElementwiseOp);
 
 // #ifdef LITE_WITH_TRAIN
 // REGISTER_LITE_OP(elementwise_sub_grad,
