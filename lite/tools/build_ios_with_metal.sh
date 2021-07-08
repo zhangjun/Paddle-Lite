@@ -13,6 +13,10 @@ WITH_EXTRA=OFF
 WITH_CV=OFF
 # controls whether to hide log information, default is ON.
 WITH_LOG=ON
+# controls whether to enable profiler, default is OFF.
+WITH_PROFILE=OFF
+# controls whether to enable precision profiler, default is OFF.
+WITH_PRECISION_PROFILE=OFF
 # controls whether to throw the exception when error occurs, default is OFF 
 WITH_EXCEPTION=OFF
 # absolute path of Paddle-Lite.
@@ -21,6 +25,8 @@ workspace=$PWD/$(dirname $0)/../../
 OPTMODEL_DIR=""
 WITH_STRIP=OFF
 IOS_DEPLOYMENT_TARGET=9.0
+WITH_LIGHT_WEIGHT_FRAMEWORK=ON
+TINY_PUBLISH=ON
 # num of threads used during compiling..
 readonly NUM_PROC=${LITE_BUILD_THREADS:-4}
 #####################################################################################################
@@ -41,6 +47,7 @@ fi
 ####################################################################################################
 function make_ios {
     local arch=$1
+    local mode=$2
 
     if [ ${arch} == "armv8" ]; then
         local os=ios64
@@ -54,6 +61,11 @@ function make_ios {
     if [ "${WITH_STRIP}" == "ON" ]; then
         WITH_EXTRA=ON
     fi
+
+    if [ "${mode}" == "full_publish" ]; then
+        TINY_PUBLISH=OFF
+    fi
+
 
     build_dir=$workspace/build.ios_with_metal.${os}.${arch}
     if [ -d $build_dir ]
@@ -71,12 +83,14 @@ function make_ios {
             -DWITH_LITE=ON \
             -DLITE_WITH_METAL=ON \
             -DLITE_WITH_ARM=ON \
-            -DLITE_ON_TINY_PUBLISH=ON \
             -DLITE_WITH_OPENMP=OFF \
             -DWITH_ARM_DOTPROD=OFF \
-            -DLITE_WITH_LIGHT_WEIGHT_FRAMEWORK=ON \
+            -DLITE_WITH_LIGHT_WEIGHT_FRAMEWORK=${WITH_LIGHT_WEIGHT_FRAMEWORK} \
+            -DLITE_ON_TINY_PUBLISH=${TINY_PUBLISH} \
             -DLITE_WITH_X86=OFF \
             -DLITE_WITH_LOG=$WITH_LOG \
+            -DLITE_WITH_PROFILE=$WITH_PROFILE \
+            -DLITE_WITH_PRECISION_PROFILE=$WITH_PRECISION_PROFILE \
             -DLITE_WITH_EXCEPTION=$WITH_EXCEPTION \
             -DLITE_BUILD_TAILOR=$WITH_STRIP \
             -DLITE_OPTMODEL_DIR=$OPTMODEL_DIR \
@@ -85,8 +99,8 @@ function make_ios {
             -DLITE_WITH_CV=$WITH_CV \
             -DDEPLOYMENT_TARGET=${IOS_DEPLOYMENT_TARGET} \
             -DARM_TARGET_OS=$os
-
-    make publish_inference -j$NUM_PROC
+    make paddle_api_light_bundled -j4
+#    make publish_inference -j$NUM_PROC
     cd -
 }
 
@@ -106,6 +120,8 @@ function print_usage {
     echo -e "|     --arch: (armv8|armv7), default is armv8                                                                                          |"
     echo -e "|     --with_cv: (OFF|ON); controls whether to compile cv functions into lib, default is OFF                                           |"
     echo -e "|     --with_log: (OFF|ON); controls whether to print log information, default is ON                                                   |"
+    echo -e "|     --with_profile: (OFF|ON); controls whether to enable profiler, default is OFF                                                    |"
+    echo -e "|     --with_precision_profile: (OFF|ON); controls whether to enable precision profiler, default is OFF                                |"
     echo -e "|     --with_exception: (OFF|ON); controls whether to throw the exception when error occurs, default is OFF                            |"
     echo -e "|     --with_extra: (OFF|ON); controls whether to publish extra operators and kernels for (sequence-related model such as OCR or NLP)  |"
     echo -e "|     --ios_deployment_target: (default: 9.0); Set the minimum compatible system version for ios deployment.                           |"
@@ -152,6 +168,14 @@ function main {
                 WITH_LOG="${i#*=}"
                 shift
                 ;;
+            --with_profile=*)
+                WITH_PROFILE="${i#*=}"
+                shift
+                ;;
+            --with_precision_profile=*)
+                WITH_PRECISION_PROFILE="${i#*=}"
+                shift
+                ;;
             --with_exception=*)
                 WITH_EXCEPTION="${i#*=}"
                 shift
@@ -159,6 +183,11 @@ function main {
             --ios_deployment_target=*)
                 IOS_DEPLOYMENT_TARGET="${i#*=}"
                 shift
+                ;;
+            # compiling result contains both light_api and cxx_api lib.
+            full_publish)
+                make_ios $ARCH full_publish
+                exit 0
                 ;;
             help)
                 print_usage

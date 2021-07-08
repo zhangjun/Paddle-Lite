@@ -11,7 +11,8 @@ endif()
 
 set(light_lib_DEPS light_api paddle_api paddle_api_light)
 
-if ((NOT LITE_ON_TINY_PUBLISH) AND (LITE_WITH_CUDA OR LITE_WITH_X86 OR LITE_WITH_SW OR LITE_WITH_BM OR LITE_WITH_HUAWEI_ASCEND_NPU OR ARM_TARGET_OS STREQUAL "android" OR ARM_TARGET_OS STREQUAL "armlinux"))
+#  OR ARM_TARGET_OS MATCHES "ios"
+if ((NOT LITE_ON_TINY_PUBLISH) AND (LITE_WITH_CUDA OR LITE_WITH_X86 OR LITE_WITH_SW OR LITE_WITH_BM OR LITE_WITH_HUAWEI_ASCEND_NPU OR ARM_TARGET_OS STREQUAL "android" OR ARM_TARGET_OS STREQUAL "armlinux" OR ARM_TARGET_OS MATCHES "ios"))
     #full api dynamic library
     lite_cc_library(paddle_full_api_shared SHARED SRCS paddle_api.cc light_api.cc cxx_api.cc cxx_api_impl.cc light_api_impl.cc
                   DEPS paddle_api paddle_api_light  paddle_api_full)
@@ -57,6 +58,7 @@ if ((NOT LITE_ON_TINY_PUBLISH) AND (LITE_WITH_CUDA OR LITE_WITH_X86 OR LITE_WITH
     endif()
     target_link_libraries(paddle_light_api_shared ${light_lib_DEPS} ${arm_kernels} ${npu_kernels} ${huawei_ascend_npu_kernels} ${rknpu_kernels} ${apu_kernels})
    if(${HOST_SYSTEM} MATCHES "macosx" AND NOT (ARM_TARGET_LANG STREQUAL "clang"))
+        message(STATUS "## #fuck")
         set(LINK_MAP_FILE "${PADDLE_SOURCE_DIR}/lite/core/exported_symbols.lds")
         set(LINK_FLAGS "-Wl,-exported_symbols_list ${LINK_MAP_FILE}")
         add_custom_command(OUTPUT ${LINK_MAP_FILE} COMMAND :)
@@ -66,6 +68,7 @@ if ((NOT LITE_ON_TINY_PUBLISH) AND (LITE_WITH_CUDA OR LITE_WITH_X86 OR LITE_WITH
         set_target_properties(paddle_light_api_shared PROPERTIES LINK_FLAGS ${LINK_FLAGS})
         add_dependencies(paddle_light_api_shared custom_linker_map)
    elseif(NOT WIN32)
+        message(STATUS "## #fuck")
         set(LINK_MAP_FILE "${PADDLE_SOURCE_DIR}/lite/core/lite.map")
         set(LINK_FLAGS "-Wl,--version-script ${LINK_MAP_FILE}")
         add_custom_command(OUTPUT ${LINK_MAP_FILE} COMMAND :)
@@ -102,7 +105,9 @@ else()
     add_dependencies(PADDLELITE_OBJS fbs_headers)
     if (IOS)
         # only sttaic lib is produced for IOS platform.
-        add_library(paddle_api_light_bundled STATIC $<TARGET_OBJECTS:PADDLELITE_OBJS>)
+        # if (LITE_ON_TINY_PUBLISH)
+            add_library(paddle_api_light_bundled STATIC $<TARGET_OBJECTS:PADDLELITE_OBJS>)
+        # endif()
     else()
         # 1. enable -flto compiling flag if toochain==gcc
         # TODO (hong19860320): Disable lto temporarily since it causes fail to catch the exceptions in android when toolchain is gcc.
@@ -497,6 +502,8 @@ if (NOT LITE_ON_TINY_PUBLISH)
     target_link_libraries(paddle_api_full ${cuda_deps})
     get_property(fluid_modules GLOBAL PROPERTY FLUID_MODULES)
     bundle_static_library(paddle_api_light paddle_api_light_bundled bundle_light_api)
+    #add_library(paddle_api_light_bundled STATIC ${__lite_cc_files} paddle_api.cc light_api.cc light_api_impl.cc)
+#    add_dependencies(publish_inference paddle_api_light_bundled)
 endif()
 
 #-----------------------------------------------------------------------------------------------------
